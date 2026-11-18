@@ -1359,7 +1359,6 @@ if(/[?&]demo/.test(location.search)){window.__g=()=>({G,goals,moves,playing,busy
   for(let i=0;i<60&&playing;i++){await sleep(220);if(busy||!playing)continue;let best=null;
     for(let y=0;y<H;y++)for(let x=0;x<W;x++){const o=G[y][x];if(o&&o.sp&&!o.lock){for(const[dx,dy]of[[1,0],[0,1],[-1,0],[0,-1]]){const q=G[y+dy]?.[x+dx];if(q&&!q.lock&&(o.sp==="r"||q.sp)){best=[o,q];break}}}if(best)break}
     const m=best||findMove();if(m){const[A,B]=m;await trySwap({x:A.x,y:A.y},{x:B.x,y:B.y})}}}}
-else if(!S.intro&&S.level===0)startLevel();
 else if(!S.intro)setTimeout(playIntro,400);
 })();
 </script>
