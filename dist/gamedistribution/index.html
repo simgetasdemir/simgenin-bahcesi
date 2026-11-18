@@ -135,6 +135,9 @@ button:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 .bubble p{margin:2px 0 4px;line-height:1.45;font-weight:600}
 .bubble .next{font-size:12px;color:var(--muted);font-weight:700;text-align:right}
 #shade{position:fixed;inset:0;background:rgba(30,40,30,.35);z-index:25}
+#shade{touch-action:manipulation;cursor:pointer}
+#dialog{touch-action:manipulation;pointer-events:auto}
+#dialog .in,#dialog .bubble,#dialog .portrait{pointer-events:none}
 #modal{position:fixed;inset:0;z-index:40;display:grid;place-items:center;padding:16px;background:rgba(30,40,30,.45)}
 #modal .card{background:var(--card);border-radius:24px;padding:20px;max-width:360px;width:100%;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.3);animation:up .25s ease-out}
 #modal h2{font-family:var(--display);font-size:26px;margin:0 0 4px;line-height:1.1;text-wrap:balance}
@@ -255,6 +258,167 @@ body.playing .hud{max-width:640px;width:100%;margin:0 auto}
   #gardenView .panel{grid-column:2;grid-row:1 / span 2;margin-top:0!important}
 }
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important}.tile{transition-duration:.05s!important}}
+
+/* ── Home screen refresh: botanical storybook ── */
+body:not(.playing) {
+  background:
+    radial-gradient(ellipse at 50% 5%, rgba(255,245,215,.16), transparent 42%),
+    linear-gradient(155deg, #173f35 0%, #102f2a 58%, #0c2926 100%);
+}
+body:not(.playing) #app { max-width: 1080px; }
+body:not(.playing) .top {
+  padding: 14px 18px;
+  border: 1px solid rgba(255,246,218,.15);
+  border-radius: 22px;
+  background: linear-gradient(110deg, rgba(255,250,232,.12), rgba(255,250,232,.045));
+  box-shadow: 0 12px 32px rgba(4,20,17,.18), inset 0 1px rgba(255,255,255,.12);
+  backdrop-filter: blur(12px);
+}
+body:not(.playing) .brand .pp1,
+body:not(.playing) .brand .pp2 {
+  text-shadow: 0 3px 0 rgba(18,48,39,.22);
+  letter-spacing: -.045em;
+}
+body:not(.playing) .brand small {
+  color: #f2e8c9;
+  opacity: .9;
+  letter-spacing: .035em;
+}
+body:not(.playing) .pill,
+body:not(.playing) .icon-btn {
+  border: 1px solid rgba(255,244,210,.22);
+  background: rgba(255,250,232,.12);
+  box-shadow: inset 0 1px rgba(255,255,255,.12);
+  backdrop-filter: blur(8px);
+}
+body:not(.playing) #gardenView {
+  padding-bottom: max(18px, env(safe-area-inset-bottom));
+}
+body:not(.playing) #gardenView .scene-wrap {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  margin-top: 16px;
+  border: 1px solid rgba(255,239,197,.34);
+  border-radius: 28px;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(255,255,235,.55), transparent 58%),
+    linear-gradient(180deg, #dce9c9 0%, #a9c99e 100%);
+  box-shadow: 0 18px 44px rgba(3,20,15,.30), inset 0 1px 0 rgba(255,255,255,.65);
+}
+body:not(.playing) #gardenView .scene-wrap::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  z-index: 2;
+  pointer-events: none;
+  border: 1px solid rgba(255,255,255,.34);
+  border-radius: 21px;
+}
+body:not(.playing) #gardenView #scene {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: saturate(1.06) contrast(1.015);
+}
+body:not(.playing) #gardenView .panel {
+  position: relative;
+  margin-top: 16px !important;
+  padding: clamp(18px, 3vw, 28px);
+  overflow: hidden;
+  border: 1px solid rgba(255,245,220,.75);
+  border-radius: 26px;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(238,205,140,.20), transparent 34%),
+    linear-gradient(145deg, #fff9e9 0%, #f5edda 100%);
+  color: #294a3b;
+  box-shadow: 0 18px 42px rgba(3,19,15,.24), inset 0 1px 0 #fff;
+}
+body:not(.playing) #gardenView .panel::after {
+  content: "✿";
+  position: absolute;
+  right: 18px;
+  top: 12px;
+  color: rgba(125,151,94,.16);
+  font-size: 54px;
+  line-height: 1;
+  pointer-events: none;
+}
+body:not(.playing) #gardenView #playBtn,
+body:not(.playing) #gardenView .big {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-height: 76px;
+  border: 1px solid rgba(255,255,255,.48);
+  border-radius: 20px;
+  background: linear-gradient(180deg, #f7a95f 0%, #e87948 100%);
+  color: #fffdf3;
+  box-shadow: 0 7px 0 #b95537, 0 13px 22px rgba(160,76,43,.22), inset 0 2px 0 rgba(255,255,255,.34);
+  text-shadow: 0 1px 2px rgba(111,48,26,.25);
+  transition: transform .16s ease, filter .16s ease, box-shadow .16s ease;
+}
+body:not(.playing) #gardenView #playBtn:active,
+body:not(.playing) #gardenView .big:active {
+  transform: translateY(4px);
+  box-shadow: 0 3px 0 #b95537, 0 7px 14px rgba(160,76,43,.18);
+}
+body:not(.playing) #gardenView #playBtn small {
+  display: block;
+  margin-top: 3px;
+  color: rgba(255,255,245,.88);
+}
+body:not(.playing) #gardenView .panel h3 {
+  position: relative;
+  z-index: 1;
+  margin: 22px 0 10px;
+  color: #345b45;
+  font-family: Georgia, serif;
+  letter-spacing: -.02em;
+}
+body:not(.playing) #gardenView .prog {
+  overflow: hidden;
+  height: 10px;
+  border: 1px solid rgba(66,105,68,.12);
+  border-radius: 99px;
+  background: #e1dfc9;
+  box-shadow: inset 0 1px 2px rgba(42,67,45,.10);
+}
+body:not(.playing) #gardenView .prog i {
+  border-radius: inherit;
+  background: linear-gradient(90deg, #8ebc70, #4f986b);
+  box-shadow: 0 0 10px rgba(91,157,103,.24);
+}
+body:not(.playing) #gardenView #tasks {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 9px;
+  margin-top: 14px;
+  padding: 0;
+  list-style: none;
+}
+body:not(.playing) #gardenView #tasks li,
+body:not(.playing) #gardenView .task {
+  border: 1px solid rgba(91,117,76,.16);
+  border-radius: 14px;
+  background: rgba(255,255,255,.56);
+  color: #49614b;
+  box-shadow: 0 3px 10px rgba(53,74,45,.045);
+}
+@media (min-width: 760px) {
+  body:not(.playing) #gardenView .scene-wrap { margin-top: 20px; }
+  body:not(.playing) #gardenView .panel { max-width: 760px; margin-left: auto; margin-right: auto; }
+}
+@media (max-width: 520px) {
+  body:not(.playing) .top { padding: 11px 12px; border-radius: 18px; }
+  body:not(.playing) #gardenView .scene-wrap { margin-top: 12px; border-radius: 21px; }
+  body:not(.playing) #gardenView .panel { padding: 16px; border-radius: 21px; }
+  body:not(.playing) #gardenView #playBtn,
+  body:not(.playing) #gardenView .big { min-height: 68px; border-radius: 17px; }
+}
+
 </style>
 
 <div id="forest" aria-hidden="true"></div>
@@ -482,12 +646,28 @@ const CH={
 };
 function talk(lines){
   return new Promise(res=>{
-    let i=0;const D=$('#dialog'),sh=$('#shade');D.hidden=false;sh.hidden=false;
-    const show=()=>{const[w,t]=lines[i],c=CH[w];D.querySelector('.portrait').innerHTML=c.face;const who=D.querySelector('.who');who.textContent=T(c.name);who.style.color=c.col;D.querySelector('.line').textContent=T(t);
-      const inn=D.querySelector('.in');inn.style.animation='none';void inn.offsetWidth;inn.style.animation='';snd(440+rnd(120),.06,'triangle',.03)};
-    show();
-    const next=()=>{i++;if(i>=lines.length){D.hidden=true;sh.hidden=true;D.onclick=sh.onclick=null;document.onkeydown=null;res()}else show()};
-    setTimeout(()=>{D.onclick=sh.onclick=next;document.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();next()}}},150);
+    let i=0, advancing=false;const D=$('#dialog'),sh=$('#shade');
+    const cleanup=()=>{D.hidden=true;sh.hidden=true;D.onpointerdown=sh.onpointerdown=D.onclick=sh.onclick=null;document.onkeydown=null;D.style.pointerEvents=sh.style.pointerEvents=''};
+    D.hidden=false;sh.hidden=false;
+    D.style.pointerEvents='auto';sh.style.pointerEvents='auto';
+    const show=()=>{
+      const [w,t]=lines[i],c=CH[w]||CH.not;
+      D.querySelector('.portrait').innerHTML=c.face;
+      const who=D.querySelector('.who');who.textContent=T(c.name);who.style.color=c.col;
+      D.querySelector('.line').textContent=T(t);
+      const inn=D.querySelector('.in');inn.style.animation='none';void inn.offsetWidth;inn.style.animation='';
+      try{snd(440+rnd(120),.06,'triangle',.03)}catch(e){}
+    };
+    const next=e=>{
+      if(e){e.preventDefault();e.stopPropagation()}
+      if(advancing)return;advancing=true;i++;
+      if(i>=lines.length){cleanup();res()}
+      else{show();setTimeout(()=>{advancing=false},180)}
+    };
+    D.onpointerdown=sh.onpointerdown=next;
+    D.onclick=sh.onclick=null;
+    document.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){next(e)}};
+    try{show()}catch(e){cleanup();console.error('Açılış diyaloğu:',e);res()}
   });
 }
 function modal(html,buttons){
@@ -1202,7 +1382,6 @@ if(/[?&]demo/.test(location.search)){window.__g=()=>({G,goals,moves,playing,busy
   for(let i=0;i<60&&playing;i++){await sleep(220);if(busy||!playing)continue;let best=null;
     for(let y=0;y<H;y++)for(let x=0;x<W;x++){const o=G[y][x];if(o&&o.sp&&!o.lock){for(const[dx,dy]of[[1,0],[0,1],[-1,0],[0,-1]]){const q=G[y+dy]?.[x+dx];if(q&&!q.lock&&(o.sp==="r"||q.sp)){best=[o,q];break}}}if(best)break}
     const m=best||findMove();if(m){const[A,B]=m;await trySwap({x:A.x,y:A.y},{x:B.x,y:B.y})}}}}
-else if(!S.intro&&S.level===0)startLevel();
 else if(!S.intro)setTimeout(playIntro,400);
 })();
 </script>
