@@ -541,9 +541,12 @@ body.playing .tip{border-radius:14px;background:#fff8d9;color:#80552b;border:2px
 .booster:disabled{opacity:.48;filter:grayscale(.65);cursor:default}
 body.playing .booster{border-color:#fff}
 @media(max-width:520px){.booster{min-width:42px;min-height:44px;border-radius:13px}}
+#versionProof{position:fixed;left:8px;top:8px;z-index:9999;padding:7px 11px;border:2px solid #fff;border-radius:999px;background:#ff2f87;color:#fff;font:900 11px/1.2 system-ui,sans-serif;letter-spacing:.04em;box-shadow:0 3px 0 #a91d5b,0 5px 14px rgba(0,0,0,.22);pointer-events:none}
+body.playing #versionProof{top:8px;left:8px;transform:scale(.92);transform-origin:top left}
 </style>
 
 <div id="forest" aria-hidden="true"></div>
+<div id="versionProof">YENİ SÜRÜM · 18 KASIM</div>
 <div id="app">
   <header class="top">
     <div class="brand"><span class="pp1">Petal</span><span class="pp2">pop</span><small id="chapterLbl">1. Bölüm · Nevin Nine'nin evi</small></div>
