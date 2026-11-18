@@ -31,7 +31,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15p
   -webkit-tap-highlight-color:transparent;overflow-x:hidden}
 button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 button:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
-#app{max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
+#app{max-width:1040px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
 .top{display:flex;align-items:center;gap:8px}
 .brand{font-family:var(--display);font-weight:800;font-size:24px;line-height:1;color:var(--leaf);flex:1;letter-spacing:-.01em}
 .brand small{display:block;font-family:var(--body);font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;margin-top:3px}
@@ -794,6 +794,19 @@ body.playing .welcome{display:none}
 #scene [data-off].off{opacity:0}
 #scene [data-on],#scene [data-off]{pointer-events:none}
 
+
+/* Immersive 3D cottage world */
+.scene-wrap{background:#b9d6d8!important;border-radius:24px;overflow:hidden;box-shadow:0 18px 48px rgba(34,57,43,.2)}
+#scene{display:none!important}
+#threeStage{position:relative;width:100%;height:clamp(390px,58vw,620px);min-height:390px;overflow:hidden;background:linear-gradient(#b9d6d8,#d5e3c3)}
+#threeStage canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+.stage-hint{position:absolute;z-index:2;top:14px;left:50%;transform:translateX(-50%);padding:8px 14px;border-radius:99px;background:rgba(31,54,42,.72);color:white;font-size:11px;font-weight:800;white-space:nowrap;pointer-events:none}
+.stage-loading{position:absolute;inset:0;display:grid;place-items:center;color:#31543e;font-weight:900;pointer-events:none}
+#threeStage.ready .stage-loading{display:none}
+#gardenView .panel{max-width:760px;margin:14px auto 0!important;width:100%;padding:20px}
+#gardenView .big{max-width:420px;align-self:center}
+#gardenView #tasks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media(max-width:650px){#threeStage{height:clamp(360px,112vw,500px);min-height:360px}#gardenView .panel{padding:13px}#gardenView #tasks{grid-template-columns:1fr}.stage-hint{font-size:10px}}
 </style>
 
 <div id="forest" aria-hidden="true"></div>
@@ -818,7 +831,7 @@ body.playing .welcome{display:none}
 
   <section id="gardenView">
     <div class="tabs" id="tabs" hidden><button data-v="1" data-t="Ön bahçe">Ön bahçe</button><button data-v="2" data-t="Arka bahçe">Arka bahçe</button></div>
-    <div class="scene-wrap"><svg id="scene" viewBox="0 0 400 260" role="img" aria-label="Simge'nin bahçesi"></svg></div>
+    <div class="scene-wrap"><svg id="scene" viewBox="0 0 400 260" role="img" aria-label="Simge'nin bahçesi"></svg><div id="threeStage"><div class="stage-hint">Sürükle: etrafına bak · Dokun: yenile</div><div class="stage-loading">3 boyutlu bahçe hazırlanıyor…</div></div></div>
     <div class="panel" style="margin-top:10px">
       <button class="big" id="playBtn"><span data-t="Oyna">Oyna</span><small id="playSub">Bulmaca 1</small></button>
       <h3><span data-t="Bahçe işleri">Bahçe işleri</span> <span id="progLbl">0 / 10</span></h3>
@@ -1779,7 +1792,7 @@ function renderGarden(){
   ul.innerHTML=nt.length?nt.map(t=>`<li class="task"><div class="ti" aria-hidden="true">${t.icon}</div><div class="tn">${T(t.name)}<small>${T('{n} yıldız gerekli',{n:t.cost})}</small></div><button class="do" data-t="${t.id}" ${S.stars<t.cost?'disabled':''}>★ ${t.cost}</button></li>`).join('')
     :ch===1?`<li class="task"><div class="ti">🌹</div><div class="tn">${T('1. bölüm tamamlandı!')}<small>${T('Arka bahçede 2. bölüm seni bekliyor.')}</small></div></li>`
     :`<li class="task"><div class="ti">🏆</div><div class="tn">${T('2. bölüm tamamlandı!')}<small>${T('3. bölüm yakında. Yıldız toplamaya devam edebilirsin.')}</small></div></li>`;
-  ul.querySelectorAll('.do').forEach(b=>b.onclick=()=>doTask(b.dataset.t));
+  ul.querySelectorAll('.do').forEach(b=>b.onclick=()=>doTask(b.dataset.t));window.__petalSnapshot={done:[...S.done],stars:S.stars,tasks:nt.map(t=>({id:t.id,name:T(t.name),cost:t.cost,icon:t.icon})),chapter:ch};window.dispatchEvent(new CustomEvent('petal-snapshot',{detail:window.__petalSnapshot}));
   const mk=$('#markers');mk.innerHTML='';
   nt.forEach(t=>{const g=el('g',{class:'marker'+(S.stars<t.cost?' locked':''),transform:`translate(${t.x} ${t.y})`,tabindex:0,role:'button','aria-label':T(t.name)},mk);
     if(S.stars>=t.cost)el('circle',{r:11,class:'ring'},g);el('circle',{r:11},g);const tx=el('text',{},g);tx.textContent=S.stars>=t.cost?'!':t.cost+'★';
@@ -1811,6 +1824,7 @@ async function doTask(id){
   }
   renderGarden();
 }
+window.__petalTask=id=>doTask(id);
 $('#playBtn').onclick=async()=>{snd(520);await Ads.midgame();startLevel()};
 
 
@@ -1876,5 +1890,44 @@ else if(!S.intro)setTimeout(playIntro,400);
 })();
 </script>
 
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js';
+import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/controls/OrbitControls.js';
+const root=document.querySelector('#threeStage');
+if(root){
+const scene=new THREE.Scene();scene.background=new THREE.Color('#b9d6d8');scene.fog=new THREE.Fog('#b9d6d8',18,38);
+const camera=new THREE.PerspectiveCamera(38,1,.1,100);camera.position.set(9,7.2,12);
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;root.appendChild(renderer.domElement);
+const controls=new OrbitControls(camera,renderer.domElement);controls.target.set(0,1.4,0);controls.enableDamping=true;controls.minDistance=7;controls.maxDistance=19;controls.maxPolarAngle=Math.PI*.48;controls.enablePan=false;
+scene.add(new THREE.HemisphereLight('#e8f5ff','#65764a',2));const sun=new THREE.DirectionalLight('#fff0d4',3.1);sun.position.set(-5,10,7);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);scene.add(sun);
+const M=(c,r=.88)=>new THREE.MeshStandardMaterial({color:c,roughness:r});const m={grass:M('#78985b'),stone:M('#b8aa91'),stone2:M('#a69780'),stone3:M('#d0c2a7'),roof:M('#713f32'),roof2:M('#985844'),wood:M('#654632'),door:M('#365e59'),glass:new THREE.MeshPhysicalMaterial({color:'#a9d9e7',roughness:.16,transparent:true,opacity:.8}),leaf:M('#477548'),leaf2:M('#6f9852'),pink:M('#e65f89'),gold:M('#f3c86d'),white:M('#fff0d5')};
+const world=new THREE.Group();scene.add(world);function G(p=world){const g=new THREE.Group();p.add(g);return g}function B(p,x,y,z,w,h,d,ma){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),ma);o.position.set(x,y,z);o.castShadow=o.receiveShadow=true;p.add(o);return o}function S(p,x,y,z,r,ma,sc=[1,1,1]){const o=new THREE.Mesh(new THREE.SphereGeometry(r,12,10),ma);o.position.set(x,y,z);o.scale.set(...sc);o.castShadow=true;p.add(o);return o}
+const floor=new THREE.Mesh(new THREE.CylinderGeometry(9.4,9.7,.35,64),m.grass);floor.position.y=-.12;floor.receiveShadow=true;world.add(floor);
+const house=G(),walls=G(house);B(walls,0,1.55,-1.8,5.2,3.1,3.5,m.stone);
+let seed=71;const R=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};
+for(let r=0;r<8;r++)for(let c=0;c<9;c++){const x=-2.48+c*.61+(r%2)*.16,y=.25+r*.37;if(y>2.85||(Math.abs(x)<.68&&y<2.15)||(Math.abs(x)>1.55&&y>1.05&&y<2.45))continue;B(walls,x,y,0, .52+R()*.08,.29,.06,[m.stone2,m.stone3,m.stone][Math.floor(R()*3)]).position.z=-.02;}
+for(let r=0;r<8;r++)for(let c=0;c<6;c++)B(walls,2.62,.25+r*.37,-3.3+c*.59+(r%2)*.12,.06,.3,.5,m.stone2);
+const roof=G(house);const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute([-3,3.1,-4,0,5.15,-4,0,5.15,.4,-3,3.1,.4,3,3.1,-4,0,5.15,-4,0,5.15,.4,3,3.1,.4],3));geo.setIndex([0,1,2,0,2,3,4,6,5,4,7,6]);geo.computeVertexNormals();const rm=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:'#794637',side:THREE.DoubleSide}));rm.castShadow=true;roof.add(rm);
+for(let side of [-1,1])for(let r=0;r<8;r++)for(let c=0;c<9;c++){const tile=B(roof,side*(.2+r*.34),5.05-r*.25,-3.85+c*.47+(r%2)*.05,.46,.08,.43,r%2?m.roof:m.roof2);tile.rotation.z=side*.59}
+const damage=G(house);for(let i=0;i<20;i++)S(damage,-2.4+R()*4.8,3.4+R()*1.5,-3.8+R()*3.7,.15,m.leaf2,[1,.25,.7]);
+const chimney=G(house);B(chimney,1.65,4.1,-2.4,.62,1.6,.68,m.stone2);B(chimney,1.65,4.95,-2.4,.82,.18,.85,m.roof2);
+const oldDoor=G(house),newDoor=G(house);B(oldDoor,0,1.05,.02,1.18,2.1,.16,m.wood);B(newDoor,0,1.05,.04,1.18,2.1,.18,m.door);S(newDoor,.42,1.05,.16,.07,m.gold);
+const oldWin=G(house),newWin=G(house);for(const x of [-1.85,1.85]){B(oldWin,x,1.85,.03,.95,1.15,.14,m.wood);for(let j=0;j<3;j++)B(oldWin,x-.25+j*.25,1.85,.12,.08,1,.04,m.roof);B(newWin,x,1.85,.04,1.04,1.22,.13,m.white);B(newWin,x,1.85,.12,.88,1.06,.05,m.glass);B(newWin,x,1.85,.16,.05,1.06,.05,m.white);B(newWin,x,1.85,.16,.88,.05,.05,m.white);for(const dx of [-.62,.62])B(newWin,x+dx,1.85,.07,.18,1.3,.1,m.door)}
+const path=G();for(let i=0;i<9;i++){const p=B(path,(i%2?-.13:.13),.12,5.7-i*.52,1.15,.18,.7,m.stone3);p.rotation.y=(R()-.5)*.2}
+const fence=G();for(let x=-7;x<=7;x+=.65){if(Math.abs(x)<1.5)continue;B(fence,x,.5,6.8,.13,.95,.15,m.wood)}B(fence,0,.35,6.8,15,.12,.16,m.wood);B(fence,0,.72,6.8,15,.12,.16,m.wood);
+const weeds=G();for(let i=0;i<110;i++){const x=-8+R()*16,z=-7+R()*13;if(z<-4&&Math.abs(x)<3.5)continue;const stem=B(weeds,x,.32+R()*.2,z,.045,.6,.045,m.leaf);stem.rotation.z=(R()-.5)*.6;S(weeds,x+(R()-.5)*.25,.5+R()*.25,z,.12,m.leaf2,[1.5,.35,.6])}
+const beds=G();for(let i=0;i<18;i++){const x=-6+R()*12,z=2.7+R()*2;B(beds,x,.32,z,.035,.6,.035,m.leaf);S(beds,x,.68,z,.16,i%2?m.pink:m.gold,[1,.75,1])}
+const trees=G();for(const [x,z] of [[-7,-3],[7,-3],[-7,4],[7,4]]){B(trees,x,1.2,z,.4,2.4,.4,m.wood);for(let j=0;j<5;j++)S(trees,x+(R()-.5),2.6+R(),z+(R()-.5),1,m.leaf2,[1,.8,1])}
+const fountain=G();const basin=new THREE.Mesh(new THREE.CylinderGeometry(.85,.95,.35,32),m.stone3);basin.position.set(4,.25,2.5);fountain.add(basin);const water=new THREE.Mesh(new THREE.CylinderGeometry(.72,.72,.06,32),new THREE.MeshPhysicalMaterial({color:'#83cde0',roughness:.15}));water.position.set(4,.46,2.5);fountain.add(water);B(fountain,4,1,2.5,.25,1.2,.25,m.stone2);
+const flowers=G();for(let i=0;i<65;i++){const x=-7+R()*14,z=-6+R()*12;B(flowers,x,.25,z,.03,.45,.03,m.leaf);S(flowers,x,.52,z,.13,[m.pink,m.gold,m.white][i%3],[1,.8,1])}
+const parts={otlar:weeds,cit:damage,kapi:oldDoor,fener:oldWin,cesme:chimney,tarh:beds};newDoor.visible=false;newWin.visible=false;
+const spots={otlar:[-3,.5,3],cit:[-2,4.3,-2],yol:[0,.4,4.7],tarh:[-4,.5,2.4],cesme:[4,1,2.5],kedi:[-4,.6,-.5],salincak:[6,.8,-2],cay:[2,.5,4],fener:[-1.8,2.4,.5],kapi:[0,1.8,.2]};const markerGroup=G(),markers=[];const ray=new THREE.Raycaster(),pointer=new THREE.Vector2();
+function updateMarkers(snap){for(const o of markers)markerGroup.remove(o);markers.length=0;for(const t of snap?.tasks||[]){const p=spots[t.id];if(!p)continue;const g=G(markerGroup);g.position.set(...p);const ring=new THREE.Mesh(new THREE.TorusGeometry(.34,.055,8,28),new THREE.MeshStandardMaterial({color:'#ffe18a',emissive:'#a56a25',emissiveIntensity:.8}));ring.rotation.x=-Math.PI/2;g.add(ring);S(g,0,.12,0,.13,m.gold);g.userData.task=t.id;markers.push(g)}}
+function sync(snap){if(!snap)return;const d=new Set(snap.done||[]);weeds.visible=!d.has('otlar');damage.visible=!d.has('cit');oldDoor.visible=!d.has('kapi');newDoor.visible=d.has('kapi');oldWin.visible=!d.has('fener');newWin.visible=d.has('fener');chimney.visible=!d.has('cesme');beds.visible=d.has('tarh');updateMarkers(snap)}
+function resize(){const w=root.clientWidth,h=root.clientHeight;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false)}new ResizeObserver(resize).observe(root);resize();
+renderer.domElement.addEventListener('pointerup',e=>{const r=renderer.domElement.getBoundingClientRect();pointer.x=(e.clientX-r.left)/r.width*2-1;pointer.y=-(e.clientY-r.top)/r.height*2+1;ray.setFromCamera(pointer,camera);const hits=ray.intersectObjects(markers,true);if(hits.length){let o=hits[0].object;while(o&&!o.userData.task)o=o.parent;if(o?.userData.task)window.__petalTask?.(o.userData.task)}});
+function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)}animate();root.classList.add('ready');window.addEventListener('petal-snapshot',e=>sync(e.detail));sync(window.__petalSnapshot);
+}
+</script>
 </body>
 </html>
