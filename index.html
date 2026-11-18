@@ -290,8 +290,9 @@ const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 
 /* ---------- Ses ---------- */
 let AC=null;
+let adMute=false;
 function snd(f=520,d=.1,type='sine',vol=.05){
-  if(S.mute)return;
+  if(S.mute||adMute)return;
   try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();
     const t=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();
     o.type=type;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f*1.5,t+d);
@@ -300,7 +301,7 @@ function snd(f=520,d=.1,type='sine',vol=.05){
 }
 const chime=()=>[660,880,1100].forEach((f,i)=>setTimeout(()=>snd(f,.18,'triangle',.06),i*90));
 const SFX=(()=>{
-  const ok=()=>{if(S.mute)return false;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();return true}catch(e){return false}};
+  const ok=()=>{if(S.mute||adMute)return false;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();return true}catch(e){return false}};
   function tone(f1,f2,d,type,vol,delay=0){const t=AC.currentTime+delay,o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.setValueAtTime(f1,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);
     g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.008);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g).connect(AC.destination);o.start(t);o.stop(t+d+.03)}
   function noise(d,vol,ftype,f,delay=0){const t=AC.currentTime+delay,b=AC.createBuffer(1,Math.ceil(AC.sampleRate*d),AC.sampleRate),c=b.getChannelData(0);
@@ -337,11 +338,55 @@ const Music=(()=>{
       step++;next+=E;
     }
   }
-  return{start(){if(on||S.mute)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();
+  return{start(){if(on||S.mute||adMute)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();
       if(!shk){shk=AC.createBuffer(1,Math.ceil(AC.sampleRate*.05),AC.sampleRate);const d=shk.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*(1-i/d.length)}
       master=AC.createGain();master.gain.value=.7;master.connect(AC.destination);on=true;step=0;next=AC.currentTime+.1;timer=setInterval(sched,60)}catch(e){}},
     stop(){on=false;clearInterval(timer);if(master){const m=master;try{m.gain.setTargetAtTime(0,AC.currentTime,.08);setTimeout(()=>m.disconnect(),600)}catch(e){}}}};
 })();
+/* ---------- Oyun sitesi reklam katmanı ----------
+   window.__PLATFORM: 'crazygames' | 'poki' | 'gamedistribution' | yok (artifact ve GitHub sayfası) */
+const Ads=(()=>{
+  let P=window.__PLATFORM||'none',gdWait=null,gdReward=false;
+  const pause=()=>{adMute=true;Music.stop()},resume=()=>{adMute=false;if(!S.mute)Music.start()};
+  if(P==='gamedistribution'){window.__gdEvent=e=>{
+    if(e.name==='SDK_GAME_PAUSE')pause();
+    if(e.name==='SDK_REWARDED_WATCH_COMPLETE')gdReward=true;
+    if(e.name==='SDK_GAME_START'){resume();if(gdWait){const w=gdWait;gdWait=null;w()}}}}
+  const cg=()=>window.CrazyGames&&window.CrazyGames.SDK;
+  async function init(){
+    try{
+      if(P==='crazygames'){await cg().init();if(cg().environment==='disabled')P='none';
+        else{const st=cg().game.settings;if(st&&st.muteAudio){S.mute=true;Music.stop()}
+          cg().game.addSettingsChangeListener(n=>{if(n.muteAudio){S.mute=true;Music.stop()}})}}
+      else if(P==='poki'){await window.PokiSDK.init().catch(()=>{});window.PokiSDK.gameLoadingFinished()}
+    }catch(e){P='none'}
+    if(P!=='none'){addEventListener('wheel',e=>e.preventDefault(),{passive:false});
+      addEventListener('keydown',e=>{if(['ArrowUp','ArrowDown',' '].includes(e.key)&&e.target===document.body)e.preventDefault()})}
+  }
+  const safe=f=>{try{f()}catch(e){}};
+  return{
+    init,
+    get on(){return P!=='none'},
+    start(){safe(()=>{if(P==='crazygames')cg().game.gameplayStart();if(P==='poki')PokiSDK.gameplayStart()})},
+    stop(){safe(()=>{if(P==='crazygames')cg().game.gameplayStop();if(P==='poki')PokiSDK.gameplayStop()})},
+    happy(){safe(()=>{if(P==='crazygames')cg().game.happytime()})},
+    midgame(){return new Promise(res=>{const done=()=>{resume();res()};
+      try{
+        if(P==='crazygames')cg().ad.requestAd('midgame',{adStarted:pause,adFinished:done,adError:done});
+        else if(P==='poki')PokiSDK.commercialBreak(pause).then(done,done);
+        else if(P==='gamedistribution'&&window.gdsdk&&gdsdk.showAd){gdWait=done;gdsdk.showAd().catch(()=>{gdWait=null;done()});setTimeout(()=>{if(gdWait===done){gdWait=null;done()}},40000)}
+        else res();
+      }catch(e){done()}})},
+    rewarded(){return new Promise(res=>{const fin=ok=>{resume();res(ok)};
+      try{
+        if(P==='crazygames')cg().ad.requestAd('rewarded',{adStarted:pause,adFinished:()=>fin(true),adError:()=>fin(false)});
+        else if(P==='poki')PokiSDK.rewardedBreak({size:'medium',onStart:pause}).then(ok=>fin(!!ok),()=>fin(false));
+        else if(P==='gamedistribution'&&window.gdsdk&&gdsdk.showAd){gdReward=false;gdWait=()=>fin(gdReward);gdsdk.showAd('rewarded').catch(()=>{gdWait=null;fin(false)})}
+        else res(false);
+      }catch(e){fin(false)}})}
+  };
+})();
+Ads.init();
 document.addEventListener('pointerdown',()=>Music.start(),{once:true});
 document.addEventListener('keydown',()=>Music.start(),{once:true});
 $('#muteBtn').onclick=e=>{e.stopPropagation();S.mute=!S.mute;save();$('#muteBtn').style.opacity=S.mute?.45:1;if(S.mute)Music.stop();else{Music.start();SFX.tick()}};
@@ -715,14 +760,14 @@ async function startLevel(){
   $('.top').hidden=true;document.body.classList.add('playing');
   buildBoard();
   const wc=WD.flat().reduce((a,b)=>a+b,0);if(wc)goals.push({k:'w',n:wc});
-  hud();playing=true;busy=false;armHint();
+  hud();playing=true;busy=false;armHint();Ads.start();
   if(S.level===0&&!S.tut){S.tut=1;save();await talk([['not','Yan yana iki taşı kaydırarak yer değiştir. Aynı türden en az 3 taşı sıraya diz.'],['not','4 taş dizersen çizgili bir taş, L ya da T şekli yaparsan parlayan bir bomba, 5 taş dizersen gökkuşağı tohumu kazanırsın.'],['not','Üstteki hedefleri hamlelerin bitmeden tamamla!']])}
   else if(wc&&!S.tutW){S.tutW=1;save();await talk([['riza','Bak kızım, koyu yeşil kareler yabani ot. Üstlerinde taş patlatırsan kökünden sökülürler.'],['riza','Çift katlı olanlara iki kez vurmak gerekir. Hadi bakalım!']])}
 }
 async function checkEnd(){
   if(!playing)return;
   if(done()){
-    playing=false;
+    playing=false;Ads.stop();Ads.happy();
     if(moves>0){combo('Bahçe şenliği!');await sleep(500);
       const pool=all().filter(o=>!o.sp&&o.t>=0);
       while(moves>0&&pool.length){const o=pool.splice(rnd(pool.length),1)[0];o.sp=Math.random()<.5?'h':'v';draw(o);moves--;hud();snd(700+moves*30,.08,'triangle');await sleep(90)}
@@ -743,12 +788,16 @@ async function checkEnd(){
     const sp=$('.pill');sp.classList.remove('bump');void sp.offsetWidth;sp.classList.add('bump');
     const pr=sp.getBoundingClientRect();FX.burst(pr.left+pr.width/2,pr.top+pr.height/2,['#ffd447','#fff'],24,7);chime();
   } else if(moves<=0){
-    playing=false;await sleep(300);
-    const btns=extraUsed?['Tekrar dene','Bahçeye dön']:['+5 hamle ile devam','Tekrar dene','Bahçeye dön'];
+    playing=false;Ads.stop();await sleep(300);
+    const AD='📺 Reklam izle: +5 hamle',ST='★1 ver: +5 hamle',FREE='+5 hamle ile devam';
+    const btns=extraUsed?['Tekrar dene','Bahçeye dön']:Ads.on?[AD,...(S.stars>=1?[ST]:[]),'Tekrar dene','Bahçeye dön']:[FREE,'Tekrar dene','Bahçeye dön'];
     const i=await modal(`<h2>Hamleler bitti</h2><p>${goals.filter(g=>g.n>0).map(g=>`${g.n} ${g.k==='w'?'yabani ot':TNAME[g.k].toLowerCase()}`).join(', ')} kaldı. Az kaldı!</p>`,btns);
     const act=btns[i];
-    if(act.startsWith('+5')){extraUsed=true;moves=5;playing=true;hud();armHint()}
-    else if(act==='Tekrar dene')startLevel();
+    const cont=()=>{extraUsed=true;moves=5;playing=true;hud();armHint();Ads.start()};
+    if(act===FREE)cont();
+    else if(act===ST){S.stars--;save();cont();toast('1 yıldız karşılığında +5 hamle!')}
+    else if(act===AD){const ok=await Ads.rewarded();if(ok){cont();toast('Teşekkürler! +5 hamle')}else{toast('Reklam şu an yok, tekrar deneyebilirsin');moves=0;playing=true;await checkEnd()}}
+    else if(act==='Tekrar dene'){await Ads.midgame();startLevel()}
     else goGarden();
   }
 }
@@ -757,7 +806,7 @@ $('#quitBtn').onclick=async()=>{
   const i=await modal('<h2>Bahçeye dönülsün mü?</h2><p>Bu bulmacadaki ilerlemen kaybolur.</p>',['Bahçeye dön','Oynamaya devam']);
   if(i===0){playing=false;goGarden()}
 };
-function goGarden(){clearHint();$('.top').hidden=false;document.body.classList.remove('playing');$('#playView').hidden=true;$('#gardenView').hidden=false;renderGarden()}
+function goGarden(){clearHint();Ads.stop();$('.top').hidden=false;document.body.classList.remove('playing');$('#playView').hidden=true;$('#gardenView').hidden=false;renderGarden()}
 
 /* ---------- Bahçe sahnesi ---------- */
 const NS='http://www.w3.org/2000/svg',scene=$('#scene');
@@ -1060,7 +1109,7 @@ async function doTask(id){
   }
   renderGarden();
 }
-$('#playBtn').onclick=()=>{snd(520);startLevel()};
+$('#playBtn').onclick=async()=>{snd(520);await Ads.midgame();startLevel()};
 
 /* ---------- Orman ---------- */
 {const r=seeded(42);let t='';
