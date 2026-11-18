@@ -831,7 +831,7 @@ body.playing .welcome{display:none}
 
   <section id="gardenView">
     <div class="tabs" id="tabs" hidden><button data-v="1" data-t="Ön bahçe">Ön bahçe</button><button data-v="2" data-t="Arka bahçe">Arka bahçe</button></div>
-    <div class="scene-wrap"><svg id="scene" viewBox="0 0 400 260" role="img" aria-label="Simge'nin bahçesi"></svg><div id="threeStage"><div class="stage-hint">Sürükle: etrafına bak · Dokun: yenile</div><div class="stage-loading">3 boyutlu bahçe hazırlanıyor…</div></div></div>
+    <div class="scene-wrap"><svg id="scene" viewBox="0 0 400 260" role="img" aria-label="Simge'nin bahçesi"></svg><div id="threeStage"><div class="stage-hint">Bahçeyi döndür · Altıgen bulmacalara dokun · Kilitleri sırayla aç</div><div class="stage-loading">3 boyutlu bahçe hazırlanıyor…</div></div></div>
     <div class="panel" style="margin-top:10px">
       <button class="big" id="playBtn"><span data-t="Oyna">Oyna</span><small id="playSub">Bulmaca 1</small></button>
       <h3><span data-t="Bahçe işleri">Bahçe işleri</span> <span id="progLbl">0 / 10</span></h3>
@@ -1824,7 +1824,7 @@ async function doTask(id){
   }
   renderGarden();
 }
-window.__petalTask=id=>doTask(id);window.__petalStartPuzzle=()=>{if(!playing)startLevel()};
+window.__petalTask=id=>doTask(id);window.__petalStartPuzzle=()=>{if(!playing)startLevel()};window.__petalLocked=()=>toast('Quyidagi bulmacalar sırasıyla açılır. Önce açık olanı tamamla!');
 $('#playBtn').onclick=async()=>{snd(520);await Ads.midgame();startLevel()};
 
 
@@ -1932,7 +1932,7 @@ function updatePuzzleNodes(level){for(const n of puzzleNodes)puzzleGroup.remove(
 function updateMarkers(snap){for(const o of markers)markerGroup.remove(o);markers.length=0;for(const t of snap?.tasks||[]){const p=spots[t.id];if(!p)continue;const g=G(markerGroup);g.position.set(...p);const ring=new THREE.Mesh(new THREE.TorusGeometry(.34,.055,8,28),new THREE.MeshStandardMaterial({color:'#ffe18a',emissive:'#a56a25',emissiveIntensity:.8}));ring.rotation.x=-Math.PI/2;g.add(ring);S(g,0,.12,0,.13,m.gold);g.userData.task=t.id;markers.push(g)}}
 function sync(snap){if(!snap)return;const d=new Set(snap.done||[]);weeds.visible=!d.has('otlar');damage.visible=!d.has('cit');oldDoor.visible=!d.has('kapi');newDoor.visible=d.has('kapi');oldWin.visible=!d.has('fener');newWin.visible=d.has('fener');chimney.visible=!d.has('cesme');beds.visible=d.has('tarh');updateMarkers(snap);updatePuzzleNodes(Math.max(0,Math.min(6,snap.level||0)))}
 function resize(){const w=root.clientWidth,h=root.clientHeight;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false)}new ResizeObserver(resize).observe(root);resize();
-renderer.domElement.addEventListener('pointerup',e=>{const r=renderer.domElement.getBoundingClientRect();pointer.x=(e.clientX-r.left)/r.width*2-1;pointer.y=-(e.clientY-r.top)/r.height*2+1;ray.setFromCamera(pointer,camera);const hits=ray.intersectObjects([...markers,...puzzleNodes],true);if(hits.length){let o=hits[0].object;while(o&&!o.userData.task&&!o.userData.puzzle)o=o.parent;if(o?.userData.task)window.__petalTask?.(o.userData.task);else if(o?.userData.puzzle){if(o.userData.unlocked)window.__petalStartPuzzle?.();else if(!o.userData.completed)window.dispatchEvent(new CustomEvent('petal-locked'))}}});
+renderer.domElement.addEventListener('pointerup',e=>{const r=renderer.domElement.getBoundingClientRect();pointer.x=(e.clientX-r.left)/r.width*2-1;pointer.y=-(e.clientY-r.top)/r.height*2+1;ray.setFromCamera(pointer,camera);const hits=ray.intersectObjects([...markers,...puzzleNodes],true);if(hits.length){let o=hits[0].object;while(o&&!o.userData.task&&!o.userData.puzzle)o=o.parent;if(o?.userData.task)window.__petalTask?.(o.userData.task);else if(o?.userData.puzzle){if(o.userData.unlocked)window.__petalStartPuzzle?.();else if(!o.userData.completed)window.__petalLocked?.()}}});
 function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)}animate();root.classList.add('ready');window.addEventListener('petal-snapshot',e=>sync(e.detail));sync(window.__petalSnapshot);
 }
 </script>
