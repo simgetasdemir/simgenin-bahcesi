@@ -188,26 +188,26 @@ body.playing #app{gap:8px}
 @keyframes pts{from{opacity:0;transform:translate(-50%,-20%) scale(.6)}25%{opacity:1;transform:translate(-50%,-60%) scale(1.15)}to{opacity:0;transform:translate(-50%,-160%) scale(1)}}
 .tile.land .gem{animation:land .28s ease-out}
 @keyframes land{40%{transform:scale(1.12,.84) translateY(6%)}75%{transform:scale(.95,1.06)}}
-/* Neon şov salonu arka planı */
-body{background:radial-gradient(ellipse 70% 45% at 50% -8%,#ff2d95 0,transparent 70%),radial-gradient(ellipse 60% 50% at -5% 105%,#7a1fff 0,transparent 70%),radial-gradient(ellipse 60% 50% at 105% 100%,#00b8ff 0,transparent 70%),linear-gradient(#2a0a4a,#14052a);background-attachment:fixed;min-height:100%}
-body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.9;
-  background-image:radial-gradient(circle,#fff 0 1px,transparent 1.6px),radial-gradient(circle,#ffd447 0 1.2px,transparent 2px),radial-gradient(circle,#ff8db3 0 1px,transparent 1.6px);
-  background-size:90px 90px,140px 140px,110px 110px;background-position:0 0,40px 70px,70px 20px;animation:twk 3s ease-in-out infinite alternate}
-@keyframes twk{to{opacity:.35}}
-body::after{content:"";position:fixed;left:50%;top:-30vh;width:200vmax;height:200vmax;margin-left:-100vmax;z-index:0;pointer-events:none;mix-blend-mode:screen;opacity:.22;
-  background:conic-gradient(from 0deg,transparent 0 20deg,#ff2d95 24deg,transparent 30deg 110deg,#ffd447 114deg,transparent 120deg 200deg,#00d4ff 204deg,transparent 210deg 290deg,#b46bff 294deg,transparent 300deg);animation:spin 18s linear infinite}
+/* Orman arka planı */
+body{background:#2e6b3a;min-height:100%}
+#forest{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+#forest svg{width:100%;height:100%;display:block}
+.ff{animation:ff 4s ease-in-out infinite alternate}
+@keyframes ff{0%{opacity:.15;transform:translate(0,0)}100%{opacity:1;transform:translate(6px,-10px)}}
+.ray{animation:ray 7s ease-in-out infinite alternate}
+@keyframes ray{to{opacity:.05}}
 #app{position:relative;z-index:1}
-.brand{color:#fff;text-shadow:0 0 6px #ff2d95,0 0 16px #ff2d95,0 0 30px #ff5cb0}
-.brand small{color:#ffd6f0;text-shadow:none}
-.scene-wrap,.panel{box-shadow:0 0 0 3px #ffd447,0 0 22px 4px rgba(255,45,149,.55)}
-.board{box-shadow:0 6px 0 #c23c6c,0 0 0 3px #ffd447,0 0 30px 8px rgba(255,45,149,.6),0 0 60px 10px rgba(122,31,255,.45)}
+.brand{color:#fff;text-shadow:0 2px 0 #1d4d27,0 0 12px rgba(10,40,15,.7)}
+.brand small{color:#fff;text-shadow:0 1px 0 #1d4d27,0 0 6px rgba(10,40,15,.8)}
+.scene-wrap,.panel{box-shadow:0 0 0 3px #ffd447,0 8px 24px rgba(10,40,15,.45)}
+.board{box-shadow:0 6px 0 #c23c6c,0 0 0 3px #ffd447,0 0 26px 6px rgba(255,230,120,.45),0 12px 30px rgba(10,40,15,.5)}
 html{overflow-x:hidden}
 .bulb-row{position:absolute;inset:1px;pointer-events:none;z-index:3}
 .bulb-row i{position:absolute;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:50%;background:#fff6c2;box-shadow:0 0 6px 2px #ffd447;animation:chase 1s steps(1) infinite}
 .bulb-row i:nth-child(3n+1){animation-delay:.33s;background:#ffd1e6;box-shadow:0 0 6px 2px #ff2d95}
 .bulb-row i:nth-child(3n+2){animation-delay:.66s;background:#d4f6ff;box-shadow:0 0 6px 2px #00d4ff}
-.hud .back,.goals,.pill,.icon-btn{box-shadow:0 0 0 2px #ffd447,0 0 12px rgba(255,45,149,.5)}
-.moves{background:linear-gradient(#3b0f66,#1e0838);box-shadow:0 0 0 2px #ffd447,0 0 14px rgba(255,212,71,.6)}
+.hud .back,.goals,.pill,.icon-btn{box-shadow:0 0 0 2px #ffd447,0 4px 10px rgba(10,40,15,.35)}
+.moves{background:linear-gradient(#2f7d4a,#1d4d27);box-shadow:0 0 0 2px #ffd447,0 0 14px rgba(255,212,71,.6)}
 .moves b{color:#ffd447;text-shadow:0 0 8px rgba(255,212,71,.8)}
 .goal .lv{color:#8a3c9e}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important}.tile{transition-duration:.05s!important}}
@@ -217,6 +217,7 @@ html{overflow-x:hidden}
 <body>
 
 
+<div id="forest" aria-hidden="true"></div>
 <div id="app">
   <header class="top">
     <div class="brand">Simge'nin Bahçesi<small id="chapterLbl">1. Bölüm · Nevin Nine'nin evi</small></div>
@@ -855,6 +856,20 @@ async function doTask(id){
 }
 $('#playBtn').onclick=()=>{snd(520);startLevel()};
 
+/* ---------- Orman ---------- */
+{const r=seeded(42);let t='';
+ const tree=(x,base,h,c,k)=>k?`<path d="M${x} ${base-h} L${x+h*.32} ${base-h*.45} L${x+h*.2} ${base-h*.45} L${x+h*.4} ${base} L${x-h*.4} ${base} L${x-h*.2} ${base-h*.45} L${x-h*.32} ${base-h*.45}Z" fill="${c}"/>`
+   :`<rect x="${x-h*.04}" y="${base-h*.5}" width="${h*.08}" height="${h*.5}" fill="#4a3424"/><circle cx="${x}" cy="${base-h*.62}" r="${h*.3}" fill="${c}"/><circle cx="${x-h*.18}" cy="${base-h*.5}" r="${h*.22}" fill="${c}"/><circle cx="${x+h*.2}" cy="${base-h*.52}" r="${h*.24}" fill="${c}"/>`;
+ const layers=[[520,'#8fc48a',90,.55],[600,'#5fa35f',130,.45],[690,'#3f8a48',170,.4],[790,'#2a6b37',220,.35],[900,'#1d4d27',280,.3]];
+ for(const[base,c,h,gap] of layers){t+=`<rect x="0" y="${base-8}" width="1000" height="${1000-base+8}" fill="${c}"/>`;
+   for(let x=-40;x<1040;x+=h*gap+r()*h*.3)t+=tree(x,base+r()*10,h*(.75+r()*.5),c,r()<.55)}
+ let ff='';for(let i=0;i<26;i++)ff+=`<circle class="ff" cx="${r()*1000}" cy="${450+r()*500}" r="${2+r()*2.5}" fill="#fff6a8" style="animation-delay:${(r()*4).toFixed(2)}s;filter:drop-shadow(0 0 4px #fff2a0)"/>`;
+ let fl='';for(let i=0;i<40;i++){const x=r()*1000,y=925+r()*70,cc=['#ff6f9f','#ffd447','#fff','#b9a1ea'][i%4];fl+=`<circle cx="${x}" cy="${y}" r="${3+r()*3}" fill="${cc}"/><circle cx="${x}" cy="${y}" r="1.4" fill="#ffd447"/>`}
+ $('#forest').innerHTML=`<svg viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMax slice"><defs><linearGradient id="fsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe8c9"/><stop offset=".45" stop-color="#e9f5c8"/><stop offset="1" stop-color="#9fd08f"/></linearGradient>
+   <linearGradient id="fray" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fffbe0" stop-opacity=".7"/><stop offset="1" stop-color="#fffbe0" stop-opacity="0"/></linearGradient></defs>
+   <rect width="1000" height="1000" fill="url(#fsky)"/><circle cx="720" cy="180" r="70" fill="#fff6c2" opacity=".85"/>
+   ${t}<g class="ray"><path d="M700 0 L560 1000 L640 1000 L760 0Z" fill="url(#fray)"/><path d="M800 0 L760 1000 L860 1000 L860 0Z" fill="url(#fray)" opacity=".7"/><path d="M560 0 L300 1000 L360 1000 L610 0Z" fill="url(#fray)" opacity=".6"/></g>
+   ${fl}${ff}</svg>`}
 /* ---------- Tahta ışıkları ---------- */
 {const b=$('#bulbs'),N=12;let h='';for(let i=0;i<N;i++){const t=(i+.5)/N*100;h+=`<i style="left:${t}%;top:0"></i><i style="left:${100-t}%;top:100%"></i><i style="left:100%;top:${t}%"></i><i style="left:0;top:${100-t}%"></i>`}b.innerHTML=h}
 /* ---------- Açılış ---------- */
