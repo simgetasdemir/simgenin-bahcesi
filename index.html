@@ -643,25 +643,27 @@ const CH={
 function talk(lines){
   return new Promise(res=>{
     let i=0, advancing=false;const D=$('#dialog'),sh=$('#shade');
+    const cleanup=()=>{D.hidden=true;sh.hidden=true;D.onpointerdown=sh.onpointerdown=D.onclick=sh.onclick=null;document.onkeydown=null;D.style.pointerEvents=sh.style.pointerEvents=''};
     D.hidden=false;sh.hidden=false;
     D.style.pointerEvents='auto';sh.style.pointerEvents='auto';
-    const show=()=>{const[w,t]=lines[i],c=CH[w];D.querySelector('.portrait').innerHTML=c.face;const who=D.querySelector('.who');who.textContent=T(c.name);who.style.color=c.col;D.querySelector('.line').textContent=T(t);
-      const inn=D.querySelector('.in');inn.style.animation='none';void inn.offsetWidth;inn.style.animation='';snd(440+rnd(120),.06,'triangle',.03)};
+    const show=()=>{
+      const [w,t]=lines[i],c=CH[w]||CH.not;
+      D.querySelector('.portrait').innerHTML=c.face;
+      const who=D.querySelector('.who');who.textContent=T(c.name);who.style.color=c.col;
+      D.querySelector('.line').textContent=T(t);
+      const inn=D.querySelector('.in');inn.style.animation='none';void inn.offsetWidth;inn.style.animation='';
+      try{snd(440+rnd(120),.06,'triangle',.03)}catch(e){}
+    };
     const next=e=>{
       if(e){e.preventDefault();e.stopPropagation()}
-      if(advancing)return;advancing=true;
-      i++;
-      if(i>=lines.length){
-        D.hidden=true;sh.hidden=true;
-        D.onpointerup=sh.onpointerup=D.onclick=sh.onclick=null;document.onkeydown=null;
-        D.style.pointerEvents=sh.style.pointerEvents='';
-        res();
-      }else{show();setTimeout(()=>{advancing=false},120)}
+      if(advancing)return;advancing=true;i++;
+      if(i>=lines.length){cleanup();res()}
+      else{show();setTimeout(()=>{advancing=false},180)}
     };
-    show();
-    D.onpointerup=sh.onpointerup=next;
+    D.onpointerdown=sh.onpointerdown=next;
     D.onclick=sh.onclick=null;
     document.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){next(e)}};
+    try{show()}catch(e){cleanup();console.error('Açılış diyaloğu:',e);res()}
   });
 }
 function modal(html,buttons){
