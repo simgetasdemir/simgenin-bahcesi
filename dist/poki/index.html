@@ -65,7 +65,7 @@ button:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 .big:active{transform:translateY(3px);box-shadow:0 2px 0 #a82a58}
 .big small{display:block;font-family:var(--body);font-size:12px;font-weight:700;opacity:.9}
 .panel h3{margin:0;font-family:var(--display);font-size:17px;display:flex;justify-content:space-between;align-items:baseline}
-.panel h3 span{font-family:var(--body);font-size:12px;color:var(--muted);font-weight:700}
+.panel h3 #progLbl{font-family:var(--body);font-size:12px;color:var(--muted);font-weight:700}
 #tasks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
 .task{display:flex;align-items:center;gap:10px;padding:8px 8px 8px 10px;border-radius:14px;background:#f1f6ea}
 .task .ti{width:36px;height:36px;border-radius:10px;background:#fff;display:grid;place-items:center;flex:none}
@@ -78,7 +78,7 @@ button:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 
 /* Bulmaca */
 .hud{display:flex;gap:8px;align-items:stretch}
-.hud .back{background:var(--card);border-radius:14px;padding:0 12px;font-weight:800;box-shadow:0 2px 0 rgba(44,42,61,.12)}
+.hud .back{font-size:24px;line-height:1;background:var(--card);border-radius:14px;padding:0 12px;font-weight:800;box-shadow:0 2px 0 rgba(44,42,61,.12)}
 .goals{flex:1;display:flex;gap:6px;flex-wrap:wrap;background:var(--card);border-radius:14px;padding:6px 8px;align-items:center;box-shadow:0 2px 0 rgba(44,42,61,.12);min-width:0}
 .goal{display:flex;align-items:center;gap:4px;font-weight:800;font-variant-numeric:tabular-nums}
 .goal .mini{width:26px;height:26px;position:relative}
@@ -217,11 +217,12 @@ html{overflow-x:hidden}
 .goal .lv{color:#8a3c9e}
 /* Oyun sırasında tahta ekranı doldurur; yatay ekranda bilgi paneli yana geçer */
 body.playing #app{max-width:none}
+body.playing #playView:not([hidden]){min-height:calc(100vh - 12px);min-height:calc(100dvh - 12px);display:flex;flex-direction:column;justify-content:center;gap:10px}
 body.playing .board{--bw:min(100vw,calc(100vh - 78px));--bw:min(100vw,calc(100dvh - 78px));padding:5px}
 body.playing .layer{inset:5px}
 body.playing .hud{max-width:640px;width:100%;margin:0 auto}
 @media (min-aspect-ratio:5/4){
-  body.playing #playView:not([hidden]){display:flex;align-items:center;justify-content:center;gap:14px;height:calc(100vh - 12px);height:calc(100dvh - 12px)}
+  body.playing #playView:not([hidden]){display:flex;flex-direction:row;align-items:center;justify-content:center;gap:14px;height:calc(100vh - 12px);height:calc(100dvh - 12px)}
   body.playing .hud{flex-direction:column;width:150px;flex:none;margin:0}
   body.playing .hud .back{padding:10px}
   body.playing .goals{flex-direction:column;align-items:flex-start;padding:10px}
@@ -238,27 +239,34 @@ body.playing .hud{max-width:640px;width:100%;margin:0 auto}
 .brand{font-size:30px;letter-spacing:.01em}
 .brand .pp1{color:#ff5c9e;-webkit-text-stroke:1.5px #fff;paint-order:stroke fill}
 .brand .pp2{color:#ffd23f;-webkit-text-stroke:1.5px #fff;paint-order:stroke fill;display:inline-block;transform:rotate(-4deg) translateY(-1px)}
+.tip{position:absolute;left:50%;top:10px;transform:translateX(-50%);z-index:7;width:max-content;max-width:calc(100% - 24px);pointer-events:none;
+  background:rgba(44,42,61,.88);color:#fff;font-weight:800;font-size:15px;line-height:1.35;text-align:center;padding:8px 14px;border-radius:14px;box-shadow:0 0 0 2px #ffd447;animation:up .3s ease-out}
+#langBtn{font-size:13px}
+@media (min-aspect-ratio:5/4){
+  body:not(.playing) #app{max-width:980px}
+  #gardenView:not([hidden]){display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);column-gap:14px;align-items:start}
+  #gardenView .tabs{grid-column:1}
+  #gardenView .scene-wrap{grid-column:1}
+  #gardenView .panel{grid-column:2;grid-row:1 / span 2;margin-top:0!important}
+}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important}.tile{transition-duration:.05s!important}}
 </style>
-<style>[hidden]{display:none!important}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
-</head>
-<body>
-
 
 <div id="forest" aria-hidden="true"></div>
 <div id="app">
   <header class="top">
     <div class="brand"><span class="pp1">Petal</span><span class="pp2">pop</span><small id="chapterLbl">1. Bölüm · Nevin Nine'nin evi</small></div>
-    <div class="pill" title="Yıldızların"><span class="st">★</span><span id="starCount">0</span></div>
-    <button class="icon-btn" id="muteBtn" aria-label="Sesi aç/kapat">♪</button>
+    <div class="pill" title="Yıldızların" data-tt="Yıldızların"><span class="st">★</span><span id="starCount">0</span></div>
+    <button class="icon-btn" id="langBtn" aria-label="Dili değiştir" data-ta="Dili değiştir">EN</button>
+    <button class="icon-btn" id="muteBtn" aria-label="Sesi aç/kapat" data-ta="Sesi aç/kapat">♪</button>
   </header>
 
   <section id="gardenView">
-    <div class="tabs" id="tabs" hidden><button data-v="1">Ön bahçe</button><button data-v="2">Arka bahçe</button></div>
+    <div class="tabs" id="tabs" hidden><button data-v="1" data-t="Ön bahçe">Ön bahçe</button><button data-v="2" data-t="Arka bahçe">Arka bahçe</button></div>
     <div class="scene-wrap"><svg id="scene" viewBox="0 0 400 260" role="img" aria-label="Simge'nin bahçesi"></svg></div>
     <div class="panel" style="margin-top:10px">
-      <button class="big" id="playBtn">Oyna<small id="playSub">Bulmaca 1</small></button>
-      <h3>Bahçe işleri <span id="progLbl">0 / 10</span></h3>
+      <button class="big" id="playBtn"><span data-t="Oyna">Oyna</span><small id="playSub">Bulmaca 1</small></button>
+      <h3><span data-t="Bahçe işleri">Bahçe işleri</span> <span id="progLbl">0 / 10</span></h3>
       <div class="prog"><i id="progBar" style="width:0%"></i></div>
       <ul id="tasks"></ul>
     </div>
@@ -266,11 +274,12 @@ body.playing .hud{max-width:640px;width:100%;margin:0 auto}
 
   <section id="playView" hidden>
     <div class="hud">
-      <button class="back" id="quitBtn" aria-label="Bahçeye dön">‹</button>
+      <button class="back" id="quitBtn" aria-label="Bahçeye dön" data-ta="Bahçeye dön">‹</button>
       <div class="goals" id="goals"></div>
-      <div class="moves"><b id="moves">20</b><small>hamle</small></div>
+      <div class="moves"><b id="moves">20</b><small data-t="hamle">hamle</small></div>
     </div>
     <div class="board" id="board">
+      <div class="tip" id="tip" hidden></div>
       <div class="layer cells" id="cells"></div>
       <div class="layer tiles" id="tiles"></div>
       <div class="bulb-row" id="bulbs"></div>
@@ -278,7 +287,7 @@ body.playing .hud{max-width:640px;width:100%;margin:0 auto}
   </section>
 </div>
 <div id="shade" hidden></div>
-<div id="dialog" hidden><div class="in"><div class="portrait"></div><div class="bubble"><div class="who"></div><p class="line"></p><div class="next">dokun ›</div></div></div></div>
+<div id="dialog" hidden><div class="in"><div class="portrait"></div><div class="bubble"><div class="who"></div><p class="line"></p><div class="next" data-t="dokun ›">dokun ›</div></div></div></div>
 <div id="modal" hidden><div class="card"></div></div>
 <div id="toast" hidden></div>
 <canvas id="fx" aria-hidden="true"></canvas>
@@ -295,11 +304,22 @@ let S={level:0,stars:0,done:[],choice:{},intro:false,mute:false};
 try{const s=JSON.parse(localStorage.getItem(KEY));if(s)S=Object.assign(S,s)}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 
+/* ---------- Dil ---------- */
+let LANG=S.lang||((navigator.language||'en').toLowerCase().startsWith('tr')?'tr':'en');
+const EN={"Oyna": "Play", "Bulmaca {n}": "Puzzle {n}", "hamle": "moves", "dokun ›": "tap ›", "Bahçe işleri": "Garden tasks", "Ön bahçe": "Front garden", "Arka bahçe": "Backyard", "Yıldızların": "Your stars", "Sesi aç/kapat": "Sound on/off", "Bahçeye dön": "Back to garden", "Dili değiştir": "Change language", "1. Bölüm · Nevin Nine'nin evi": "Chapter 1 · Grandma Nevin's house", "2. Bölüm · Ege Gülü": "Chapter 2 · The Aegean Rose", "{n} yıldız gerekli": "Needs {n} stars", "1. bölüm tamamlandı!": "Chapter 1 complete!", "Arka bahçede 2. bölüm seni bekliyor.": "Chapter 2 is waiting in the backyard.", "2. bölüm tamamlandı!": "Chapter 2 complete!", "3. bölüm yakında. Yıldız toplamaya devam edebilirsin.": "Chapter 3 is coming soon. Keep collecting stars!", "{n} yıldız daha lazım. Bir bulmaca oyna!": "You need {n} more stars. Play a puzzle!", "Sonra fikrini değiştiremezsin, iyi seç!": "You can't change it later, so choose well!", "Vazgeç": "Cancel", "Nevin Nine'nin bahçesi yeniden çiçek açtı. Şimdi sıra arka bahçede: Ege Gülü ve Bahar Şenliği.": "Grandma Nevin's garden is blooming again. Next up is the backyard: the Aegean Rose and the Spring Festival.", "Arka bahçeye git": "Go to the backyard", "ŞENLİK BİRİNCİSİ!": "FESTIVAL CHAMPION!", "Ege Gülü kırk yıl sonra yeniden açtı ve Bahar Şenliği'nde birinci oldu. 3. bölüm yakında!": "The Aegean Rose bloomed again after forty years and won first prize at the Spring Festival. Chapter 3 is coming soon!", "Yaşasın!": "Hooray!", "Çiçek": "Flower", "Yaprak": "Leaf", "Damla": "Drop", "Limon": "Lemon", "Üzüm": "Grape", "Yabani ot": "Weeds", "yabani ot": "weeds", "Tatlı!": "Sweet!", "Şahane!": "Lovely!", "Nefis!": "Delicious!", "Şeker patlaması!": "Sugar rush!", "İnanılmaz!": "Incredible!", "Efsane!": "Legendary!", "Gökkuşağı!": "Rainbow!", "Bahçe şenliği!": "Garden party!", "Taşlar karıştırıldı": "Tiles shuffled", "MEGA KAZANÇ!": "MEGA BLOOM!", "SÜPER KAZANÇ!": "SUPER BLOOM!", "BÜYÜK KAZANÇ!": "BIG BLOOM!", "Bulmaca {n} puanı": "Puzzle {n} score", "+1 yıldız! Bahçede seni bekleyen işler var.": "+1 star! Tasks are waiting for you in the garden.", "Yıldızı al": "Collect star", "📺 Reklam izle: +5 hamle": "📺 Watch an ad: +5 moves", "★1 ver: +5 hamle": "Spend ★1: +5 moves", "+5 hamle ile devam": "Continue with +5 moves", "Tekrar dene": "Try again", "Hamleler bitti": "Out of moves", "{list} kaldı. Az kaldı!": "Still {list} to go. So close!", "1 yıldız karşılığında +5 hamle!": "+5 moves for 1 star!", "Teşekkürler! +5 hamle": "Thanks! +5 moves", "Reklam şu an yok, tekrar deneyebilirsin": "No ad available right now. Try again later.", "Bahçeye dönülsün mü?": "Back to the garden?", "Bu bulmacadaki ilerlemen kaybolur.": "You'll lose your progress in this puzzle.", "Oynamaya devam": "Keep playing", "Yan yana iki taşı kaydırarak yer değiştir. Aynı türden 3 taşı sıraya diz!": "Swipe two neighboring tiles to swap them. Line up 3 of the same kind!", "4'lü dizi çizgili taş, L ya da T şekli bomba, 5'li dizi gökkuşağı tohumu yapar.": "4 in a row makes a striped tile, an L or T shape makes a bomb, 5 in a row makes a rainbow seed.", "Yeşil kareler yabani ot. Üstlerinde taş patlat, koyu olanlara iki kez vur!": "Green squares are weeds. Pop tiles on them. Dark ones need two hits!", "Simge": "Simge", "Rıza Usta": "Uncle Rıza", "Ela": "Ela", "Fıstık": "Pistachio", "Saffet Hanım": "Mrs. Saffet", "İpucu": "Tip", "Nevin Nine'nin mektubu": "Grandma Nevin's letter", "Kuru otları temizle": "Clear the dry weeds", "Çiti onar": "Fix the fence", "Taş yolu döşe": "Lay the stone path", "Çiçek tarhı ek": "Plant a flower bed", "Eski çeşmeyi onar": "Repair the old fountain", "Kediye yuva yap": "Make a bed for the cat", "Zeytine salıncak as": "Hang a swing on the olive tree", "Çay köşesi kur": "Set up a tea corner", "Fenerleri as": "Hang the lanterns", "Bahçe kapısını boya": "Paint the garden gate", "Dikenli çalıları temizle": "Clear the thorny bushes", "Eski serayı onar": "Repair the old greenhouse", "Ege Gülü tohumlarını ek": "Plant the Aegean Rose seeds", "Eski kuyuyu onar": "Repair the old well", "Gül kemeri kur": "Build a rose arch", "Kemerin altına bank koy": "Put a bench under the arch", "Arı kovanı yerleştir": "Set up a beehive", "Sebze tarhı kur": "Plant a vegetable bed", "Ege Gülü'nü açtır": "Make the Aegean Rose bloom", "Şenlik bayraklarını as": "Hang the festival flags", "Tarha ne ekelim?": "What should we plant?", "Lavanta": "Lavender", "Gül": "Rose", "Papatya": "Daisy", "Sandalyeler hangi renk olsun?": "What color should the chairs be?", "Ege mavisi": "Aegean blue", "Limon sarısı": "Lemon yellow", "Kireç beyazı": "Chalk white", "Kapı hangi renge boyansın?": "What color should the gate be?", "Lacivert": "Navy blue", "Zeytin yeşili": "Olive green", "Begonvil pembesi": "Bougainvillea pink", "Bank hangi renk olsun?": "What color should the bench be?", "Lavanta moru": "Lavender purple", "Nane yeşili": "Mint green", "Bayraklar hangi renkte olsun?": "What color should the flags be?", "Gökkuşağı": "Rainbow", "Pembe beyaz": "Pink and white", "Mavi beyaz": "Blue and white", "Oh be! Kuru otların altından yemyeşil bir çimen çıktı.": "Phew! There was bright green grass under all those dry weeds.", "Aferin kızım. Nevin Hanım her sabah buraya çıkıp çiçeklerine günaydın derdi.": "Well done, dear. Every morning Nevin came out here to say good morning to her flowers.", "Çivileri sağlam çak. Burası poyraz alır, ilk rüzgârda yıkılmasın.": "Hammer those nails in tight. The north wind blows hard here.", "Bakın usta, begonvil de açtı! Çit düzelince güneş ona da vurmaya başladı.": "Look, the bougainvillea is blooming! Now that the fence is fixed, it gets the sun too.", "Hmm. Fena olmamış. Ama daha yapılacak çok iş var.": "Hmm. Not bad. But there's still a lot of work to do.", "Simge?! Gerçekten sen misin? Çocukken bu yolda bisiklet sürerdik!": "Simge?! Is that really you? We used to ride our bikes on this path as kids!", "Ela! Hâlâ köyün çiçekçisi misin?": "Ela! Are you still the village florist?", "Tabii ki. Bir tarh kurarsan fideleri benden al. Sana arkadaş fiyatı!": "Of course. If you plant a flower bed, get the seedlings from me. Friends' discount!", "Çok yakıştı! Bak, arılar şimdiden keşfetti bile.": "It looks perfect! Look, the bees have already found it.", "Ninem de hep çiçek ekerdi. Sanki bahçe yeniden nefes alıyor.": "Grandma always planted flowers. It feels like the garden is breathing again.", "Çeşmenin bir taşı oynuyor... İçinde küçük bir teneke kutu var!": "One of the fountain stones is loose... There's a little tin box inside!", "\"Simge'ciğim, bu tohumları sana sakladım. Bahar Şenliği'nde ek. Gerisini Rıza bilir.\"": "\"My dear Simge, I saved these seeds for you. Plant them for the Spring Festival. Rıza knows the rest.\"", "Rıza Usta? Siz bu kutuyu biliyor musunuz?": "Uncle Rıza? Do you know about this box?", "Bilirim... Ama önce bir çay demleyelim, sonra anlatırım.": "I do... But let's brew some tea first, then I'll tell you.", "Miyav!": "Meow!", "Miyav?": "Meow?", "Sen de kimsin bakalım? Tasmasında \"Fıstık\" yazıyor.": "And who are you? Your collar says \"Pistachio\".", "Nevin Hanım'ın kedisi. Ondan beri benim bahçede yatıyordu. Demek evine döndü.": "That's Nevin's cat. She's been sleeping in my garden ever since. Looks like she's come home.", "Ninem beni bu zeytin ağacının altında sallardı.": "Grandma used to push me on a swing under this olive tree.", "Seni sallarken hep aynı türküyü mırıldanırdı. Bütün sokak duyardı.": "She always hummed the same folk song while she pushed you. The whole street could hear it.", "İşte şimdi oldu. Otur bakalım, anlatayım.": "Now that's more like it. Sit down and I'll tell you.", "O tohumlar Nevin Hanım'ın \"Ege Gülü\". Kırk yıl önce şenlikte birinci olmuştu. Tohumunu kimseye vermedi.": "Those seeds are Nevin's \"Aegean Rose\". It won first prize at the festival forty years ago. She never gave its seeds to anyone.", "Ve bana bıraktı... Bu yıl Ege Gülü'nü şenlikte yeniden açtıracağım!": "And she left them to me... This year I'll make the Aegean Rose bloom at the festival again!", "Akşam oldu bak! Bahçe masal gibi görünüyor.": "Evening's here! The garden looks like a fairy tale.", "Ninem görse çok sevinirdi.": "Grandma would have loved to see this.", "Bence görüyor.": "I think she can.", "Şenlik kurulu bahçeni görmeye gelecek kızım. Kapıdan girer girmez ağızları açık kalacak.": "The festival committee is coming to see your garden, dear. Their jaws will drop the moment they walk in.", "Ben de dükkânda herkese anlattım. Bütün köy merak ediyor!": "I told everyone at the shop. The whole village is curious!", "O zaman sıra Ege Gülü'nde. Hadi tohumları ekelim!": "Then it's time for the Aegean Rose. Let's plant those seeds!", "Arka bahçe de orman olmuş! Bu dikenlerin altında ne var acaba?": "The backyard is a jungle too! I wonder what's under these thorns.", "Nevin Hanım'ın serası. Ege Gülü orada büyürdü.": "Nevin's greenhouse. That's where the Aegean Rose grew.", "Camları tek tek sildim, bak nasıl parlıyor!": "I cleaned every pane of glass. Look how it shines!", "Tohumlar için mükemmel bir yuva oldu.": "It's the perfect home for the seeds.", "\"Her sabah bir avuç su, bir de güzel bir söz. Gül dediğin sevgiyle büyür.\"": "\"A handful of water and a kind word every morning. A rose grows with love.\"", "Söz veriyorum nine, her sabah onlarla konuşacağım.": "I promise, Grandma. I'll talk to them every morning.", "Demek Nevin'in torunu sensin. Ben Saffet. Karşı köyün gül bahçesi benimdir.": "So you're Nevin's granddaughter. I'm Saffet. The rose garden in the next village is mine.", "On iki yıldır şenliğin birincisiyim. Sana bol şans... İhtiyacın olacak.": "I've won the festival twelve years in a row. Good luck... You'll need it.", "Bu da kimdi böyle?": "Who on earth was that?", "Boş ver kızım. Nevin Hanım'la gençliklerinde can dosttular, sonra küstüler.": "Never mind her, dear. She and Nevin were best friends when they were young. Then they fell out.", "Bu kemerin altından geçen herkes gülümser!": "Everyone who walks under this arch will smile!", "Şenlikte jüri de buradan geçecek.": "The festival judges will walk through here too.", "Nevin Hanım'la Saffet bu bankta saatlerce otururdu.": "Nevin and Saffet used to sit on this bench for hours.", "Peki neden küstüler?": "So why did they fall out?", "Bir gül yüzünden. Gerisini o anlatsın.": "Over a rose. Let her tell you the rest.", "Korkma Fıstık, arılar dostumuz. Güllerimizi onlar tozlayacak.": "Don't worry, Pistachio. Bees are our friends. They'll pollinate our roses.", "Şenlik sofrası için domates, biber... Hepsi senin bahçenden!": "Tomatoes and peppers for the festival table... All from your garden!", "Ninemin domatesli böreği de olmazsa olmaz.": "And Grandma's tomato pastry is a must.", "Rıza Usta! Çabuk gelin, açtı!": "Uncle Rıza! Come quick, it's blooming!", "Kırk yıl... Kırk yıl sonra Ege Gülü yeniden açtı. Nevin Hanım, görüyor musun?": "Forty years... After forty years the Aegean Rose is blooming again. Nevin, can you see it?", "...Bu koku. Nevin'in gülü. Hiç unutmadım.": "...That scent. Nevin's rose. I never forgot it.", "Jüri kararını verdi. Bu yılın birincisi... Simge'nin Bahçesi!": "The judges have decided. This year's winner is... Simge's Garden!", "Nevin'le aramız bu gül yüzünden açılmıştı. Bir dal istemiştim, vermedi. Şimdi anlıyorum, sana saklıyormuş.": "Nevin and I fell out over this rose. I asked her for a cutting and she refused. Now I understand. She was saving it for you.", "O zaman ilk dalı size vereyim Saffet Hanım. Ninem de bunu isterdi.": "Then let me give you the first cutting, Mrs. Saffet. Grandma would have wanted that.", "...Teşekkür ederim, kızım.": "...Thank you, dear.", "Şenlik başlasın!": "Let the festival begin!", "Tohumları ekmek için uygun bir yer lazım.": "I need a good place to plant the seeds.", "Evin arkasına hiç baktın mı? Nevin Hanım'ın asıl hazinesi orada.": "Have you looked behind the house? Nevin's real treasure is back there.", "Arka bahçe açıldı! Yeni işler ve 20 yeni bulmaca seni bekliyor.": "The backyard is open! New tasks and 20 new puzzles are waiting for you.", "İşte geldim... Nevin Nine'nin evi. Ama bu bahçe ne hale gelmiş böyle!": "Here I am... Grandma Nevin's house. But look at the state of this garden!", "\"Bahçemi sana emanet ediyorum Simge'ciğim. Onu yeniden çiçeklendir.\"": "\"I'm leaving my garden in your care, my dear Simge. Make it bloom again.\"", "Hoş geldin kızım. Ben Rıza, yan komşunuz. Bu bahçe bir zamanlar köyün en güzeliydi.": "Welcome, dear. I'm Rıza, your next-door neighbor. This garden was once the prettiest in the village.", "Bahar Şenliği'ne bir ay var. Yetişir mi, bilmem...": "The Spring Festival is a month away. Can it be ready in time? I'm not so sure...", "Yetişecek! Hemen işe koyuluyorum.": "It will be! I'm getting to work right now.", "Bulmacaları çöz, her biri sana 1 yıldız kazandırır. Yıldızlarla bahçe işlerini yap ve hikayeyi ilerlet.": "Each puzzle you solve earns 1 star. Spend stars on garden tasks to move the story forward."};
+const MISS=new Set();window.__miss=MISS;
+function T(s,v){let r=s;if(LANG==='en'){if(EN[s]!==undefined)r=EN[s];else MISS.add(s)}if(v)for(const k in v)r=r.split('{'+k+'}').join(v[k]);return r}
+function relabel(){document.documentElement.lang=LANG;
+  document.querySelectorAll('[data-t]').forEach(e=>e.textContent=T(e.dataset.t));
+  document.querySelectorAll('[data-ta]').forEach(e=>e.setAttribute('aria-label',T(e.dataset.ta)));
+  document.querySelectorAll('[data-tt]').forEach(e=>e.title=T(e.dataset.tt));
+  const lb=document.getElementById('langBtn');if(lb)lb.textContent=LANG==='tr'?'EN':'TR'}
+function setLang(l){LANG=l;relabel();if(typeof renderGarden==='function'&&sceneCh)renderGarden();if(typeof hud==='function'&&playing)hud()}
 /* ---------- Ses ---------- */
 let AC=null;
-let adMute=false;
+let adMute=false,sysMute=false;
 function snd(f=520,d=.1,type='sine',vol=.05){
-  if(S.mute||adMute)return;
+  if(S.mute||adMute||sysMute)return;
   try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();
     const t=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();
     o.type=type;o.frequency.setValueAtTime(f,t);o.frequency.exponentialRampToValueAtTime(f*1.5,t+d);
@@ -308,7 +328,7 @@ function snd(f=520,d=.1,type='sine',vol=.05){
 }
 const chime=()=>[660,880,1100].forEach((f,i)=>setTimeout(()=>snd(f,.18,'triangle',.06),i*90));
 const SFX=(()=>{
-  const ok=()=>{if(S.mute||adMute)return false;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();return true}catch(e){return false}};
+  const ok=()=>{if(S.mute||adMute||sysMute)return false;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();return true}catch(e){return false}};
   function tone(f1,f2,d,type,vol,delay=0){const t=AC.currentTime+delay,o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.setValueAtTime(f1,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);
     g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.008);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g).connect(AC.destination);o.start(t);o.stop(t+d+.03)}
   function noise(d,vol,ftype,f,delay=0){const t=AC.currentTime+delay,b=AC.createBuffer(1,Math.ceil(AC.sampleRate*d),AC.sampleRate),c=b.getChannelData(0);
@@ -345,7 +365,7 @@ const Music=(()=>{
       step++;next+=E;
     }
   }
-  return{start(){if(on||S.mute||adMute)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();
+  return{start(){if(on||S.mute||adMute||sysMute)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();
       if(!shk){shk=AC.createBuffer(1,Math.ceil(AC.sampleRate*.05),AC.sampleRate);const d=shk.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*(1-i/d.length)}
       master=AC.createGain();master.gain.value=.7;master.connect(AC.destination);on=true;step=0;next=AC.currentTime+.1;timer=setInterval(sched,60)}catch(e){}},
     stop(){on=false;clearInterval(timer);if(master){const m=master;try{m.gain.setTargetAtTime(0,AC.currentTime,.08);setTimeout(()=>m.disconnect(),600)}catch(e){}}}};
@@ -353,8 +373,8 @@ const Music=(()=>{
 /* ---------- Oyun sitesi reklam katmanı ----------
    window.__PLATFORM: 'crazygames' | 'poki' | 'gamedistribution' | yok (artifact ve GitHub sayfası) */
 const Ads=(()=>{
-  let P=window.__PLATFORM||'none',gdWait=null,gdReward=false;
-  const pause=()=>{adMute=true;Music.stop()},resume=()=>{adMute=false;if(!S.mute)Music.start()};
+  let P=window.__PLATFORM||'none',gdWait=null,gdReward=false;const adsOn=window.__ADS!==false;let readyRes;const ready=new Promise(r=>readyRes=r);
+  const pause=()=>{adMute=true;Music.stop()},resume=()=>{adMute=false;Music.start()};
   if(P==='gamedistribution'){window.__gdEvent=e=>{
     if(e.name==='SDK_GAME_PAUSE')pause();
     if(e.name==='SDK_REWARDED_WATCH_COMPLETE')gdReward=true;
@@ -363,28 +383,31 @@ const Ads=(()=>{
   async function init(){
     try{
       if(P==='crazygames'){await cg().init();if(cg().environment==='disabled')P='none';
-        else{const st=cg().game.settings;if(st&&st.muteAudio){S.mute=true;Music.stop()}
-          cg().game.addSettingsChangeListener(n=>{if(n.muteAudio){S.mute=true;Music.stop()}})}}
+        else{const st=cg().game.settings;if(st&&st.muteAudio){sysMute=true;Music.stop()}
+          cg().game.addSettingsChangeListener(n=>{sysMute=!!n.muteAudio;if(sysMute)Music.stop();else Music.start()});
+          if(!S.lang){try{const loc=(cg().user.systemInfo||{}).locale||'';if(loc){const l=loc.toLowerCase().startsWith('tr')?'tr':'en';if(l!==LANG)setLang(l)}}catch(e){}}}}
       else if(P==='poki'){await window.PokiSDK.init().catch(()=>{});window.PokiSDK.gameLoadingFinished()}
     }catch(e){P='none'}
+    readyRes();
     if(P!=='none'){addEventListener('wheel',e=>e.preventDefault(),{passive:false});
       addEventListener('keydown',e=>{if(['ArrowUp','ArrowDown',' '].includes(e.key)&&e.target===document.body)e.preventDefault()})}
   }
   const safe=f=>{try{f()}catch(e){}};
   return{
     init,
-    get on(){return P!=='none'},
-    start(){safe(()=>{if(P==='crazygames')cg().game.gameplayStart();if(P==='poki')PokiSDK.gameplayStart()})},
-    stop(){safe(()=>{if(P==='crazygames')cg().game.gameplayStop();if(P==='poki')PokiSDK.gameplayStop()})},
+    get on(){return P!=='none'&&adsOn},
+    progress(n){safe(()=>{if(P==='crazygames')cg().game.reportGameCompletedPercentage(Math.round(n))})},
+    start(){ready.then(()=>safe(()=>{if(P==='crazygames')cg().game.gameplayStart();if(P==='poki')PokiSDK.gameplayStart()}))},
+    stop(){ready.then(()=>safe(()=>{if(P==='crazygames')cg().game.gameplayStop();if(P==='poki')PokiSDK.gameplayStop()}))},
     happy(){safe(()=>{if(P==='crazygames')cg().game.happytime()})},
-    midgame(){return new Promise(res=>{const done=()=>{resume();res()};
+    async midgame(){if(!adsOn)return;await ready;return new Promise(res=>{const done=()=>{resume();res()};
       try{
         if(P==='crazygames')cg().ad.requestAd('midgame',{adStarted:pause,adFinished:done,adError:done});
         else if(P==='poki')PokiSDK.commercialBreak(pause).then(done,done);
         else if(P==='gamedistribution'&&window.gdsdk&&gdsdk.showAd){gdWait=done;gdsdk.showAd().catch(()=>{gdWait=null;done()});setTimeout(()=>{if(gdWait===done){gdWait=null;done()}},40000)}
         else res();
       }catch(e){done()}})},
-    rewarded(){return new Promise(res=>{const fin=ok=>{resume();res(ok)};
+    async rewarded(){if(!adsOn)return false;await ready;return new Promise(res=>{const fin=ok=>{resume();res(ok)};
       try{
         if(P==='crazygames')cg().ad.requestAd('rewarded',{adStarted:pause,adFinished:()=>fin(true),adError:()=>fin(false)});
         else if(P==='poki')PokiSDK.rewardedBreak({size:'medium',onStart:pause}).then(ok=>fin(!!ok),()=>fin(false));
@@ -395,7 +418,9 @@ const Ads=(()=>{
 })();
 Ads.init();
 document.addEventListener('pointerdown',()=>Music.start(),{once:true});
+['touchend','click'].forEach(ev=>document.addEventListener(ev,()=>{try{if(AC&&AC.state!=='running')AC.resume()}catch(e){}},{passive:true}));
 document.addEventListener('keydown',()=>Music.start(),{once:true});
+$('#langBtn').onclick=e=>{e.stopPropagation();S.lang=LANG==='tr'?'en':'tr';save();setLang(S.lang);SFX.tick()};
 $('#muteBtn').onclick=e=>{e.stopPropagation();S.mute=!S.mute;save();$('#muteBtn').style.opacity=S.mute?.45:1;if(S.mute)Music.stop();else{Music.start();SFX.tick()}};
 $('#muteBtn').style.opacity=S.mute?.45:1;
 
@@ -453,7 +478,7 @@ const CH={
 function talk(lines){
   return new Promise(res=>{
     let i=0;const D=$('#dialog'),sh=$('#shade');D.hidden=false;sh.hidden=false;
-    const show=()=>{const[w,t]=lines[i],c=CH[w];D.querySelector('.portrait').innerHTML=c.face;const who=D.querySelector('.who');who.textContent=c.name;who.style.color=c.col;D.querySelector('.line').textContent=t;
+    const show=()=>{const[w,t]=lines[i],c=CH[w];D.querySelector('.portrait').innerHTML=c.face;const who=D.querySelector('.who');who.textContent=T(c.name);who.style.color=c.col;D.querySelector('.line').textContent=T(t);
       const inn=D.querySelector('.in');inn.style.animation='none';void inn.offsetWidth;inn.style.animation='';snd(440+rnd(120),.06,'triangle',.03)};
     show();
     const next=()=>{i++;if(i>=lines.length){D.hidden=true;sh.hidden=true;D.onclick=sh.onclick=null;document.onkeydown=null;res()}else show()};
@@ -656,7 +681,7 @@ async function resolve(pref){
         if(k==null){const r=g.runs.reduce((a,b)=>b.cells.length>a.cells.length?b:a);k=r.cells[Math.floor(r.cells.length/2)]}
         creates.push({k,t:g.t,sp})}}
     await blast(clear,creates);pref=null;
-    if(guard>=1){combo(PRAISE[Math.min(guard-1,PRAISE.length-1)]);snd(500+guard*120,.15,'triangle',.05);if(guard>=3)FX.confetti(30)}
+    if(guard>=1){combo(T(PRAISE[Math.min(guard-1,PRAISE.length-1)]));snd(500+guard*120,.15,'triangle',.05);if(guard>=3)FX.confetti(30)}
     await gravity();
   }
 }
@@ -692,12 +717,12 @@ function shuffle(silent){
     if(!findGroups().length&&findMove())break;
   }
   all().forEach(draw);
-  if(!silent)toast('Taşlar karıştırıldı');
+  if(!silent)toast(T('Taşlar karıştırıldı'));
 }
 async function comboFire(A,B){
   const cells=new Set(),add=(x,y)=>{if(x>=0&&y>=0&&x<W&&y<H)cells.add(y*W+x)};
   const cx=A.x,cy=A.y;A.fired=B.fired=true;
-  if(A.sp==='r'&&B.sp==='r'){for(let y=0;y<H;y++)for(let x=0;x<W;x++)add(x,y);combo('Gökkuşağı!')}
+  if(A.sp==='r'&&B.sp==='r'){for(let y=0;y<H;y++)for(let x=0;x<W;x++)add(x,y);combo(T('Gökkuşağı!'))}
   else if(A.sp==='r'||B.sp==='r'){
     const R=A.sp==='r'?A:B,X=R===A?B:A;add(R.x,R.y);add(X.x,X.y);
     const targets=all().filter(o=>o.t===X.t&&o!==X&&o.sp!=='r');
@@ -714,7 +739,7 @@ async function comboFire(A,B){
 async function trySwap(a,b){
   if(busy||!playing||moves<=0)return;
   if(Math.abs(a.x-b.x)+Math.abs(a.y-b.y)!==1)return;
-  busy=true;clearSel();clearHint();cascadeN=0;
+  busy=true;clearSel();clearHint();cascadeN=0;if(S.level!==1||moves<L.m-3)showTip(null);
   const A=G[a.y][a.x],B=G[b.y][b.x];
   swapG(a,b);SFX.whoosh();await sleep(170);
   if(A.sp==='r'||B.sp==='r'||(A.sp&&B.sp)){
@@ -733,11 +758,12 @@ function hud(){
   $('#moves').textContent=moves;$('.moves').classList.toggle('low',playing&&moves<=5&&moves>0);
   $('#goals').innerHTML=goals.map(g=>{
     const ic=g.k==='w'?`<div class="gem" style="inset:0;background:#3f7a37"><svg viewBox="0 0 40 40"><path d="M8 32 Q12 14 16 32 Q20 8 24 32 Q28 16 32 32Z" fill="#8fdc6a"/></svg></div>`:`<div class="gem g${g.k}" style="inset:0">${ICONS[g.k]}</div>`;
-    return `<div class="goal${g.n<=0?' ok':''}" data-k="${g.k}" title="${g.k==='w'?'Yabani ot':TNAME[g.k]}"><div class="mini">${ic}</div><b>${Math.max(0,g.n)}</b></div>`}).join('')+`<div class="goal"><span class="lv">Bulmaca ${S.level+1}</span></div>`;
+    return `<div class="goal${g.n<=0?' ok':''}" data-k="${g.k}" title="${T(g.k==='w'?'Yabani ot':TNAME[g.k])}"><div class="mini">${ic}</div><b>${Math.max(0,g.n)}</b></div>`}).join('')+`<div class="goal"><span class="lv">${T('Bulmaca {n}',{n:S.level+1})}</span></div>`;
 }
 function clearSel(){if(sel){const o=G[sel.y]?.[sel.x];o&&o.el.classList.remove('sel');sel=null}}
+function showTip(t){const e=$('#tip');if(!t){e.hidden=true;return}e.textContent=t;e.hidden=false}
 function clearHint(){clearTimeout(hintT);tilesEl.querySelectorAll('.hint').forEach(e=>e.classList.remove('hint'))}
-function armHint(){clearHint();hintT=setTimeout(()=>{if(busy||!playing)return;const m=findMove();if(m)m.forEach(o=>o.el.classList.add('hint'))},7000)}
+function armHint(ms=7000){clearHint();hintT=setTimeout(()=>{if(busy||!playing)return;const m=findMove();if(m)m.forEach(o=>o.el.classList.add('hint'))},ms)}
 
 /* Dokunma: kaydır ya da iki taşa sırayla dokun */
 let down=null;
@@ -768,24 +794,27 @@ async function startLevel(){
   buildBoard();
   const wc=WD.flat().reduce((a,b)=>a+b,0);if(wc)goals.push({k:'w',n:wc});
   hud();playing=true;busy=false;armHint();Ads.start();
-  if(S.level===0&&!S.tut){S.tut=1;save();await talk([['not','Yan yana iki taşı kaydırarak yer değiştir. Aynı türden en az 3 taşı sıraya diz.'],['not','4 taş dizersen çizgili bir taş, L ya da T şekli yaparsan parlayan bir bomba, 5 taş dizersen gökkuşağı tohumu kazanırsın.'],['not','Üstteki hedefleri hamlelerin bitmeden tamamla!']])}
-  else if(wc&&!S.tutW){S.tutW=1;save();await talk([['riza','Bak kızım, koyu yeşil kareler yabani ot. Üstlerinde taş patlatırsan kökünden sökülürler.'],['riza','Çift katlı olanlara iki kez vurmak gerekir. Hadi bakalım!']])}
+  let tipTxt=null;
+  if(S.level===0)tipTxt=T('Yan yana iki taşı kaydırarak yer değiştir. Aynı türden 3 taşı sıraya diz!');
+  else if(S.level===1)tipTxt=T("4'lü dizi çizgili taş, L ya da T şekli bomba, 5'li dizi gökkuşağı tohumu yapar.");
+  else if(wc&&!S.tutW){S.tutW=1;save();tipTxt=T('Yeşil kareler yabani ot. Üstlerinde taş patlat, koyu olanlara iki kez vur!')}
+  showTip(tipTxt);if(tipTxt&&S.level===0)armHint(900);
 }
 async function checkEnd(){
   if(!playing)return;
   if(done()){
-    playing=false;Ads.stop();Ads.happy();
-    if(moves>0){combo('Bahçe şenliği!');await sleep(500);
+    playing=false;Ads.stop();
+    if(moves>0){combo(T('Bahçe şenliği!'));await sleep(500);
       const pool=all().filter(o=>!o.sp&&o.t>=0);
       while(moves>0&&pool.length){const o=pool.splice(rnd(pool.length),1)[0];o.sp=Math.random()<.5?'h':'v';draw(o);moves--;hud();snd(700+moves*30,.08,'triangle');await sleep(90)}
       const sp=all().filter(o=>o.sp&&o.sp!=='r');if(sp.length){cascadeN=0;await blast(new Set(sp.map(o=>o.y*W+o.x)));await gravity();await resolve(null)}
     }
     await sleep(300);SFX.fanfare();flash();
     const left=L.m+(extraUsed?5:0);
-    const title=score>=6000?'MEGA KAZANÇ!':score>=3500?'SÜPER KAZANÇ!':'BÜYÜK KAZANÇ!';
+    const title=T(score>=6000?'MEGA KAZANÇ!':score>=3500?'SÜPER KAZANÇ!':'BÜYÜK KAZANÇ!');
     S.level++;S.stars++;S.best=Math.max(S.best||0,score);save();renderGarden();
     const M=$('#modal');M.classList.add('win');
-    const p=modal(`<div class="big-star">★</div><div class="jack">${title}</div><div class="bulbs">${'<i></i>'.repeat(9)}</div><div class="score"><span id="scoreN">0</span><small>Bulmaca ${S.level} puanı</small></div><p style="margin-top:10px">+1 yıldız! Bahçede seni bekleyen işler var.</p>`,['Yıldızı al']);
+    const p=modal(`<div class="big-star">★</div><div class="jack">${title}</div><div class="bulbs">${'<i></i>'.repeat(9)}</div><div class="score"><span id="scoreN">0</span><small>${T('Bulmaca {n} puanı',{n:S.level})}</small></div><p style="margin-top:10px">${T('+1 yıldız! Bahçede seni bekleyen işler var.')}</p>`,[T('Yıldızı al')]);
     countUp($('#scoreN'),score,1400);
     const cr=M.querySelector('.card').getBoundingClientRect();
     FX.confetti(160);FX.fountain(cr.left+cr.width/2,cr.top+30,70);
@@ -794,23 +823,25 @@ async function checkEnd(){
     goGarden();
     const sp=$('.pill');sp.classList.remove('bump');void sp.offsetWidth;sp.classList.add('bump');
     const pr=sp.getBoundingClientRect();FX.burst(pr.left+pr.width/2,pr.top+pr.height/2,['#ffd447','#fff'],24,7);chime();
+    if(!S.intro){await sleep(600);await playIntro()}
   } else if(moves<=0){
     playing=false;Ads.stop();await sleep(300);
-    const AD='📺 Reklam izle: +5 hamle',ST='★1 ver: +5 hamle',FREE='+5 hamle ile devam';
-    const btns=extraUsed?['Tekrar dene','Bahçeye dön']:Ads.on?[AD,...(S.stars>=1?[ST]:[]),'Tekrar dene','Bahçeye dön']:[FREE,'Tekrar dene','Bahçeye dön'];
-    const i=await modal(`<h2>Hamleler bitti</h2><p>${goals.filter(g=>g.n>0).map(g=>`${g.n} ${g.k==='w'?'yabani ot':TNAME[g.k].toLowerCase()}`).join(', ')} kaldı. Az kaldı!</p>`,btns);
+    const AD=T('📺 Reklam izle: +5 hamle'),ST=T('★1 ver: +5 hamle'),FREE=T('+5 hamle ile devam'),RETRY=T('Tekrar dene'),HOME=T('Bahçeye dön');
+    const btns=extraUsed?[RETRY,HOME]:Ads.on?[AD,...(S.stars>=1?[ST]:[]),RETRY,HOME]:[FREE,RETRY,HOME];
+    const list=goals.filter(g=>g.n>0).map(g=>`${g.n} ${g.k==='w'?T('yabani ot'):T(TNAME[g.k]).toLowerCase()}`).join(', ');
+    const i=await modal(`<h2>${T('Hamleler bitti')}</h2><p>${T('{list} kaldı. Az kaldı!',{list})}</p>`,btns);
     const act=btns[i];
     const cont=()=>{extraUsed=true;moves=5;playing=true;hud();armHint();Ads.start()};
     if(act===FREE)cont();
-    else if(act===ST){S.stars--;save();cont();toast('1 yıldız karşılığında +5 hamle!')}
-    else if(act===AD){const ok=await Ads.rewarded();if(ok){cont();toast('Teşekkürler! +5 hamle')}else{toast('Reklam şu an yok, tekrar deneyebilirsin');moves=0;playing=true;await checkEnd()}}
-    else if(act==='Tekrar dene'){await Ads.midgame();startLevel()}
+    else if(act===ST){S.stars--;save();cont();toast(T('1 yıldız karşılığında +5 hamle!'))}
+    else if(act===AD){const ok=await Ads.rewarded();if(ok){cont();toast(T('Teşekkürler! +5 hamle'))}else{toast(T('Reklam şu an yok, tekrar deneyebilirsin'));moves=0;playing=true;await checkEnd()}}
+    else if(act===RETRY){await Ads.midgame();startLevel()}
     else goGarden();
   }
 }
 $('#quitBtn').onclick=async()=>{
   if(busy)return;
-  const i=await modal('<h2>Bahçeye dönülsün mü?</h2><p>Bu bulmacadaki ilerlemen kaybolur.</p>',['Bahçeye dön','Oynamaya devam']);
+  const i=await modal(`<h2>${T('Bahçeye dönülsün mü?')}</h2><p>${T('Bu bulmacadaki ilerlemen kaybolur.')}</p>`,[T('Bahçeye dön'),T('Oynamaya devam')]);
   if(i===0){playing=false;goGarden()}
 };
 function goGarden(){clearHint();Ads.stop();$('.top').hidden=false;document.body.classList.remove('playing');$('#playView').hidden=true;$('#gardenView').hidden=false;renderGarden()}
@@ -1075,27 +1106,28 @@ function renderGarden(){
   scene.querySelectorAll('[data-on]').forEach(e=>e.classList.toggle('off',!S.done.includes(e.dataset.on)));
   scene.querySelectorAll('[data-off]').forEach(e=>e.classList.toggle('off',S.done.includes(e.dataset.off)));
   applyChoices();
-  $('#chapterLbl').textContent=CHAP[ch];
+  $('#chapterLbl').textContent=T(CHAP[ch]);
   const tb=$('#tabs');tb.hidden=unlocked()<2;tb.querySelectorAll('button').forEach(b=>b.classList.toggle('on',+b.dataset.v===ch));
   $('#starCount').textContent=S.stars;
-  $('#playSub').textContent='Bulmaca '+(S.level+1);
+  $('#playSub').textContent=T('Bulmaca {n}',{n:S.level+1});
   const all=TASKS.filter(t=>t.ch===ch),n=all.filter(t=>S.done.includes(t.id)).length;$('#progLbl').textContent=n+' / '+all.length;$('#progBar').style.width=n/all.length*100+'%';
+  Ads.progress(S.done.length/TASKS.length*100);
   const nt=nextTasks(ch),ul=$('#tasks');
-  ul.innerHTML=nt.length?nt.map(t=>`<li class="task"><div class="ti" aria-hidden="true">${t.icon}</div><div class="tn">${t.name}<small>${t.cost} yıldız gerekli</small></div><button class="do" data-t="${t.id}" ${S.stars<t.cost?'disabled':''}>★ ${t.cost}</button></li>`).join('')
-    :ch===1?`<li class="task"><div class="ti">🌹</div><div class="tn">1. bölüm tamamlandı!<small>Arka bahçede 2. bölüm seni bekliyor.</small></div></li>`
-    :`<li class="task"><div class="ti">🏆</div><div class="tn">2. bölüm tamamlandı!<small>3. bölüm yakında. Yıldız toplamaya devam edebilirsin.</small></div></li>`;
+  ul.innerHTML=nt.length?nt.map(t=>`<li class="task"><div class="ti" aria-hidden="true">${t.icon}</div><div class="tn">${T(t.name)}<small>${T('{n} yıldız gerekli',{n:t.cost})}</small></div><button class="do" data-t="${t.id}" ${S.stars<t.cost?'disabled':''}>★ ${t.cost}</button></li>`).join('')
+    :ch===1?`<li class="task"><div class="ti">🌹</div><div class="tn">${T('1. bölüm tamamlandı!')}<small>${T('Arka bahçede 2. bölüm seni bekliyor.')}</small></div></li>`
+    :`<li class="task"><div class="ti">🏆</div><div class="tn">${T('2. bölüm tamamlandı!')}<small>${T('3. bölüm yakında. Yıldız toplamaya devam edebilirsin.')}</small></div></li>`;
   ul.querySelectorAll('.do').forEach(b=>b.onclick=()=>doTask(b.dataset.t));
   const mk=$('#markers');mk.innerHTML='';
-  nt.forEach(t=>{const g=el('g',{class:'marker'+(S.stars<t.cost?' locked':''),transform:`translate(${t.x} ${t.y})`,tabindex:0,role:'button','aria-label':t.name},mk);
+  nt.forEach(t=>{const g=el('g',{class:'marker'+(S.stars<t.cost?' locked':''),transform:`translate(${t.x} ${t.y})`,tabindex:0,role:'button','aria-label':T(t.name)},mk);
     if(S.stars>=t.cost)el('circle',{r:11,class:'ring'},g);el('circle',{r:11},g);const tx=el('text',{},g);tx.textContent=S.stars>=t.cost?'!':t.cost+'★';
     g.onclick=()=>doTask(t.id)});
 }
 $('#tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{S.view=+b.dataset.v;save();SFX.tick();renderGarden()});
 async function doTask(id){
   const t=TASKS.find(x=>x.id===id);if(!t||S.done.includes(id))return;
-  if(S.stars<t.cost){toast(`${t.cost-S.stars} yıldız daha lazım. Bir bulmaca oyna!`);SFX.nope();return}
+  if(S.stars<t.cost){toast(T('{n} yıldız daha lazım. Bir bulmaca oyna!',{n:t.cost-S.stars}));SFX.nope();return}
   if(t.choice){
-    const i=await modal(`<h2>${t.choice.title}</h2><p>Sonra fikrini değiştiremezsin, iyi seç!</p><div class="opts">${t.choice.opts.map(([k,n,c],j)=>`<button class="opt" data-opt="${j}"><span class="sw" style="background:${c}"></span>${n}</button>`).join('')}</div>`,['Vazgeç']);
+    const i=await modal(`<h2>${T(t.choice.title)}</h2><p>${T('Sonra fikrini değiştiremezsin, iyi seç!')}</p><div class="opts">${t.choice.opts.map(([k,n,c],j)=>`<button class="opt" data-opt="${j}"><span class="sw" style="background:${c}"></span>${T(n)}</button>`).join('')}</div>`,[T('Vazgeç')]);
     if(typeof i==='number')return;
     S.choice[t.id]=t.choice.opts[i.opt][0];
   }
@@ -1105,14 +1137,14 @@ async function doTask(id){
   await sleep(700);await talk(t.say);
   if(t.ch===1&&chDone(1)){
     SFX.fanfare();FX.confetti(160);
-    await modal('<div class="big-star">🌹</div><h2>1. bölüm tamamlandı!</h2><p>Nevin Nine\'nin bahçesi yeniden çiçek açtı. Şimdi sıra arka bahçede: Ege Gülü ve Bahar Şenliği.</p>',['Arka bahçeye git']);
+    Ads.happy();await modal(`<div class="big-star">🌹</div><h2>${T('1. bölüm tamamlandı!')}</h2><p>${T("Nevin Nine'nin bahçesi yeniden çiçek açtı. Şimdi sıra arka bahçede: Ege Gülü ve Bahar Şenliği.")}</p>`,[T('Arka bahçeye git')]);
     S.view=2;save();renderGarden();
     await talk([['simge','Tohumları ekmek için uygun bir yer lazım.'],['riza','Evin arkasına hiç baktın mı? Nevin Hanım\'ın asıl hazinesi orada.'],['not','Arka bahçe açıldı! Yeni işler ve 20 yeni bulmaca seni bekliyor.']]);
   }
   if(t.ch===2&&chDone(2)){
     SFX.fanfare();FX.confetti(200);
     const r=$('.scene-wrap').getBoundingClientRect();FX.fountain(r.left+r.width/2,r.top+r.height/2,80);
-    await modal('<div class="big-star">🏆</div><div class="jack">ŞENLİK BİRİNCİSİ!</div><p>Ege Gülü kırk yıl sonra yeniden açtı ve Bahar Şenliği\'nde birinci oldu. 3. bölüm yakında!</p>',['Yaşasın!']);
+    Ads.happy();await modal(`<div class="big-star">🏆</div><div class="jack">${T('ŞENLİK BİRİNCİSİ!')}</div><p>${T("Ege Gülü kırk yıl sonra yeniden açtı ve Bahar Şenliği'nde birinci oldu. 3. bölüm yakında!")}</p>`,[T('Yaşasın!')]);
   }
   renderGarden();
 }
@@ -1135,19 +1167,23 @@ $('#playBtn').onclick=async()=>{snd(520);await Ads.midgame();startLevel()};
 /* ---------- Tahta ışıkları ---------- */
 {const b=$('#bulbs'),N=12;let h='';for(let i=0;i<N;i++){const t=(i+.5)/N*100;h+=`<i style="left:${t}%;top:0"></i><i style="left:${100-t}%;top:100%"></i><i style="left:100%;top:${t}%"></i><i style="left:0;top:${100-t}%"></i>`}b.innerHTML=h}
 /* ---------- Açılış ---------- */
-renderGarden();
-if(!S.intro){
-  setTimeout(async()=>{
-    await talk([
+relabel();renderGarden();
+async function playIntro(){
+  await talk([
       ['simge','İşte geldim... Nevin Nine\'nin evi. Ama bu bahçe ne hale gelmiş böyle!'],
       ['mektup','"Bahçemi sana emanet ediyorum Simge\'ciğim. Onu yeniden çiçeklendir."'],
       ['riza','Hoş geldin kızım. Ben Rıza, yan komşunuz. Bu bahçe bir zamanlar köyün en güzeliydi.'],
       ['riza','Bahar Şenliği\'ne bir ay var. Yetişir mi, bilmem...'],
       ['simge','Yetişecek! Hemen işe koyuluyorum.'],
       ['not','Bulmacaları çöz, her biri sana 1 yıldız kazandırır. Yıldızlarla bahçe işlerini yap ve hikayeyi ilerlet.']
-    ]);S.intro=true;save();
-  },400);
+  ]);S.intro=true;save();
 }
+if(/[?&]demo/.test(location.search)){window.__demo=async lv=>{S.level=lv;S.intro=true;S.tutW=1;await startLevel();showTip(null);
+  for(let i=0;i<60&&playing;i++){await sleep(220);if(busy||!playing)continue;let best=null;
+    for(let y=0;y<H;y++)for(let x=0;x<W;x++){const o=G[y][x];if(o&&o.sp){for(const[dx,dy]of[[1,0],[0,1],[-1,0],[0,-1]]){const q=G[y+dy]?.[x+dx];if(q&&(o.sp==="r"||q.sp)){best=[o,q];break}}}if(best)break}
+    const m=best||findMove();if(m){const[A,B]=m;await trySwap({x:A.x,y:A.y},{x:B.x,y:B.y})}}}}
+else if(!S.intro&&S.level===0)startLevel();
+else if(!S.intro)setTimeout(playIntro,400);
 })();
 </script>
 

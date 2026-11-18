@@ -10,7 +10,7 @@ gd_id = sys.argv[1] if len(sys.argv) > 1 else "GD_GAME_ID"
 
 HEADS = {
     "crazygames": '<script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script>\n'
-                  "<script>window.__PLATFORM='crazygames'</script>\n",
+                  "<script>window.__PLATFORM='crazygames';window.__ADS=false</script>\n",  # Basic Launch: reklamsız. Full Launch'ta __ADS=false kaldırılır.
     "poki": '<script src="https://game-cdn.poki.com/scripts/v2/poki-sdk.js"></script>\n'
             "<script>window.__PLATFORM='poki'</script>\n",
     "gamedistribution": "<script>window.__PLATFORM='gamedistribution';"
