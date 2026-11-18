@@ -486,6 +486,54 @@ body:not(.playing) #gardenView .task .do[disabled]{
   body:not(.playing) #gardenView #tasks{grid-template-columns:1fr}
 }
 
+
+/* Petalpop oyun ekranı: ana bahçeyle aynı neşeli, renkli görsel dil */
+body.playing{
+  background:
+    radial-gradient(ellipse at 12% 8%,rgba(255,232,153,.9),transparent 32%),
+    radial-gradient(ellipse at 92% 18%,rgba(255,164,203,.55),transparent 28%),
+    linear-gradient(155deg,#8edcf0 0%,#b9edcf 52%,#fff0b8 100%);
+}
+body.playing #forest{opacity:.18;filter:saturate(1.2)}
+body.playing .top{padding:8px 10px;background:rgba(255,255,255,.92);border:2px solid #fff;border-radius:19px;box-shadow:0 4px 0 rgba(55,139,151,.18),0 8px 18px rgba(39,99,93,.12)}
+body.playing .brand{color:#e94f91;text-shadow:none}
+body.playing .brand small{color:#568c7b;text-shadow:none}
+body.playing .pill,body.playing .icon-btn{background:#fff;box-shadow:0 3px 0 #d9e9dc;color:#416b5b}
+body.playing .hud{gap:9px;align-items:stretch}
+body.playing .hud .back{background:linear-gradient(#fff,#fff4fa);color:#e94f91;border:2px solid #fff;box-shadow:0 4px 0 #e7c4d4,0 5px 12px rgba(39,99,93,.12);min-width:48px}
+body.playing .goals{background:rgba(255,255,255,.94);border:2px solid #fff;box-shadow:0 4px 0 #d8e8dc,0 5px 12px rgba(39,99,93,.1);border-radius:17px}
+body.playing .goal{color:#47745f}
+body.playing .goal.ok{color:#269b67}
+body.playing .moves{background:linear-gradient(160deg,#ff83ad,#ef4e8d);border:2px solid #fff;box-shadow:0 4px 0 #c93670,0 5px 12px rgba(39,99,93,.16);border-radius:17px;min-width:68px}
+body.playing .moves b{color:#fff;text-shadow:0 2px 0 rgba(174,35,91,.35)}
+body.playing .moves small{color:#fff;opacity:.95}
+body.playing .lvl-title{color:#397e69;text-shadow:0 1px #fff;font-size:14px;letter-spacing:.02em}
+body.playing .board{
+  background:linear-gradient(135deg,#fff8d5,#ffcf69 45%,#ff8eb4);
+  border:3px solid #fff;
+  border-radius:23px;
+  padding:8px;
+  box-shadow:0 7px 0 #d86a91,0 0 0 4px rgba(255,255,255,.55),0 14px 28px rgba(55,105,91,.25);
+}
+body.playing .board::before{inset:5px;border-radius:15px;background:#9a704d}
+body.playing .cells{border:2px solid rgba(255,255,255,.55);border-radius:12px}
+body.playing .cell{background:#9a7558;box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}
+body.playing .cell:nth-child(odd){background:#a98565}
+body.playing .cell.w1{background:radial-gradient(circle at 30% 70%,#83d85b 0 18%,transparent 19%),radial-gradient(circle at 75% 30%,#6fc94d 0 16%,transparent 17%),#4f9b43}
+body.playing .cell.w2{background:radial-gradient(circle at 30% 70%,#3e7e32 0 18%,transparent 19%),radial-gradient(circle at 75% 30%,#3e7e32 0 16%,transparent 17%),#2b632b;box-shadow:inset 0 0 0 2px #1d4d25}
+body.playing .tile.sel .gem{filter:drop-shadow(0 0 5px #fff) brightness(1.12)}
+body.playing .tip{border-radius:14px;background:#fff8d9;color:#80552b;border:2px solid #fff;box-shadow:0 3px 0 rgba(117,81,41,.2)}
+@media(max-width:520px){
+  body.playing{padding:6px max(7px,env(safe-area-inset-left,0px))}
+  body.playing .top{padding:7px 8px}
+  body.playing .brand{font-size:21px}
+  body.playing .brand small{font-size:10px}
+  body.playing .hud{gap:6px}
+  body.playing .goals{padding:5px 6px;gap:4px}
+  body.playing .goal{font-size:13px}
+  body.playing .moves{min-width:57px;padding:4px 8px}
+}
+
 </style>
 
 <div id="forest" aria-hidden="true"></div>
