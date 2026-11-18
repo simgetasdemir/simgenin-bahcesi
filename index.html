@@ -84,7 +84,7 @@ button:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 .moves b{display:block;font-family:var(--display);font-size:26px;line-height:1;font-variant-numeric:tabular-nums}
 .moves small{font-size:11px;font-weight:700;opacity:.8}
 .lvl-title{font-family:var(--display);font-weight:700;font-size:13px;color:var(--muted);text-align:center;margin:-4px 0 -6px}
-.board{position:relative;--bw:min(calc(100vw - 10px),640px,calc(100vh - 150px));--bw:min(calc(100vw - 10px),640px,calc(100dvh - 150px));width:var(--bw);aspect-ratio:1;margin-left:calc(50% - var(--bw) / 2);
+.board{position:relative;--bw:min(calc(100vw - 10px),calc(100vh - 92px));--bw:min(calc(100vw - 10px),calc(100dvh - 92px));width:var(--bw);aspect-ratio:1;margin-left:calc(50% - var(--bw) / 2);
   background:var(--soil);border-radius:20px;padding:6px;box-shadow:0 5px 0 #3d2e23}
 .layer{position:absolute;inset:6px}
 .cells{display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);border-radius:14px;overflow:hidden}
@@ -176,6 +176,18 @@ button:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 .big-star{display:inline-block;animation:jack .8s cubic-bezier(.2,1.6,.4,1) both}
 .pill.bump{animation:bump .5s ease}
 @keyframes bump{40%{transform:scale(1.35)}}
+body.playing{padding-block:6px}
+body.playing #app{gap:8px}
+.goal .lv{font-size:12px;color:var(--muted);font-weight:800;margin-left:auto;white-space:nowrap}
+.goal.bump .mini{animation:bump .35s ease}
+.moves.low{background:var(--rose);animation:throb .8s ease-in-out infinite}
+.fly{position:fixed;z-index:58;pointer-events:none;transition:left .55s cubic-bezier(.5,-.3,.7,1),top .55s cubic-bezier(.3,.4,.5,1.2),transform .55s ease;transform:scale(1)}
+.fly .gem{inset:0}
+.pts{position:absolute;z-index:6;pointer-events:none;font-family:var(--display);font-weight:800;color:#fff;font-size:22px;transform:translate(-50%,-50%);
+  text-shadow:0 2px 0 var(--rose),0 0 6px rgba(0,0,0,.35);animation:pts .8s ease-out forwards;white-space:nowrap}
+@keyframes pts{from{opacity:0;transform:translate(-50%,-20%) scale(.6)}25%{opacity:1;transform:translate(-50%,-60%) scale(1.15)}to{opacity:0;transform:translate(-50%,-160%) scale(1)}}
+.tile.land .gem{animation:land .28s ease-out}
+@keyframes land{40%{transform:scale(1.12,.84) translateY(6%)}75%{transform:scale(.95,1.06)}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important}.tile{transition-duration:.05s!important}}
 </style>
 <style>[hidden]{display:none!important}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
@@ -206,7 +218,6 @@ button:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
       <div class="goals" id="goals"></div>
       <div class="moves"><b id="moves">20</b><small>hamle</small></div>
     </div>
-    <div class="lvl-title" id="lvlTitle">Bulmaca 1</div>
     <div class="board" id="board">
       <div class="layer cells" id="cells"></div>
       <div class="layer tiles" id="tiles"></div>
@@ -441,13 +452,19 @@ async function blast(initial,creates=[]){
   }
   if(fired.length)shake(fired.length>1||fired.some(o=>o.sp!=='h'&&o.sp!=='v'));
   const n=clear.size;score+=n*10*Math.max(1,cascadeN+1)+fired.length*60;
+  let flies=0,sx=0,sy=0;
   for(const k of clear){
-    const x=k%W,y=Math.floor(k/W),o=G[y][x];if(!o)continue;
+    const x=k%W,y=Math.floor(k/W),o=G[y][x];if(!o)continue;sx+=x;sy+=y;
+    const gk=WD[y][x]>0?'w':o.t;const gl=goals.find(g=>g.k===gk&&g.n>0);
+    if(gl&&flies<10&&o.sp!=='r'){flies++;flyTo(o,gk,br.left+x*cw,br.top+y*cw,cw)}
     FX.burst(br.left+(x+.5)*cw,br.top+(y+.5)*cw,o.sp==='r'?['#ff6f9f','#ffd447','#4fb6f5','#a77cf2']:CANDY[o.t],n>12?4:7,cw*.12);
     if(WD[y][x]>0){WD[y][x]--;paintCell(x,y);collect('w')}
     if(o.t>=0&&o.sp!=='r')collect(o.t);
     o.el.classList.add('pop');const el=o.el;setTimeout(()=>el.remove(),230);G[y][x]=null;
   }
+  if(clear.size){const pt=document.createElement('div');pt.className='pts';pt.textContent='+'+(n*10*Math.max(1,cascadeN+1));
+    pt.style.left=((sx/clear.size+.5)*12.5)+'%';pt.style.top=((sy/clear.size+.5)*12.5)+'%';if(n>=8)pt.style.fontSize='30px';
+    $('#board').appendChild(pt);setTimeout(()=>pt.remove(),850)}
   for(const c of creates){const x=c.k%W,y=Math.floor(c.k/W);const o=mk(c.sp==='r'?-1:c.t,c.sp,x,y);o.el.classList.add('born');G[y][x]=o}
   cascadeN++;
   snd(fx?300:420+cascadeN*70,fx?.25:.1,fx?'sawtooth':'sine',fx?.04:.05);
@@ -462,7 +479,9 @@ async function gravity(){
     for(let y=wr;y>=0;y--){n++;const o=mk(rnd(5),null,x,-n);G[y][x]=o;fresh.push([o,y])}
     if(fresh.length){void tilesEl.offsetWidth;fresh.forEach(([o,y])=>pos(o,x,y))}
   }
-  await sleep(250);
+  const moved=all().filter(o=>o.el.style.top!==o._lt);moved.forEach(o=>o._lt=o.el.style.top);
+  await sleep(240);
+  moved.forEach(o=>{o.el.classList.remove('land');void o.el.offsetWidth;o.el.classList.add('land')});
 }
 async function resolve(pref){
   for(let guard=0;guard<40;guard++){
@@ -473,10 +492,20 @@ async function resolve(pref){
         if(k==null){const r=g.runs.reduce((a,b)=>b.cells.length>a.cells.length?b:a);k=r.cells[Math.floor(r.cells.length/2)]}
         creates.push({k,t:g.t,sp})}}
     await blast(clear,creates);pref=null;
+    if(guard>=1){combo(PRAISE[Math.min(guard-1,PRAISE.length-1)]);snd(500+guard*120,.15,'triangle',.05);if(guard>=3)FX.confetti(30)}
     await gravity();
   }
-  if(cascadeN>=4)combo(cascadeN>=7?'Harika!':cascadeN>=5?'Süper!':'Güzel!');
 }
+function flyTo(o,k,x,y,cw){
+  const f=document.createElement('div');f.className='fly';
+  f.innerHTML=k==='w'?`<div class="gem" style="background:#3f7a37"><svg viewBox="0 0 40 40"><path d="M8 32 Q12 14 16 32 Q20 8 24 32 Q28 16 32 32Z" fill="#8fdc6a"/></svg></div>`:`<div class="gem g${k}">${ICONS[k]}</div>`;
+  Object.assign(f.style,{left:x+'px',top:y+'px',width:cw+'px',height:cw+'px'});document.body.appendChild(f);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{const t=document.querySelector(`.goal[data-k="${k}"] .mini`);if(!t){f.remove();return}
+    const r=t.getBoundingClientRect();Object.assign(f.style,{left:(r.left+r.width/2-cw/2)+'px',top:(r.top+r.height/2-cw/2)+'px'});f.style.transform='scale(.45)'}));
+  setTimeout(()=>{f.remove();const g=document.querySelector(`.goal[data-k="${k}"]`);if(g){g.classList.remove('bump');void g.offsetWidth;g.classList.add('bump');
+    const r=g.getBoundingClientRect();FX.burst(r.left+16,r.top+r.height/2,CANDY[k==='w'?1:k],5,3);snd(1200+rnd(300),.05,'triangle',.025)}},600);
+}
+const PRAISE=['Tatlı!','Şahane!','Nefis!','Şeker patlaması!','İnanılmaz!','Efsane!'];
 function combo(t){const d=document.createElement('div');d.className='combo';d.textContent=t;$('#board').appendChild(d);setTimeout(()=>d.remove(),1000)}
 function swapG(a,b){const A=G[a.y][a.x],B=G[b.y][b.x];G[a.y][a.x]=B;G[b.y][b.x]=A;pos(A,b.x,b.y);pos(B,a.x,a.y)}
 function matchAt(x,y){const c=col(x,y);if(c<0)return false;
@@ -537,10 +566,10 @@ async function trySwap(a,b){
 function collect(t){for(const g of goals)if(g.k===t&&g.n>0)g.n--}
 const done=()=>goals.every(g=>g.n<=0);
 function hud(){
-  $('#moves').textContent=moves;
+  $('#moves').textContent=moves;$('.moves').classList.toggle('low',playing&&moves<=5&&moves>0);
   $('#goals').innerHTML=goals.map(g=>{
     const ic=g.k==='w'?`<div class="gem" style="inset:0;background:#3f7a37"><svg viewBox="0 0 40 40"><path d="M8 32 Q12 14 16 32 Q20 8 24 32 Q28 16 32 32Z" fill="#8fdc6a"/></svg></div>`:`<div class="gem g${g.k}" style="inset:0">${ICONS[g.k]}</div>`;
-    return `<div class="goal${g.n<=0?' ok':''}" title="${g.k==='w'?'Yabani ot':TNAME[g.k]}"><div class="mini">${ic}</div><b>${Math.max(0,g.n)}</b></div>`}).join('');
+    return `<div class="goal${g.n<=0?' ok':''}" data-k="${g.k}" title="${g.k==='w'?'Yabani ot':TNAME[g.k]}"><div class="mini">${ic}</div><b>${Math.max(0,g.n)}</b></div>`}).join('')+`<div class="goal"><span class="lv">Bulmaca ${S.level+1}</span></div>`;
 }
 function clearSel(){if(sel){const o=G[sel.y]?.[sel.x];o&&o.el.classList.remove('sel');sel=null}}
 function clearHint(){clearTimeout(hintT);tilesEl.querySelectorAll('.hint').forEach(e=>e.classList.remove('hint'))}
@@ -571,7 +600,7 @@ async function startLevel(){
   L=levelDef(S.level);moves=L.m;extraUsed=false;score=0;
   goals=(L.g||[]).map(([t,n])=>({k:t,n}));
   $('#gardenView').hidden=true;$('#playView').hidden=false;
-  $('#lvlTitle').textContent='Bulmaca '+(S.level+1);
+  $('.top').hidden=true;document.body.classList.add('playing');
   buildBoard();
   const wc=WD.flat().reduce((a,b)=>a+b,0);if(wc)goals.push({k:'w',n:wc});
   hud();playing=true;busy=false;armHint();
@@ -616,7 +645,7 @@ $('#quitBtn').onclick=async()=>{
   const i=await modal('<h2>Bahçeye dönülsün mü?</h2><p>Bu bulmacadaki ilerlemen kaybolur.</p>',['Bahçeye dön','Oynamaya devam']);
   if(i===0){playing=false;goGarden()}
 };
-function goGarden(){clearHint();$('#playView').hidden=true;$('#gardenView').hidden=false;renderGarden()}
+function goGarden(){clearHint();$('.top').hidden=false;document.body.classList.remove('playing');$('#playView').hidden=true;$('#gardenView').hidden=false;renderGarden()}
 
 /* ---------- Bahçe sahnesi ---------- */
 const NS='http://www.w3.org/2000/svg',scene=$('#scene');
