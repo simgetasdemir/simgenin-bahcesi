@@ -534,6 +534,13 @@ body.playing .tip{border-radius:14px;background:#fff8d9;color:#80552b;border:2px
   body.playing .moves{min-width:57px;padding:4px 8px}
 }
 
+/* Tek kullanımlık bahçıvan makası güçlendiricisi */
+.booster{flex:none;min-width:48px;min-height:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;border-radius:15px;background:linear-gradient(#fff,#fff0f6);border:2px solid #fff;color:#df4e8b;font-size:20px;line-height:1;box-shadow:0 4px 0 #e7c4d4,0 5px 12px rgba(39,99,93,.12);font-weight:900}
+.booster small{font-size:10px;line-height:1.1;color:#8a6a79}
+.booster.armed{background:linear-gradient(#fff4b9,#ffd76a);color:#9a5a16;box-shadow:0 4px 0 #d9a33d,0 0 0 3px rgba(255,215,106,.28)}
+.booster:disabled{opacity:.48;filter:grayscale(.65);cursor:default}
+body.playing .booster{border-color:#fff}
+@media(max-width:520px){.booster{min-width:42px;min-height:44px;border-radius:13px}}
 </style>
 
 <div id="forest" aria-hidden="true"></div>
@@ -560,6 +567,7 @@ body.playing .tip{border-radius:14px;background:#fff8d9;color:#80552b;border:2px
     <div class="hud">
       <button class="back" id="quitBtn" aria-label="Bahçeye dön" data-ta="Bahçeye dön">‹</button>
       <div class="goals" id="goals"></div>
+      <button class="booster" id="hammerBtn" type="button" aria-label="Bahçıvan makası">✂️<small>1</small></button>
       <div class="moves"><b id="moves">20</b><small data-t="hamle">hamle</small></div>
     </div>
     <div class="board" id="board">
@@ -877,7 +885,7 @@ function levelDef(i){
 const W=8,H=8;
 const tilesEl=$('#tiles'),cellsEl=$('#cells');
 let score=0;
-let G=[],WD=[],L=null,moves=0,goals=[],busy=false,sel=null,extraUsed=false,playing=false,cascadeN=0,hintT=null;
+let G=[],WD=[],L=null,moves=0,goals=[],busy=false,sel=null,extraUsed=false,playing=false,cascadeN=0,hintT=null,hammerMode=false,hammerUsed=false;
 
 function mk(t,sp,x,y){
   const el=document.createElement('div');el.className='tile';
@@ -1048,6 +1056,22 @@ async function comboFire(A,B){
   }
   await blast(cells);
 }
+async function useHammer(x,y){
+  if(busy||!playing||hammerUsed||moves<=0)return;
+  const o=G[y]?.[x];if(!o)return;
+  hammerUsed=true;hammerMode=false;busy=true;clearSel();clearHint();cascadeN=0;
+  moves--;hud();SFX.boom();combo('Bahçıvan dokunuşu!');
+  await blast(new Set([y*W+x]));
+  await gravity();await resolve(null);
+  if(!findMove())shuffle(true);
+  busy=false;await checkEnd();if(playing)armHint();
+}
+$('#hammerBtn').onclick=()=>{
+  if(busy||!playing||hammerUsed)return;
+  hammerMode=!hammerMode;clearSel();hud();
+  toast(hammerMode?'Makas hazır! Temizlemek istediğin taşa dokun.':'Makas iptal edildi.');
+  SFX.tick();
+};
 async function trySwap(a,b){
   if(busy||!playing||moves<=0)return;
   if(Math.abs(a.x-b.x)+Math.abs(a.y-b.y)!==1)return;
@@ -1069,6 +1093,7 @@ function collect(t){for(const g of goals)if(g.k===t&&g.n>0)g.n--}
 const done=()=>goals.every(g=>g.n<=0);
 function hud(){
   $('#moves').textContent=moves;$('.moves').classList.toggle('low',playing&&moves<=5&&moves>0);
+  const hb=$('#hammerBtn');if(hb){hb.disabled=hammerUsed||!playing;hb.classList.toggle('armed',hammerMode);hb.innerHTML=hammerUsed?'✓<small>0</small>':'✂️<small>1</small>';hb.title=hammerUsed?'Bu seviyede makas kullanıldı':hammerMode?'Bir taşa dokun':'Bir taşı temizle';}
   $('#goals').innerHTML=goals.map(g=>{
     const ic=g.k==='v'?VINE_IC:g.k==='w'?`<div class="gem" style="inset:0;background:#3f7a37"><svg viewBox="0 0 40 40"><path d="M8 32 Q12 14 16 32 Q20 8 24 32 Q28 16 32 32Z" fill="#8fdc6a"/></svg></div>`:`<div class="gem g${g.k}" style="inset:0">${ICONS[g.k]}</div>`;
     return `<div class="goal${g.n<=0?' ok':''}" data-k="${g.k}" title="${T(g.k==='v'?'Sarmaşık':g.k==='w'?'Yabani ot':TNAME[g.k])}"><div class="mini">${ic}</div><b>${Math.max(0,g.n)}</b></div>`}).join('')+`<div class="goal"><span class="lv">${T('Bulmaca {n}',{n:S.level+1})}</span></div>`;
@@ -1094,13 +1119,14 @@ tilesEl.addEventListener('pointermove',e=>{
 });
 tilesEl.addEventListener('pointerup',()=>{
   if(!down)return;const d=down;down=null;if(d.moved||busy)return;
+   if(hammerMode){useHammer(d.x,d.y);return;}
   if(sel&&Math.abs(sel.x-d.x)+Math.abs(sel.y-d.y)===1){const s=sel;trySwap(s,{x:d.x,y:d.y});return}
   if(sel&&sel.x===d.x&&sel.y===d.y){clearSel();return}
   clearSel();sel={x:d.x,y:d.y};G[d.y][d.x].el.classList.add('sel');SFX.tick();
 });
 
 async function startLevel(){
-  L=levelDef(S.level);moves=L.m;extraUsed=false;score=0;
+  L=levelDef(S.level);moves=L.m;extraUsed=false;score=0;hammerMode=false;hammerUsed=false;
   goals=(L.g||[]).map(([t,n])=>({k:t,n}));
   $('#gardenView').hidden=true;$('#playView').hidden=false;
   $('.top').hidden=true;document.body.classList.add('playing');
