@@ -188,6 +188,28 @@ body.playing #app{gap:8px}
 @keyframes pts{from{opacity:0;transform:translate(-50%,-20%) scale(.6)}25%{opacity:1;transform:translate(-50%,-60%) scale(1.15)}to{opacity:0;transform:translate(-50%,-160%) scale(1)}}
 .tile.land .gem{animation:land .28s ease-out}
 @keyframes land{40%{transform:scale(1.12,.84) translateY(6%)}75%{transform:scale(.95,1.06)}}
+/* Neon şov salonu arka planı */
+body{background:radial-gradient(ellipse 70% 45% at 50% -8%,#ff2d95 0,transparent 70%),radial-gradient(ellipse 60% 50% at -5% 105%,#7a1fff 0,transparent 70%),radial-gradient(ellipse 60% 50% at 105% 100%,#00b8ff 0,transparent 70%),linear-gradient(#2a0a4a,#14052a);background-attachment:fixed;min-height:100%}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.9;
+  background-image:radial-gradient(circle,#fff 0 1px,transparent 1.6px),radial-gradient(circle,#ffd447 0 1.2px,transparent 2px),radial-gradient(circle,#ff8db3 0 1px,transparent 1.6px);
+  background-size:90px 90px,140px 140px,110px 110px;background-position:0 0,40px 70px,70px 20px;animation:twk 3s ease-in-out infinite alternate}
+@keyframes twk{to{opacity:.35}}
+body::after{content:"";position:fixed;left:50%;top:-30vh;width:200vmax;height:200vmax;margin-left:-100vmax;z-index:0;pointer-events:none;mix-blend-mode:screen;opacity:.22;
+  background:conic-gradient(from 0deg,transparent 0 20deg,#ff2d95 24deg,transparent 30deg 110deg,#ffd447 114deg,transparent 120deg 200deg,#00d4ff 204deg,transparent 210deg 290deg,#b46bff 294deg,transparent 300deg);animation:spin 18s linear infinite}
+#app{position:relative;z-index:1}
+.brand{color:#fff;text-shadow:0 0 6px #ff2d95,0 0 16px #ff2d95,0 0 30px #ff5cb0}
+.brand small{color:#ffd6f0;text-shadow:none}
+.scene-wrap,.panel{box-shadow:0 0 0 3px #ffd447,0 0 22px 4px rgba(255,45,149,.55)}
+.board{box-shadow:0 6px 0 #c23c6c,0 0 0 3px #ffd447,0 0 30px 8px rgba(255,45,149,.6),0 0 60px 10px rgba(122,31,255,.45)}
+html{overflow-x:hidden}
+.bulb-row{position:absolute;inset:1px;pointer-events:none;z-index:3}
+.bulb-row i{position:absolute;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:50%;background:#fff6c2;box-shadow:0 0 6px 2px #ffd447;animation:chase 1s steps(1) infinite}
+.bulb-row i:nth-child(3n+1){animation-delay:.33s;background:#ffd1e6;box-shadow:0 0 6px 2px #ff2d95}
+.bulb-row i:nth-child(3n+2){animation-delay:.66s;background:#d4f6ff;box-shadow:0 0 6px 2px #00d4ff}
+.hud .back,.goals,.pill,.icon-btn{box-shadow:0 0 0 2px #ffd447,0 0 12px rgba(255,45,149,.5)}
+.moves{background:linear-gradient(#3b0f66,#1e0838);box-shadow:0 0 0 2px #ffd447,0 0 14px rgba(255,212,71,.6)}
+.moves b{color:#ffd447;text-shadow:0 0 8px rgba(255,212,71,.8)}
+.goal .lv{color:#8a3c9e}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important}.tile{transition-duration:.05s!important}}
 </style>
 <style>[hidden]{display:none!important}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
@@ -221,6 +243,7 @@ body.playing #app{gap:8px}
     <div class="board" id="board">
       <div class="layer cells" id="cells"></div>
       <div class="layer tiles" id="tiles"></div>
+      <div class="bulb-row" id="bulbs"></div>
     </div>
   </section>
 </div>
@@ -832,6 +855,8 @@ async function doTask(id){
 }
 $('#playBtn').onclick=()=>{snd(520);startLevel()};
 
+/* ---------- Tahta ışıkları ---------- */
+{const b=$('#bulbs'),N=12;let h='';for(let i=0;i<N;i++){const t=(i+.5)/N*100;h+=`<i style="left:${t}%;top:0"></i><i style="left:${100-t}%;top:100%"></i><i style="left:100%;top:${t}%"></i><i style="left:0;top:${100-t}%"></i>`}b.innerHTML=h}
 /* ---------- Açılış ---------- */
 buildScene();renderGarden();
 if(!S.intro){
