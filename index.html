@@ -541,12 +541,178 @@ body.playing .tip{border-radius:14px;background:#fff8d9;color:#80552b;border:2px
 .booster:disabled{opacity:.48;filter:grayscale(.65);cursor:default}
 body.playing .booster{border-color:#fff}
 @media(max-width:520px){.booster{min-width:42px;min-height:44px;border-radius:13px}}
-#versionProof{position:fixed;left:8px;top:8px;z-index:9999;padding:7px 11px;border:2px solid #fff;border-radius:999px;background:#ff2f87;color:#fff;font:900 11px/1.2 system-ui,sans-serif;letter-spacing:.04em;box-shadow:0 3px 0 #a91d5b,0 5px 14px rgba(0,0,0,.22);pointer-events:none}
-body.playing #versionProof{top:8px;left:8px;transform:scale(.92);transform-origin:top left}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   PETALPOP 2.0 · RADICAL PRODUCT REDESIGN
+   Cozy premium garden world + editorial quest layout
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+:root{
+  --pp-forest:#173d32;--pp-moss:#47765a;--pp-sage:#a9c6a0;
+  --pp-cream:#fff9ed;--pp-paper:#fffdf8;--pp-ink:#253d34;
+  --pp-coral:#ef7891;--pp-gold:#eebd65;--pp-line:rgba(46,78,58,.13);
+}
+html{background:#e8efdf}
+body{
+  min-height:100%;padding:22px clamp(12px,3vw,36px) 32px;
+  background:
+    radial-gradient(ellipse at 8% 2%,rgba(249,220,157,.7),transparent 32%),
+    radial-gradient(ellipse at 95% 20%,rgba(173,207,173,.48),transparent 30%),
+    linear-gradient(145deg,#e8efdf 0%,#f6f0df 55%,#e5eee3 100%);
+  color:var(--pp-ink);
+}
+#forest{opacity:.13!important;filter:saturate(.55) blur(1px)}
+#app{max-width:1120px;gap:18px}
+.top{
+  min-height:76px;padding:12px 18px;border-radius:23px;
+  background:rgba(255,253,248,.88);border:1px solid rgba(255,255,255,.9);
+  box-shadow:0 12px 34px rgba(38,69,49,.09),inset 0 1px 0 #fff;
+  backdrop-filter:blur(16px);
+}
+.brand{color:var(--pp-forest)!important;text-shadow:none!important;font-size:30px;letter-spacing:-.045em}
+.brand::before{
+  content:"✿";display:inline-grid;place-items:center;width:36px;height:36px;margin-right:8px;
+  border-radius:13px;background:#f8e5df;color:#d86d7e;font-size:22px;vertical-align:2px;
+  box-shadow:inset 0 -2px 0 rgba(157,75,83,.12)
+}
+.brand .pp1{color:#254f3e}.brand .pp2{color:#d8787e}
+.brand small{margin-top:2px;color:#82917c!important;text-shadow:none!important;font-size:10px;letter-spacing:.16em}
+.pill,.icon-btn{
+  background:#f6f2e8!important;border:1px solid #eee6d7;color:#4e6655!important;
+  box-shadow:0 2px 0 rgba(66,91,65,.08)!important
+}
+.pill{padding:9px 15px}
+.icon-btn{width:42px;height:42px}
+#gardenView{
+  display:grid;grid-template-columns:minmax(0,1.55fr) minmax(310px,.85fr);
+  grid-template-areas:"tabs tabs" "scene panel";
+  gap:16px;align-items:stretch
+}
+#gardenView .tabs{grid-area:tabs}
+#gardenView .scene-wrap{
+  grid-area:scene;align-self:stretch;min-width:0;margin:0!important;
+  border:7px solid rgba(255,253,248,.96)!important;border-radius:30px!important;
+  background:#b8d8c0;box-shadow:0 2px 0 #d7dfc9,0 18px 40px rgba(37,75,51,.17)!important;
+  min-height:360px;display:flex;align-items:center
+}
+#gardenView #scene{width:100%;height:auto;filter:saturate(1.08) contrast(1.02)}
+#gardenView .panel{
+  grid-area:panel;align-self:stretch;margin:0!important;padding:24px!important;
+  border:1px solid rgba(255,255,255,.95)!important;border-radius:28px!important;
+  background:linear-gradient(155deg,#fffefa,#f8f3e7)!important;
+  box-shadow:0 2px 0 #e4dfcd,0 18px 40px rgba(37,75,51,.12)!important;
+  color:var(--pp-ink)!important;gap:15px;position:relative;overflow:hidden
+}
+#gardenView .panel::before{
+  content:"YOUR LITTLE WORLD";display:block;position:relative;z-index:1;
+  color:#9a9c7f;font:800 10px/1 var(--body);letter-spacing:.2em
+}
+#gardenView .panel::after{
+  content:"✿";position:absolute;right:20px;top:12px;color:rgba(216,120,126,.11);
+  font-size:100px;line-height:1;pointer-events:none
+}
+#gardenView #playBtn{
+  min-height:84px;border-radius:19px!important;
+  background:linear-gradient(135deg,#e98b8c,#d96d7d)!important;
+  border:1px solid rgba(255,255,255,.8)!important;
+  box-shadow:0 5px 0 #ad5965,0 12px 24px rgba(190,91,103,.2),inset 0 1px 0 rgba(255,255,255,.5)!important;
+  font-size:25px;letter-spacing:.01em
+}
+#gardenView #playBtn::after{display:none}
+#gardenView #playBtn small{font-size:11px;letter-spacing:.13em;text-transform:uppercase;opacity:.9}
+#gardenView .panel h3{
+  margin:7px 0 0!important;color:#365e49!important;font-size:22px!important;
+  letter-spacing:-.02em
+}
+#gardenView .panel h3 #progLbl{color:#92977f;font-size:11px;letter-spacing:.06em}
+#gardenView .prog{height:9px!important;background:#e9e8d8!important;border:0!important}
+#gardenView .prog i{background:linear-gradient(90deg,#8ebd79,#477e60)!important}
+#gardenView #tasks{display:flex!important;flex-direction:column;gap:9px!important;margin-top:0!important}
+#gardenView .task{
+  padding:10px!important;border:1px solid #ece9dc!important;border-radius:17px!important;
+  background:rgba(255,255,255,.72)!important;box-shadow:0 3px 10px rgba(52,76,49,.045)!important
+}
+#gardenView .task .ti{background:#f5e9df!important;border-radius:12px;color:#b66e70}
+#gardenView .task .tn{color:#435b49;font-size:13px}
+#gardenView .task .tn small{color:#9a9b89;font-size:11px}
+#gardenView .task .do{
+  background:#668c68!important;box-shadow:0 3px 0 #456b4c!important;border-radius:11px!important;
+  padding:8px 11px
+}
+#gardenView .task .do[disabled]{background:#d8ddd1!important;box-shadow:0 3px 0 #bdc5b8!important}
+.tabs{display:flex;gap:8px;justify-content:flex-start}
+.tabs button{
+  padding:9px 16px;border-radius:99px;background:rgba(255,253,248,.7);
+  border:1px solid #e5e4d5;color:#6d806c;font-weight:800;font-size:12px
+}
+.tabs button.on{background:#315c48;color:#fff;border-color:#315c48;box-shadow:0 3px 0 #234532}
+body.playing{padding-top:14px;background:linear-gradient(145deg,#e8efdf,#f7f0df 55%,#e5eee3)!important}
+body.playing #app{max-width:680px;gap:12px}
+body.playing #forest{opacity:.08!important}
+body.playing .top{min-height:62px;padding:8px 14px}
+body.playing .brand{font-size:24px}
+body.playing .brand::before{width:30px;height:30px;font-size:18px;border-radius:10px}
+body.playing .hud{gap:10px}
+body.playing .hud .back,body.playing .goals,body.playing .moves,body.playing .booster{
+  border:1px solid rgba(255,255,255,.95);border-radius:17px;
+  box-shadow:0 3px 0 rgba(56,82,59,.12),0 8px 18px rgba(45,73,53,.07)
+}
+body.playing .hud .back{background:#fffaf0;color:#42654f}
+body.playing .goals{background:#fffdf7}
+body.playing .moves{background:#d97883;box-shadow:0 3px 0 #b65e6a}
+body.playing .booster{background:#fffaf0;box-shadow:0 3px 0 #e4d5d1;color:#b86c79}
+body.playing .lvl-title{color:#6d826c;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+body.playing .board{
+  background:linear-gradient(145deg,#d9b985,#b88d68)!important;
+  border:7px solid #fffaf0!important;border-radius:25px!important;padding:7px!important;
+  box-shadow:0 3px 0 #c7b99c,0 18px 40px rgba(47,72,51,.2)!important
+}
+body.playing .board::before{inset:5px;border-radius:14px;background:#88694f}
+body.playing .cells{border-radius:11px}
+body.playing .cell{background:#8f7257}
+body.playing .cell:nth-child(odd){background:#98795c}
+body.playing .tip{background:#fffaf0;color:#5d765d;border:1px solid #e7e2d3;box-shadow:0 4px 12px rgba(30,50,30,.1)}
+#dialog .bubble{background:#fffaf0;border:1px solid rgba(255,255,255,.9)}
+#modal .card{background:#fffaf0;border:1px solid #fff;box-shadow:0 18px 55px rgba(25,48,34,.28)}
+#toast{background:#294b3a;border:1px solid rgba(255,255,255,.3);box-shadow:0 8px 25px rgba(20,40,30,.18)}
+@media(max-width:760px){
+  body{padding:10px 10px 24px}
+  #app{gap:12px}
+  .top{min-height:64px;padding:9px 11px;border-radius:19px}
+  .brand{font-size:24px}
+  .brand::before{width:30px;height:30px;font-size:18px;border-radius:10px;margin-right:6px}
+  .brand small{font-size:9px}
+  #gardenView{grid-template-columns:1fr;grid-template-areas:"tabs" "scene" "panel";gap:12px}
+  #gardenView .scene-wrap{min-height:0;border-width:5px!important;border-radius:23px!important}
+  #gardenView .panel{padding:17px!important;border-radius:23px!important}
+  #gardenView .panel::before{font-size:9px}
+  #gardenView #playBtn{min-height:70px}
+  #gardenView .panel h3{font-size:20px!important}
+  #gardenView #tasks{display:grid!important;grid-template-columns:1fr 1fr!important;gap:7px!important}
+  #gardenView .task{gap:7px;padding:8px!important}
+  #gardenView .task .ti{width:31px;height:31px}
+  #gardenView .task .tn{font-size:11px}
+  #gardenView .task .do{padding:7px 8px;font-size:11px}
+  body.playing{padding:7px 7px 16px}
+  body.playing #app{gap:9px}
+  body.playing .top{min-height:54px;padding:6px 9px}
+  body.playing .brand{font-size:20px}
+  body.playing .brand small{font-size:8px}
+  body.playing .hud{gap:5px}
+  body.playing .hud .back{min-width:40px;padding:0 9px}
+  body.playing .goals{padding:5px;gap:4px}
+  body.playing .goal{font-size:12px}
+  body.playing .moves{min-width:53px;padding:4px 7px}
+  body.playing .booster{min-width:39px;min-height:42px}
+  body.playing .board{--bw:min(calc(100vw - 12px),calc(100dvh - 170px));border-width:5px!important;padding:5px!important}
+}
+@media(max-width:390px){
+  #gardenView #tasks{grid-template-columns:1fr!important}
+  body.playing .goal .mini{width:22px;height:22px}
+}
+
 </style>
 
 <div id="forest" aria-hidden="true"></div>
-<div id="versionProof">YENİ SÜRÜM · 18 KASIM</div>
 <div id="app">
   <header class="top">
     <div class="brand"><span class="pp1">Petal</span><span class="pp2">pop</span><small id="chapterLbl">1. Bölüm · Nevin Nine'nin evi</small></div>
