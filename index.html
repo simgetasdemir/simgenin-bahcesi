@@ -1431,7 +1431,7 @@ async function checkEnd(){
     await sleep(300);SFX.fanfare();flash();
     const left=L.m+(extraUsed?5:0);
     const title=T(score>=6000?'MEGA KAZANÇ!':score>=3500?'SÜPER KAZANÇ!':'BÜYÜK KAZANÇ!');
-    S.level++;S.stars++;S.best=Math.max(S.best||0,score);save();renderGarden();
+    S.level=Math.min(30,S.level+1);S.stars++;S.best=Math.max(S.best||0,score);save();renderGarden();
     const M=$('#modal');M.classList.add('win');
     const p=modal(`<div class="big-star">★</div><div class="jack">${title}</div><div class="bulbs">${'<i></i>'.repeat(9)}</div><div class="score"><span id="scoreN">0</span><small>${T('Bulmaca {n} puanı',{n:S.level})}</small></div><p style="margin-top:10px">${T('+1 yıldız! Bahçede seni bekleyen işler var.')}</p>`,[T('Yıldızı al')]);
     countUp($('#scoreN'),score,1400);
@@ -1440,6 +1440,7 @@ async function checkEnd(){
     const iv=setInterval(()=>{FX.fountain(Math.random()*innerWidth,innerHeight+10,14);FX.burst(Math.random()*innerWidth,Math.random()*innerHeight*.5,['#ffd447','#ff6f9f','#fff'],18,8);snd(800+rnd(600),.08,'triangle',.03)},450);
     await p;clearInterval(iv);M.classList.remove('win');
     goGarden();
+    if(S.level===30){await sleep(500);await modal(`<div class="big-star">🌹</div><div class="jack">${T('BAHAR ŞENLİĞİ!')}</div><p>${T('30 bulmacayı tamamladın. Nevin Nine’nin bahçesi yeniden hayat buldu. Evin, seranın ve Ege Gülü’nün hikâyesini tamamladın!')}</p><p>${T('Yeni bir macera yakında. Şimdilik bahçeni keşfedebilir ve tamamladığın işleri görebilirsin.')}</p>`,[T('Bahçeyi keşfet')]);}
     const sp=$('.pill');sp.classList.remove('bump');void sp.offsetWidth;sp.classList.add('bump');
     const pr=sp.getBoundingClientRect();FX.burst(pr.left+pr.width/2,pr.top+pr.height/2,['#ffd447','#fff'],24,7);chime();
     if(!S.intro){await sleep(600);await playIntro()}
@@ -1824,8 +1825,8 @@ async function doTask(id){
   }
   renderGarden();
 }
-window.__petalTask=id=>doTask(id);window.__petalStartPuzzle=()=>{if(!playing)startLevel()};window.__petalLocked=()=>toast('Quyidagi bulmacalar sırasıyla açılır. Önce açık olanı tamamla!');
-$('#playBtn').onclick=async()=>{snd(520);await Ads.midgame();startLevel()};
+window.__petalTask=id=>doTask(id);window.__petalStartPuzzle=()=>{if(!playing&&S.level<30)startLevel();else if(S.level>=30)toast('30 bulmacalık ilk hikâyeyi tamamladın!')};window.__petalLocked=()=>toast('Quyidagi bulmacalar sırasıyla açılır. Önce açık olanı tamamla!');
+$('#playBtn').onclick=async()=>{if(S.level>=30){toast(T('İlk hikâye tamamlandı! Yeni macera yakında.'));return}snd(520);await Ads.midgame();startLevel()};
 
 
 /* ---------- 30 seviyelik bölüm haritası ---------- */
@@ -1927,7 +1928,7 @@ const parts={otlar:weeds,cit:damage,kapi:oldDoor,fener:oldWin,cesme:chimney,tarh
 const spots={otlar:[-3,.5,3],cit:[-2,4.3,-2],yol:[0,.4,4.7],tarh:[-4,.5,2.4],cesme:[4,1,2.5],kedi:[-4,.6,-.5],salincak:[6,.8,-2],cay:[2,.5,4],fener:[-1.8,2.4,.5],kapi:[0,1.8,.2]};const markerGroup=G(),markers=[];const puzzleGroup=G(),puzzleNodes=[];const ray=new THREE.Raycaster(),pointer=new THREE.Vector2();
 const puzzleSpots=[[-3.2,.18,5.4],[-2.1,.18,4.25],[-.9,.18,5.5],[.5,.18,4.1],[1.8,.18,5.35],[3.1,.18,4.15]];
 function labelSprite(txt,color){const c=document.createElement('canvas');c.width=128;c.height=128;const x=c.getContext('2d');x.fillStyle='rgba(48,62,43,.88)';x.beginPath();x.arc(64,64,54,0,Math.PI*2);x.fill();x.strokeStyle='#f5d88b';x.lineWidth=7;x.stroke();x.fillStyle=color;x.font='bold 58px system-ui';x.textAlign='center';x.textBaseline='middle';x.fillText(txt,64,67);const tex=new THREE.CanvasTexture(c);const mat=new THREE.SpriteMaterial({map:tex,transparent:true,depthWrite:false});const sp=new THREE.Sprite(mat);sp.scale.set(.72,.72,1);return sp}
-function updatePuzzleNodes(level){for(const n of puzzleNodes)puzzleGroup.remove(n);puzzleNodes.length=0;for(let i=0;i<6;i++){const g=G(puzzleGroup);g.position.set(...puzzleSpots[i]);const unlocked=i<=level,completed=i<level;const base=new THREE.Mesh(new THREE.CylinderGeometry(.43,.5,.22,32),M(completed?'#9aaf75':unlocked?'#d4b56d':'#788078'));base.position.y=.11;g.add(base);const ring=new THREE.Mesh(new THREE.TorusGeometry(.34,.045,8,32),M(completed?'#d8f0a1':unlocked?'#ffe18a':'#626b65'));ring.rotation.x=-Math.PI/2;ring.position.y=.25;g.add(ring);const orb=new THREE.Mesh(new THREE.SphereGeometry(.19,20,16),M(completed?'#9bd37d':unlocked?'#f3c86d':'#8b9690'));orb.position.y=.48;g.add(orb);const sp=labelSprite(completed?'✓':unlocked?String(i+1):'🔒', '#fff8df');sp.position.y=1.02;g.add(sp);g.userData.puzzle=true;g.userData.unlocked=unlocked;g.userData.completed=completed;puzzleNodes.push(g)}}
+function updatePuzzleNodes(level){for(const n of puzzleNodes)puzzleGroup.remove(n);puzzleNodes.length=0;for(let i=0;i<6;i++){const g=G(puzzleGroup);g.position.set(...puzzleSpots[i]);const completed=level>=(i+1)*5,unlocked=!completed&&level>=i*5;const base=new THREE.Mesh(new THREE.CylinderGeometry(.43,.5,.22,32),M(completed?'#9aaf75':unlocked?'#d4b56d':'#788078'));base.position.y=.11;g.add(base);const ring=new THREE.Mesh(new THREE.TorusGeometry(.34,.045,8,32),M(completed?'#d8f0a1':unlocked?'#ffe18a':'#626b65'));ring.rotation.x=-Math.PI/2;ring.position.y=.25;g.add(ring);const orb=new THREE.Mesh(new THREE.SphereGeometry(.19,20,16),M(completed?'#9bd37d':unlocked?'#f3c86d':'#8b9690'));orb.position.y=.48;g.add(orb);const sp=labelSprite(completed?'✓':unlocked?String(i+1):'🔒', '#fff8df');sp.position.y=1.02;g.add(sp);g.userData.puzzle=true;g.userData.unlocked=unlocked;g.userData.completed=completed;puzzleNodes.push(g)}}
 
 function updateMarkers(snap){for(const o of markers)markerGroup.remove(o);markers.length=0;for(const t of snap?.tasks||[]){const p=spots[t.id];if(!p)continue;const g=G(markerGroup);g.position.set(...p);const ring=new THREE.Mesh(new THREE.TorusGeometry(.34,.055,8,28),new THREE.MeshStandardMaterial({color:'#ffe18a',emissive:'#a56a25',emissiveIntensity:.8}));ring.rotation.x=-Math.PI/2;g.add(ring);S(g,0,.12,0,.13,m.gold);g.userData.task=t.id;markers.push(g)}}
 function sync(snap){if(!snap)return;const d=new Set(snap.done||[]);weeds.visible=!d.has('otlar');damage.visible=!d.has('cit');oldDoor.visible=!d.has('kapi');newDoor.visible=d.has('kapi');oldWin.visible=!d.has('fener');newWin.visible=d.has('fener');chimney.visible=!d.has('cesme');beds.visible=d.has('tarh');updateMarkers(snap);updatePuzzleNodes(Math.max(0,Math.min(6,snap.level||0)))}
