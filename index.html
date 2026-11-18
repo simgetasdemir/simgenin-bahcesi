@@ -1133,7 +1133,7 @@ async function startLevel(){
   buildBoard();
   const wc=WD.flat().reduce((a,b)=>a+b,0);if(wc)goals.push({k:'w',n:wc});
   const vc=all().filter(o=>o.lock).length;if(vc)goals.push({k:'v',n:vc});
-  hud();playing=true;busy=false;armHint();Ads.start();
+  playing=true;busy=false;hud();armHint();Ads.start();
   let tipTxt=null;
   if(S.level===0)tipTxt=T('Yan yana iki taşı kaydırarak yer değiştir. Aynı türden 3 taşı sıraya diz!');
   else if(S.level===1)tipTxt=T("4'lü dizi çizgili taş, L ya da T şekli bomba, 5'li dizi gökkuşağı tohumu yapar.");
