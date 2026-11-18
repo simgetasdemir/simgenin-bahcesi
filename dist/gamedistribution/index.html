@@ -191,6 +191,11 @@ body.playing #app{gap:8px}
   text-shadow:0 2px 0 var(--rose),0 0 6px rgba(0,0,0,.35);animation:pts .8s ease-out forwards;white-space:nowrap}
 @keyframes pts{from{opacity:0;transform:translate(-50%,-20%) scale(.6)}25%{opacity:1;transform:translate(-50%,-60%) scale(1.15)}to{opacity:0;transform:translate(-50%,-160%) scale(1)}}
 .tile.land .gem{animation:land .28s ease-out}
+.vine{position:absolute;inset:-2%;pointer-events:none;z-index:2;filter:drop-shadow(0 2px 1px rgba(0,0,0,.35))}
+.vine svg{width:100%;height:100%;display:block}
+.tile.locked .gem{filter:brightness(.95)}
+.vine.snap{animation:snap .35s ease-in forwards}
+@keyframes snap{to{transform:scale(1.5) rotate(25deg);opacity:0}}
 @keyframes land{40%{transform:scale(1.12,.84) translateY(6%)}75%{transform:scale(.95,1.06)}}
 /* Orman arka planı */
 body{background:#2e6b3a;min-height:100%}
@@ -305,7 +310,7 @@ const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 
 /* ---------- Dil ---------- */
 let LANG=S.lang||((navigator.language||'en').toLowerCase().startsWith('tr')?'tr':'en');
-const EN={"Oyna": "Play", "Bulmaca {n}": "Puzzle {n}", "hamle": "moves", "dokun ›": "tap ›", "Bahçe işleri": "Garden tasks", "Ön bahçe": "Front garden", "Arka bahçe": "Backyard", "Yıldızların": "Your stars", "Sesi aç/kapat": "Sound on/off", "Bahçeye dön": "Back to garden", "Dili değiştir": "Change language", "1. Bölüm · Nevin Nine'nin evi": "Chapter 1 · Grandma Nevin's house", "2. Bölüm · Ege Gülü": "Chapter 2 · The Aegean Rose", "{n} yıldız gerekli": "Needs {n} stars", "1. bölüm tamamlandı!": "Chapter 1 complete!", "Arka bahçede 2. bölüm seni bekliyor.": "Chapter 2 is waiting in the backyard.", "2. bölüm tamamlandı!": "Chapter 2 complete!", "3. bölüm yakında. Yıldız toplamaya devam edebilirsin.": "Chapter 3 is coming soon. Keep collecting stars!", "{n} yıldız daha lazım. Bir bulmaca oyna!": "You need {n} more stars. Play a puzzle!", "Sonra fikrini değiştiremezsin, iyi seç!": "You can't change it later, so choose well!", "Vazgeç": "Cancel", "Nevin Nine'nin bahçesi yeniden çiçek açtı. Şimdi sıra arka bahçede: Ege Gülü ve Bahar Şenliği.": "Grandma Nevin's garden is blooming again. Next up is the backyard: the Aegean Rose and the Spring Festival.", "Arka bahçeye git": "Go to the backyard", "ŞENLİK BİRİNCİSİ!": "FESTIVAL CHAMPION!", "Ege Gülü kırk yıl sonra yeniden açtı ve Bahar Şenliği'nde birinci oldu. 3. bölüm yakında!": "The Aegean Rose bloomed again after forty years and won first prize at the Spring Festival. Chapter 3 is coming soon!", "Yaşasın!": "Hooray!", "Çiçek": "Flower", "Yaprak": "Leaf", "Damla": "Drop", "Limon": "Lemon", "Üzüm": "Grape", "Yabani ot": "Weeds", "yabani ot": "weeds", "Tatlı!": "Sweet!", "Şahane!": "Lovely!", "Nefis!": "Delicious!", "Şeker patlaması!": "Sugar rush!", "İnanılmaz!": "Incredible!", "Efsane!": "Legendary!", "Gökkuşağı!": "Rainbow!", "Bahçe şenliği!": "Garden party!", "Taşlar karıştırıldı": "Tiles shuffled", "MEGA KAZANÇ!": "MEGA BLOOM!", "SÜPER KAZANÇ!": "SUPER BLOOM!", "BÜYÜK KAZANÇ!": "BIG BLOOM!", "Bulmaca {n} puanı": "Puzzle {n} score", "+1 yıldız! Bahçede seni bekleyen işler var.": "+1 star! Tasks are waiting for you in the garden.", "Yıldızı al": "Collect star", "📺 Reklam izle: +5 hamle": "📺 Watch an ad: +5 moves", "★1 ver: +5 hamle": "Spend ★1: +5 moves", "+5 hamle ile devam": "Continue with +5 moves", "Tekrar dene": "Try again", "Hamleler bitti": "Out of moves", "{list} kaldı. Az kaldı!": "Still {list} to go. So close!", "1 yıldız karşılığında +5 hamle!": "+5 moves for 1 star!", "Teşekkürler! +5 hamle": "Thanks! +5 moves", "Reklam şu an yok, tekrar deneyebilirsin": "No ad available right now. Try again later.", "Bahçeye dönülsün mü?": "Back to the garden?", "Bu bulmacadaki ilerlemen kaybolur.": "You'll lose your progress in this puzzle.", "Oynamaya devam": "Keep playing", "Yan yana iki taşı kaydırarak yer değiştir. Aynı türden 3 taşı sıraya diz!": "Swipe two neighboring tiles to swap them. Line up 3 of the same kind!", "4'lü dizi çizgili taş, L ya da T şekli bomba, 5'li dizi gökkuşağı tohumu yapar.": "4 in a row makes a striped tile, an L or T shape makes a bomb, 5 in a row makes a rainbow seed.", "Yeşil kareler yabani ot. Üstlerinde taş patlat, koyu olanlara iki kez vur!": "Green squares are weeds. Pop tiles on them. Dark ones need two hits!", "Simge": "Simge", "Rıza Usta": "Uncle Rıza", "Ela": "Ela", "Fıstık": "Pistachio", "Saffet Hanım": "Mrs. Saffet", "İpucu": "Tip", "Nevin Nine'nin mektubu": "Grandma Nevin's letter", "Kuru otları temizle": "Clear the dry weeds", "Çiti onar": "Fix the fence", "Taş yolu döşe": "Lay the stone path", "Çiçek tarhı ek": "Plant a flower bed", "Eski çeşmeyi onar": "Repair the old fountain", "Kediye yuva yap": "Make a bed for the cat", "Zeytine salıncak as": "Hang a swing on the olive tree", "Çay köşesi kur": "Set up a tea corner", "Fenerleri as": "Hang the lanterns", "Bahçe kapısını boya": "Paint the garden gate", "Dikenli çalıları temizle": "Clear the thorny bushes", "Eski serayı onar": "Repair the old greenhouse", "Ege Gülü tohumlarını ek": "Plant the Aegean Rose seeds", "Eski kuyuyu onar": "Repair the old well", "Gül kemeri kur": "Build a rose arch", "Kemerin altına bank koy": "Put a bench under the arch", "Arı kovanı yerleştir": "Set up a beehive", "Sebze tarhı kur": "Plant a vegetable bed", "Ege Gülü'nü açtır": "Make the Aegean Rose bloom", "Şenlik bayraklarını as": "Hang the festival flags", "Tarha ne ekelim?": "What should we plant?", "Lavanta": "Lavender", "Gül": "Rose", "Papatya": "Daisy", "Sandalyeler hangi renk olsun?": "What color should the chairs be?", "Ege mavisi": "Aegean blue", "Limon sarısı": "Lemon yellow", "Kireç beyazı": "Chalk white", "Kapı hangi renge boyansın?": "What color should the gate be?", "Lacivert": "Navy blue", "Zeytin yeşili": "Olive green", "Begonvil pembesi": "Bougainvillea pink", "Bank hangi renk olsun?": "What color should the bench be?", "Lavanta moru": "Lavender purple", "Nane yeşili": "Mint green", "Bayraklar hangi renkte olsun?": "What color should the flags be?", "Gökkuşağı": "Rainbow", "Pembe beyaz": "Pink and white", "Mavi beyaz": "Blue and white", "Oh be! Kuru otların altından yemyeşil bir çimen çıktı.": "Phew! There was bright green grass under all those dry weeds.", "Aferin kızım. Nevin Hanım her sabah buraya çıkıp çiçeklerine günaydın derdi.": "Well done, dear. Every morning Nevin came out here to say good morning to her flowers.", "Çivileri sağlam çak. Burası poyraz alır, ilk rüzgârda yıkılmasın.": "Hammer those nails in tight. The north wind blows hard here.", "Bakın usta, begonvil de açtı! Çit düzelince güneş ona da vurmaya başladı.": "Look, the bougainvillea is blooming! Now that the fence is fixed, it gets the sun too.", "Hmm. Fena olmamış. Ama daha yapılacak çok iş var.": "Hmm. Not bad. But there's still a lot of work to do.", "Simge?! Gerçekten sen misin? Çocukken bu yolda bisiklet sürerdik!": "Simge?! Is that really you? We used to ride our bikes on this path as kids!", "Ela! Hâlâ köyün çiçekçisi misin?": "Ela! Are you still the village florist?", "Tabii ki. Bir tarh kurarsan fideleri benden al. Sana arkadaş fiyatı!": "Of course. If you plant a flower bed, get the seedlings from me. Friends' discount!", "Çok yakıştı! Bak, arılar şimdiden keşfetti bile.": "It looks perfect! Look, the bees have already found it.", "Ninem de hep çiçek ekerdi. Sanki bahçe yeniden nefes alıyor.": "Grandma always planted flowers. It feels like the garden is breathing again.", "Çeşmenin bir taşı oynuyor... İçinde küçük bir teneke kutu var!": "One of the fountain stones is loose... There's a little tin box inside!", "\"Simge'ciğim, bu tohumları sana sakladım. Bahar Şenliği'nde ek. Gerisini Rıza bilir.\"": "\"My dear Simge, I saved these seeds for you. Plant them for the Spring Festival. Rıza knows the rest.\"", "Rıza Usta? Siz bu kutuyu biliyor musunuz?": "Uncle Rıza? Do you know about this box?", "Bilirim... Ama önce bir çay demleyelim, sonra anlatırım.": "I do... But let's brew some tea first, then I'll tell you.", "Miyav!": "Meow!", "Miyav?": "Meow?", "Sen de kimsin bakalım? Tasmasında \"Fıstık\" yazıyor.": "And who are you? Your collar says \"Pistachio\".", "Nevin Hanım'ın kedisi. Ondan beri benim bahçede yatıyordu. Demek evine döndü.": "That's Nevin's cat. She's been sleeping in my garden ever since. Looks like she's come home.", "Ninem beni bu zeytin ağacının altında sallardı.": "Grandma used to push me on a swing under this olive tree.", "Seni sallarken hep aynı türküyü mırıldanırdı. Bütün sokak duyardı.": "She always hummed the same folk song while she pushed you. The whole street could hear it.", "İşte şimdi oldu. Otur bakalım, anlatayım.": "Now that's more like it. Sit down and I'll tell you.", "O tohumlar Nevin Hanım'ın \"Ege Gülü\". Kırk yıl önce şenlikte birinci olmuştu. Tohumunu kimseye vermedi.": "Those seeds are Nevin's \"Aegean Rose\". It won first prize at the festival forty years ago. She never gave its seeds to anyone.", "Ve bana bıraktı... Bu yıl Ege Gülü'nü şenlikte yeniden açtıracağım!": "And she left them to me... This year I'll make the Aegean Rose bloom at the festival again!", "Akşam oldu bak! Bahçe masal gibi görünüyor.": "Evening's here! The garden looks like a fairy tale.", "Ninem görse çok sevinirdi.": "Grandma would have loved to see this.", "Bence görüyor.": "I think she can.", "Şenlik kurulu bahçeni görmeye gelecek kızım. Kapıdan girer girmez ağızları açık kalacak.": "The festival committee is coming to see your garden, dear. Their jaws will drop the moment they walk in.", "Ben de dükkânda herkese anlattım. Bütün köy merak ediyor!": "I told everyone at the shop. The whole village is curious!", "O zaman sıra Ege Gülü'nde. Hadi tohumları ekelim!": "Then it's time for the Aegean Rose. Let's plant those seeds!", "Arka bahçe de orman olmuş! Bu dikenlerin altında ne var acaba?": "The backyard is a jungle too! I wonder what's under these thorns.", "Nevin Hanım'ın serası. Ege Gülü orada büyürdü.": "Nevin's greenhouse. That's where the Aegean Rose grew.", "Camları tek tek sildim, bak nasıl parlıyor!": "I cleaned every pane of glass. Look how it shines!", "Tohumlar için mükemmel bir yuva oldu.": "It's the perfect home for the seeds.", "\"Her sabah bir avuç su, bir de güzel bir söz. Gül dediğin sevgiyle büyür.\"": "\"A handful of water and a kind word every morning. A rose grows with love.\"", "Söz veriyorum nine, her sabah onlarla konuşacağım.": "I promise, Grandma. I'll talk to them every morning.", "Demek Nevin'in torunu sensin. Ben Saffet. Karşı köyün gül bahçesi benimdir.": "So you're Nevin's granddaughter. I'm Saffet. The rose garden in the next village is mine.", "On iki yıldır şenliğin birincisiyim. Sana bol şans... İhtiyacın olacak.": "I've won the festival twelve years in a row. Good luck... You'll need it.", "Bu da kimdi böyle?": "Who on earth was that?", "Boş ver kızım. Nevin Hanım'la gençliklerinde can dosttular, sonra küstüler.": "Never mind her, dear. She and Nevin were best friends when they were young. Then they fell out.", "Bu kemerin altından geçen herkes gülümser!": "Everyone who walks under this arch will smile!", "Şenlikte jüri de buradan geçecek.": "The festival judges will walk through here too.", "Nevin Hanım'la Saffet bu bankta saatlerce otururdu.": "Nevin and Saffet used to sit on this bench for hours.", "Peki neden küstüler?": "So why did they fall out?", "Bir gül yüzünden. Gerisini o anlatsın.": "Over a rose. Let her tell you the rest.", "Korkma Fıstık, arılar dostumuz. Güllerimizi onlar tozlayacak.": "Don't worry, Pistachio. Bees are our friends. They'll pollinate our roses.", "Şenlik sofrası için domates, biber... Hepsi senin bahçenden!": "Tomatoes and peppers for the festival table... All from your garden!", "Ninemin domatesli böreği de olmazsa olmaz.": "And Grandma's tomato pastry is a must.", "Rıza Usta! Çabuk gelin, açtı!": "Uncle Rıza! Come quick, it's blooming!", "Kırk yıl... Kırk yıl sonra Ege Gülü yeniden açtı. Nevin Hanım, görüyor musun?": "Forty years... After forty years the Aegean Rose is blooming again. Nevin, can you see it?", "...Bu koku. Nevin'in gülü. Hiç unutmadım.": "...That scent. Nevin's rose. I never forgot it.", "Jüri kararını verdi. Bu yılın birincisi... Simge'nin Bahçesi!": "The judges have decided. This year's winner is... Simge's Garden!", "Nevin'le aramız bu gül yüzünden açılmıştı. Bir dal istemiştim, vermedi. Şimdi anlıyorum, sana saklıyormuş.": "Nevin and I fell out over this rose. I asked her for a cutting and she refused. Now I understand. She was saving it for you.", "O zaman ilk dalı size vereyim Saffet Hanım. Ninem de bunu isterdi.": "Then let me give you the first cutting, Mrs. Saffet. Grandma would have wanted that.", "...Teşekkür ederim, kızım.": "...Thank you, dear.", "Şenlik başlasın!": "Let the festival begin!", "Tohumları ekmek için uygun bir yer lazım.": "I need a good place to plant the seeds.", "Evin arkasına hiç baktın mı? Nevin Hanım'ın asıl hazinesi orada.": "Have you looked behind the house? Nevin's real treasure is back there.", "Arka bahçe açıldı! Yeni işler ve 20 yeni bulmaca seni bekliyor.": "The backyard is open! New tasks and 20 new puzzles are waiting for you.", "İşte geldim... Nevin Nine'nin evi. Ama bu bahçe ne hale gelmiş böyle!": "Here I am... Grandma Nevin's house. But look at the state of this garden!", "\"Bahçemi sana emanet ediyorum Simge'ciğim. Onu yeniden çiçeklendir.\"": "\"I'm leaving my garden in your care, my dear Simge. Make it bloom again.\"", "Hoş geldin kızım. Ben Rıza, yan komşunuz. Bu bahçe bir zamanlar köyün en güzeliydi.": "Welcome, dear. I'm Rıza, your next-door neighbor. This garden was once the prettiest in the village.", "Bahar Şenliği'ne bir ay var. Yetişir mi, bilmem...": "The Spring Festival is a month away. Can it be ready in time? I'm not so sure...", "Yetişecek! Hemen işe koyuluyorum.": "It will be! I'm getting to work right now.", "Bulmacaları çöz, her biri sana 1 yıldız kazandırır. Yıldızlarla bahçe işlerini yap ve hikayeyi ilerlet.": "Each puzzle you solve earns 1 star. Spend stars on garden tasks to move the story forward."};
+const EN={"Oyna": "Play", "Bulmaca {n}": "Puzzle {n}", "hamle": "moves", "dokun ›": "tap ›", "Bahçe işleri": "Garden tasks", "Ön bahçe": "Front garden", "Arka bahçe": "Backyard", "Yıldızların": "Your stars", "Sesi aç/kapat": "Sound on/off", "Bahçeye dön": "Back to garden", "Dili değiştir": "Change language", "1. Bölüm · Nevin Nine'nin evi": "Chapter 1 · Grandma Nevin's house", "2. Bölüm · Ege Gülü": "Chapter 2 · The Aegean Rose", "{n} yıldız gerekli": "Needs {n} stars", "1. bölüm tamamlandı!": "Chapter 1 complete!", "Arka bahçede 2. bölüm seni bekliyor.": "Chapter 2 is waiting in the backyard.", "2. bölüm tamamlandı!": "Chapter 2 complete!", "3. bölüm yakında. Yıldız toplamaya devam edebilirsin.": "Chapter 3 is coming soon. Keep collecting stars!", "{n} yıldız daha lazım. Bir bulmaca oyna!": "You need {n} more stars. Play a puzzle!", "Sonra fikrini değiştiremezsin, iyi seç!": "You can't change it later, so choose well!", "Vazgeç": "Cancel", "Nevin Nine'nin bahçesi yeniden çiçek açtı. Şimdi sıra arka bahçede: Ege Gülü ve Bahar Şenliği.": "Grandma Nevin's garden is blooming again. Next up is the backyard: the Aegean Rose and the Spring Festival.", "Arka bahçeye git": "Go to the backyard", "ŞENLİK BİRİNCİSİ!": "FESTIVAL CHAMPION!", "Ege Gülü kırk yıl sonra yeniden açtı ve Bahar Şenliği'nde birinci oldu. 3. bölüm yakında!": "The Aegean Rose bloomed again after forty years and won first prize at the Spring Festival. Chapter 3 is coming soon!", "Yaşasın!": "Hooray!", "Çiçek": "Flower", "Yaprak": "Leaf", "Damla": "Drop", "Limon": "Lemon", "Üzüm": "Grape", "Yabani ot": "Weeds", "Sarmaşık": "Vines", "sarmaşık": "vines", "Sarmaşıklı taşlar kaydırılamaz. Onları bir eşleşmeye kat ya da özel taşla vur, sarmaşık kopsun!": "Tiles wrapped in vines can't be moved. Include them in a match or hit them with a special tile to snap the vines!", "yabani ot": "weeds", "Tatlı!": "Sweet!", "Şahane!": "Lovely!", "Nefis!": "Delicious!", "Şeker patlaması!": "Sugar rush!", "İnanılmaz!": "Incredible!", "Efsane!": "Legendary!", "Gökkuşağı!": "Rainbow!", "Bahçe şenliği!": "Garden party!", "Taşlar karıştırıldı": "Tiles shuffled", "MEGA KAZANÇ!": "MEGA BLOOM!", "SÜPER KAZANÇ!": "SUPER BLOOM!", "BÜYÜK KAZANÇ!": "BIG BLOOM!", "Bulmaca {n} puanı": "Puzzle {n} score", "+1 yıldız! Bahçede seni bekleyen işler var.": "+1 star! Tasks are waiting for you in the garden.", "Yıldızı al": "Collect star", "📺 Reklam izle: +5 hamle": "📺 Watch an ad: +5 moves", "★1 ver: +5 hamle": "Spend ★1: +5 moves", "+5 hamle ile devam": "Continue with +5 moves", "Tekrar dene": "Try again", "Hamleler bitti": "Out of moves", "{list} kaldı. Az kaldı!": "Still {list} to go. So close!", "1 yıldız karşılığında +5 hamle!": "+5 moves for 1 star!", "Teşekkürler! +5 hamle": "Thanks! +5 moves", "Reklam şu an yok, tekrar deneyebilirsin": "No ad available right now. Try again later.", "Bahçeye dönülsün mü?": "Back to the garden?", "Bu bulmacadaki ilerlemen kaybolur.": "You'll lose your progress in this puzzle.", "Oynamaya devam": "Keep playing", "Yan yana iki taşı kaydırarak yer değiştir. Aynı türden 3 taşı sıraya diz!": "Swipe two neighboring tiles to swap them. Line up 3 of the same kind!", "4'lü dizi çizgili taş, L ya da T şekli bomba, 5'li dizi gökkuşağı tohumu yapar.": "4 in a row makes a striped tile, an L or T shape makes a bomb, 5 in a row makes a rainbow seed.", "Yeşil kareler yabani ot. Üstlerinde taş patlat, koyu olanlara iki kez vur!": "Green squares are weeds. Pop tiles on them. Dark ones need two hits!", "Simge": "Simge", "Rıza Usta": "Uncle Rıza", "Ela": "Ela", "Fıstık": "Pistachio", "Saffet Hanım": "Mrs. Saffet", "İpucu": "Tip", "Nevin Nine'nin mektubu": "Grandma Nevin's letter", "Kuru otları temizle": "Clear the dry weeds", "Çiti onar": "Fix the fence", "Taş yolu döşe": "Lay the stone path", "Çiçek tarhı ek": "Plant a flower bed", "Eski çeşmeyi onar": "Repair the old fountain", "Kediye yuva yap": "Make a bed for the cat", "Zeytine salıncak as": "Hang a swing on the olive tree", "Çay köşesi kur": "Set up a tea corner", "Fenerleri as": "Hang the lanterns", "Bahçe kapısını boya": "Paint the garden gate", "Dikenli çalıları temizle": "Clear the thorny bushes", "Eski serayı onar": "Repair the old greenhouse", "Ege Gülü tohumlarını ek": "Plant the Aegean Rose seeds", "Eski kuyuyu onar": "Repair the old well", "Gül kemeri kur": "Build a rose arch", "Kemerin altına bank koy": "Put a bench under the arch", "Arı kovanı yerleştir": "Set up a beehive", "Sebze tarhı kur": "Plant a vegetable bed", "Ege Gülü'nü açtır": "Make the Aegean Rose bloom", "Şenlik bayraklarını as": "Hang the festival flags", "Tarha ne ekelim?": "What should we plant?", "Lavanta": "Lavender", "Gül": "Rose", "Papatya": "Daisy", "Sandalyeler hangi renk olsun?": "What color should the chairs be?", "Ege mavisi": "Aegean blue", "Limon sarısı": "Lemon yellow", "Kireç beyazı": "Chalk white", "Kapı hangi renge boyansın?": "What color should the gate be?", "Lacivert": "Navy blue", "Zeytin yeşili": "Olive green", "Begonvil pembesi": "Bougainvillea pink", "Bank hangi renk olsun?": "What color should the bench be?", "Lavanta moru": "Lavender purple", "Nane yeşili": "Mint green", "Bayraklar hangi renkte olsun?": "What color should the flags be?", "Gökkuşağı": "Rainbow", "Pembe beyaz": "Pink and white", "Mavi beyaz": "Blue and white", "Oh be! Kuru otların altından yemyeşil bir çimen çıktı.": "Phew! There was bright green grass under all those dry weeds.", "Aferin kızım. Nevin Hanım her sabah buraya çıkıp çiçeklerine günaydın derdi.": "Well done, dear. Every morning Nevin came out here to say good morning to her flowers.", "Çivileri sağlam çak. Burası poyraz alır, ilk rüzgârda yıkılmasın.": "Hammer those nails in tight. The north wind blows hard here.", "Bakın usta, begonvil de açtı! Çit düzelince güneş ona da vurmaya başladı.": "Look, the bougainvillea is blooming! Now that the fence is fixed, it gets the sun too.", "Hmm. Fena olmamış. Ama daha yapılacak çok iş var.": "Hmm. Not bad. But there's still a lot of work to do.", "Simge?! Gerçekten sen misin? Çocukken bu yolda bisiklet sürerdik!": "Simge?! Is that really you? We used to ride our bikes on this path as kids!", "Ela! Hâlâ köyün çiçekçisi misin?": "Ela! Are you still the village florist?", "Tabii ki. Bir tarh kurarsan fideleri benden al. Sana arkadaş fiyatı!": "Of course. If you plant a flower bed, get the seedlings from me. Friends' discount!", "Çok yakıştı! Bak, arılar şimdiden keşfetti bile.": "It looks perfect! Look, the bees have already found it.", "Ninem de hep çiçek ekerdi. Sanki bahçe yeniden nefes alıyor.": "Grandma always planted flowers. It feels like the garden is breathing again.", "Çeşmenin bir taşı oynuyor... İçinde küçük bir teneke kutu var!": "One of the fountain stones is loose... There's a little tin box inside!", "\"Simge'ciğim, bu tohumları sana sakladım. Bahar Şenliği'nde ek. Gerisini Rıza bilir.\"": "\"My dear Simge, I saved these seeds for you. Plant them for the Spring Festival. Rıza knows the rest.\"", "Rıza Usta? Siz bu kutuyu biliyor musunuz?": "Uncle Rıza? Do you know about this box?", "Bilirim... Ama önce bir çay demleyelim, sonra anlatırım.": "I do... But let's brew some tea first, then I'll tell you.", "Miyav!": "Meow!", "Miyav?": "Meow?", "Sen de kimsin bakalım? Tasmasında \"Fıstık\" yazıyor.": "And who are you? Your collar says \"Pistachio\".", "Nevin Hanım'ın kedisi. Ondan beri benim bahçede yatıyordu. Demek evine döndü.": "That's Nevin's cat. She's been sleeping in my garden ever since. Looks like she's come home.", "Ninem beni bu zeytin ağacının altında sallardı.": "Grandma used to push me on a swing under this olive tree.", "Seni sallarken hep aynı türküyü mırıldanırdı. Bütün sokak duyardı.": "She always hummed the same folk song while she pushed you. The whole street could hear it.", "İşte şimdi oldu. Otur bakalım, anlatayım.": "Now that's more like it. Sit down and I'll tell you.", "O tohumlar Nevin Hanım'ın \"Ege Gülü\". Kırk yıl önce şenlikte birinci olmuştu. Tohumunu kimseye vermedi.": "Those seeds are Nevin's \"Aegean Rose\". It won first prize at the festival forty years ago. She never gave its seeds to anyone.", "Ve bana bıraktı... Bu yıl Ege Gülü'nü şenlikte yeniden açtıracağım!": "And she left them to me... This year I'll make the Aegean Rose bloom at the festival again!", "Akşam oldu bak! Bahçe masal gibi görünüyor.": "Evening's here! The garden looks like a fairy tale.", "Ninem görse çok sevinirdi.": "Grandma would have loved to see this.", "Bence görüyor.": "I think she can.", "Şenlik kurulu bahçeni görmeye gelecek kızım. Kapıdan girer girmez ağızları açık kalacak.": "The festival committee is coming to see your garden, dear. Their jaws will drop the moment they walk in.", "Ben de dükkânda herkese anlattım. Bütün köy merak ediyor!": "I told everyone at the shop. The whole village is curious!", "O zaman sıra Ege Gülü'nde. Hadi tohumları ekelim!": "Then it's time for the Aegean Rose. Let's plant those seeds!", "Arka bahçe de orman olmuş! Bu dikenlerin altında ne var acaba?": "The backyard is a jungle too! I wonder what's under these thorns.", "Nevin Hanım'ın serası. Ege Gülü orada büyürdü.": "Nevin's greenhouse. That's where the Aegean Rose grew.", "Camları tek tek sildim, bak nasıl parlıyor!": "I cleaned every pane of glass. Look how it shines!", "Tohumlar için mükemmel bir yuva oldu.": "It's the perfect home for the seeds.", "\"Her sabah bir avuç su, bir de güzel bir söz. Gül dediğin sevgiyle büyür.\"": "\"A handful of water and a kind word every morning. A rose grows with love.\"", "Söz veriyorum nine, her sabah onlarla konuşacağım.": "I promise, Grandma. I'll talk to them every morning.", "Demek Nevin'in torunu sensin. Ben Saffet. Karşı köyün gül bahçesi benimdir.": "So you're Nevin's granddaughter. I'm Saffet. The rose garden in the next village is mine.", "On iki yıldır şenliğin birincisiyim. Sana bol şans... İhtiyacın olacak.": "I've won the festival twelve years in a row. Good luck... You'll need it.", "Bu da kimdi böyle?": "Who on earth was that?", "Boş ver kızım. Nevin Hanım'la gençliklerinde can dosttular, sonra küstüler.": "Never mind her, dear. She and Nevin were best friends when they were young. Then they fell out.", "Bu kemerin altından geçen herkes gülümser!": "Everyone who walks under this arch will smile!", "Şenlikte jüri de buradan geçecek.": "The festival judges will walk through here too.", "Nevin Hanım'la Saffet bu bankta saatlerce otururdu.": "Nevin and Saffet used to sit on this bench for hours.", "Peki neden küstüler?": "So why did they fall out?", "Bir gül yüzünden. Gerisini o anlatsın.": "Over a rose. Let her tell you the rest.", "Korkma Fıstık, arılar dostumuz. Güllerimizi onlar tozlayacak.": "Don't worry, Pistachio. Bees are our friends. They'll pollinate our roses.", "Şenlik sofrası için domates, biber... Hepsi senin bahçenden!": "Tomatoes and peppers for the festival table... All from your garden!", "Ninemin domatesli böreği de olmazsa olmaz.": "And Grandma's tomato pastry is a must.", "Rıza Usta! Çabuk gelin, açtı!": "Uncle Rıza! Come quick, it's blooming!", "Kırk yıl... Kırk yıl sonra Ege Gülü yeniden açtı. Nevin Hanım, görüyor musun?": "Forty years... After forty years the Aegean Rose is blooming again. Nevin, can you see it?", "...Bu koku. Nevin'in gülü. Hiç unutmadım.": "...That scent. Nevin's rose. I never forgot it.", "Jüri kararını verdi. Bu yılın birincisi... Simge'nin Bahçesi!": "The judges have decided. This year's winner is... Simge's Garden!", "Nevin'le aramız bu gül yüzünden açılmıştı. Bir dal istemiştim, vermedi. Şimdi anlıyorum, sana saklıyormuş.": "Nevin and I fell out over this rose. I asked her for a cutting and she refused. Now I understand. She was saving it for you.", "O zaman ilk dalı size vereyim Saffet Hanım. Ninem de bunu isterdi.": "Then let me give you the first cutting, Mrs. Saffet. Grandma would have wanted that.", "...Teşekkür ederim, kızım.": "...Thank you, dear.", "Şenlik başlasın!": "Let the festival begin!", "Tohumları ekmek için uygun bir yer lazım.": "I need a good place to plant the seeds.", "Evin arkasına hiç baktın mı? Nevin Hanım'ın asıl hazinesi orada.": "Have you looked behind the house? Nevin's real treasure is back there.", "Arka bahçe açıldı! Yeni işler ve 20 yeni bulmaca seni bekliyor.": "The backyard is open! New tasks and 20 new puzzles are waiting for you.", "İşte geldim... Nevin Nine'nin evi. Ama bu bahçe ne hale gelmiş böyle!": "Here I am... Grandma Nevin's house. But look at the state of this garden!", "\"Bahçemi sana emanet ediyorum Simge'ciğim. Onu yeniden çiçeklendir.\"": "\"I'm leaving my garden in your care, my dear Simge. Make it bloom again.\"", "Hoş geldin kızım. Ben Rıza, yan komşunuz. Bu bahçe bir zamanlar köyün en güzeliydi.": "Welcome, dear. I'm Rıza, your next-door neighbor. This garden was once the prettiest in the village.", "Bahar Şenliği'ne bir ay var. Yetişir mi, bilmem...": "The Spring Festival is a month away. Can it be ready in time? I'm not so sure...", "Yetişecek! Hemen işe koyuluyorum.": "It will be! I'm getting to work right now.", "Bulmacaları çöz, her biri sana 1 yıldız kazandırır. Yıldızlarla bahçe işlerini yap ve hikayeyi ilerlet.": "Each puzzle you solve earns 1 star. Spend stars on garden tasks to move the story forward."};
 const MISS=new Set();window.__miss=MISS;
 function T(s,v){let r=s;if(LANG==='en'){if(EN[s]!==undefined)r=EN[s];else MISS.add(s)}if(v)for(const k in v)r=r.split('{'+k+'}').join(v[k]);return r}
 function relabel(){document.documentElement.lang=LANG;
@@ -505,6 +510,8 @@ const ICONS=[
 ];
 const ICON_R=`<svg viewBox="0 0 40 40"><path d="M20 6 L23.5 16 L34 16 L25.5 22.5 L28.5 33 L20 27 L11.5 33 L14.5 22.5 L6 16 L16.5 16Z" fill="#fff"/></svg>`;
 const TNAME=['Çiçek','Yaprak','Damla','Limon','Üzüm'];
+const VINE_SVG=`<svg viewBox="0 0 40 40"><g fill="none" stroke-linecap="round"><path d="M1 6 C10 12 6 22 14 26 C22 30 30 28 39 36" stroke="#1f5416" stroke-width="3.6"/><path d="M1 6 C10 12 6 22 14 26 C22 30 30 28 39 36" stroke="#6cc845" stroke-width="1.8"/><path d="M39 4 C30 8 34 18 26 14 C18 10 10 30 2 38" stroke="#1f5416" stroke-width="3.6"/><path d="M39 4 C30 8 34 18 26 14 C18 10 10 30 2 38" stroke="#8ad85d" stroke-width="1.8"/></g><g fill="#4fb636" stroke="#1f5416" stroke-width="1"><path d="M6 10 C3 5 9 3 9 8Z"/><path d="M33 31 C38 30 38 35 34 35Z"/><path d="M33 9 C37 6 39 11 35 12Z"/><path d="M6 33 C2 34 2 29 6 30Z"/></g></svg>`;
+const VINE_IC=`<div class="gem" style="inset:0;background:#d9c49a">${VINE_SVG}</div>`;
 
 /* ---------- Bölümler ---------- */
 const P={
@@ -516,39 +523,43 @@ const P={
  diamond:(x,y)=>Math.abs(x-3.5)+Math.abs(y-3.5)<=3,
  checker:(x,y)=>(x+y)%2===1,
  full:()=>true,
+ dots:(x,y)=>x%3===1&&y%3===1,
+ mid:(x,y)=>(y===3||y===4)&&x>=2&&x<=5,
+ rows:(x,y)=>y===2||y===5,
+ xs:(x,y)=>x===y||x===7-y,
  heart:(x,y)=>[[1,2,5,6],[0,1,2,3,4,5,6,7],[0,1,2,3,4,5,6,7],[1,2,3,4,5,6],[2,3,4,5],[3,4]][y-1]?.includes(x)
 };
 const LV=[
  {m:20,g:[[0,12]]},
  {m:20,g:[[1,15],[2,15]]},
  {m:20,w:'center'},
- {m:22,g:[[3,25]]},
+ {m:24,v:'mid',g:[[3,20]]},
  {m:22,w:'bottom',g:[[4,15]]},
  {m:22,w:'cross'},
- {m:24,g:[[0,25],[2,25]]},
+ {m:24,v:'dots',g:[[0,20],[2,20]]},
  {m:25,w:'frame'},
- {m:24,w:'corners',g:[[1,20]]},
+ {m:28,w:'corners',v:'mid'},
  {m:26,w:'diamond',w2:'center'},
  {m:24,g:[[3,30],[4,30]]},
  {m:25,w:'checker'},
  {m:26,w:'bottom',w2:'bottom',g:[[2,20]]},
  {m:26,w:'frame',w2:'corners'},
- {m:25,g:[[0,30],[1,30],[3,30]]},
+ {m:26,v:'rows',g:[[0,20],[3,20]]},
  {m:28,w:'heart'},
  {m:26,w:'checker',g:[[4,25]]},
  {m:28,w:'corners',w2:'corners'},
  {m:28,w:'cross',w2:'center',g:[[0,20]]},
  {m:30,w:'full',w2:'heart'},
- {m:26,g:[[0,35],[4,35]]},
+ {m:27,v:'xs',g:[[0,25],[4,25]]},
  {m:28,w:'diamond',w2:'diamond'},
  {m:26,w:'checker',w2:'center',g:[[2,25]]},
  {m:28,g:[[1,40],[3,40]]},
  {m:28,w:'heart',w2:'heart'},
  {m:27,w:'frame',w2:'frame',g:[[0,20]]},
  {m:30,w:'full'},
- {m:26,g:[[0,30],[2,30],[4,30]]},
+ {m:28,v:'rows',w:'center',g:[[2,25]]},
  {m:28,w:'cross',w2:'cross'},
- {m:30,w:'corners',w2:'diamond',g:[[3,30]]},
+ {m:30,w:'corners',w2:'diamond',v:'dots'},
  {m:28,w:'bottom',w2:'checker',g:[[1,30]]},
  {m:30,w:'full',w2:'center'},
  {m:28,g:[[0,40],[1,40],[2,40]]},
@@ -563,7 +574,7 @@ const LV=[
 function levelDef(i){
   if(i<LV.length)return LV[i];
   const ks=Object.keys(P),w=ks[i%ks.length];
-  return {m:26,w,w2:i%3?null:'center',g:[[i%5,20+(i%4)*4]]};
+  return {m:26,w,w2:i%3?null:'center',v:i%4===1?['dots','mid','rows','xs'][(i>>2)%4]:null,g:[[i%5,20+(i%4)*4]]};
 }
 
 /* ---------- Eşleştir-3 motoru ---------- */
@@ -577,7 +588,7 @@ function mk(t,sp,x,y){
   const o={t,sp:sp||null,el,x,y,fired:false};
   draw(o);pos(o,x,y);tilesEl.appendChild(el);return o;
 }
-function draw(o){o.el.innerHTML=o.sp==='r'?`<div class="gem gr">${ICON_R}</div>`:`<div class="gem g${o.t}${o.sp?' sp-'+o.sp:''}">${ICONS[o.t]}</div>`}
+function draw(o){o.el.innerHTML=(o.sp==='r'?`<div class="gem gr">${ICON_R}</div>`:`<div class="gem g${o.t}${o.sp?' sp-'+o.sp:''}">${ICONS[o.t]}</div>`)+(o.lock?`<div class="vine">${VINE_SVG}</div>`:'');o.el.classList.toggle('locked',!!o.lock)}
 function pos(o,x,y){o.x=x;o.y=y;o.el.style.left=x*12.5+'%';o.el.style.top=y*12.5+'%'}
 const col=(x,y)=>{if(x<0||y<0||x>=W||y>=H)return -1;const o=G[y][x];return o&&o.sp!=='r'?o.t:-1};
 const all=()=>G.flat().filter(Boolean);
@@ -588,7 +599,7 @@ function buildBoard(){
     let w=0;if(L.w&&P[L.w](x,y))w++;if(L.w2&&P[L.w2](x,y))w++;WD[y].push(w);
     const c=document.createElement('div');c.className='cell'+(w?' w'+w:'');cellsEl.appendChild(c);
     let t;do{t=rnd(5)}while((x>1&&col(x-1,y)===t&&col(x-2,y)===t)||(y>1&&col(x,y-1)===t&&col(x,y-2)===t));
-    G[y].push(mk(t,null,x,y));
+    const o=mk(t,null,x,y);if(L.v&&P[L.v](x,y)){o.lock=true;draw(o)}G[y].push(o);
   }}
   if(!findMove())shuffle(true);
 }
@@ -628,7 +639,9 @@ function area(o){
 async function blast(initial,creates=[]){
   const clear=new Set(),q=[...initial];let fx=false;
   const fired=[];
-  while(q.length){const k=q.pop();if(clear.has(k))continue;clear.add(k);const o=G[Math.floor(k/W)][k%W];
+  const unl=new Set();
+  while(q.length){const k=q.pop();if(clear.has(k)||unl.has(k))continue;const o=G[Math.floor(k/W)][k%W];
+    if(o&&o.lock){unl.add(k);continue}clear.add(k);
     if(o&&o.sp&&!o.fired){o.fired=true;fx=true;fired.push(o);q.push(...area(o))}}
   const br=tilesEl.getBoundingClientRect(),cw=br.width/W;
   for(const o of fired){
@@ -638,6 +651,10 @@ async function blast(initial,creates=[]){
       $('#board').appendChild(b);setTimeout(()=>b.remove(),400)}
     else{FX.ring(px,py,o.sp==='r'?'#ff6f9f':'#fff');FX.ring(px,py,'#ffd447');if(o.sp==='r')flash()}
   }
+  for(const k of unl){const o=G[Math.floor(k/W)][k%W];o.lock=false;o.el.classList.remove('locked');const v=o.el.querySelector('.vine');if(v){v.classList.add('snap');setTimeout(()=>v.remove(),360)}
+    const px=br.left+o.x*cw,py=br.top+o.y*cw;FX.burst(px+cw/2,py+cw/2,['#5cb83a','#2c6b1f','#a8e07a'],8,cw*.14);
+    if(goals.some(g=>g.k==='v'&&g.n>0))flyTo(o,'v',px,py,cw);collect('v');score+=40}
+  if(unl.size)snd(260,.12,'sawtooth',.04);
   if(fired.length)shake(fired.length>1||fired.some(o=>o.sp!=='h'&&o.sp!=='v'));
   const n=clear.size;score+=n*10*Math.max(1,cascadeN+1)+fired.length*60;
   let flies=0,sx=0,sy=0;
@@ -676,9 +693,9 @@ async function resolve(pref){
     const gs=findGroups();if(!gs.length)break;
     const clear=new Set(),creates=[];
     for(const g of gs){g.cells.forEach(k=>clear.add(k));const sp=specialFor(g);
-      if(sp){let k=pref&&pref.find(p=>g.cells.has(p));
-        if(k==null){const r=g.runs.reduce((a,b)=>b.cells.length>a.cells.length?b:a);k=r.cells[Math.floor(r.cells.length/2)]}
-        creates.push({k,t:g.t,sp})}}
+      if(sp){const free=k=>!G[Math.floor(k/W)][k%W]?.lock;let k=pref&&pref.find(p=>g.cells.has(p)&&free(p));
+        if(k==null){const r=g.runs.reduce((a,b)=>b.cells.length>a.cells.length?b:a);k=r.cells[Math.floor(r.cells.length/2)];if(!free(k))k=[...g.cells].find(free)}
+        if(k!=null)creates.push({k,t:g.t,sp})}}
     await blast(clear,creates);pref=null;
     if(guard>=1){combo(T(PRAISE[Math.min(guard-1,PRAISE.length-1)]));snd(500+guard*120,.15,'triangle',.05);if(guard>=3)FX.confetti(30)}
     await gravity();
@@ -686,12 +703,12 @@ async function resolve(pref){
 }
 function flyTo(o,k,x,y,cw){
   const f=document.createElement('div');f.className='fly';
-  f.innerHTML=k==='w'?`<div class="gem" style="background:#3f7a37"><svg viewBox="0 0 40 40"><path d="M8 32 Q12 14 16 32 Q20 8 24 32 Q28 16 32 32Z" fill="#8fdc6a"/></svg></div>`:`<div class="gem g${k}">${ICONS[k]}</div>`;
+  f.innerHTML=k==='v'?VINE_IC:k==='w'?`<div class="gem" style="background:#3f7a37"><svg viewBox="0 0 40 40"><path d="M8 32 Q12 14 16 32 Q20 8 24 32 Q28 16 32 32Z" fill="#8fdc6a"/></svg></div>`:`<div class="gem g${k}">${ICONS[k]}</div>`;
   Object.assign(f.style,{left:x+'px',top:y+'px',width:cw+'px',height:cw+'px'});document.body.appendChild(f);
   requestAnimationFrame(()=>requestAnimationFrame(()=>{const t=document.querySelector(`.goal[data-k="${k}"] .mini`);if(!t){f.remove();return}
     const r=t.getBoundingClientRect();Object.assign(f.style,{left:(r.left+r.width/2-cw/2)+'px',top:(r.top+r.height/2-cw/2)+'px'});f.style.transform='scale(.45)'}));
   setTimeout(()=>{f.remove();const g=document.querySelector(`.goal[data-k="${k}"]`);if(g){g.classList.remove('bump');void g.offsetWidth;g.classList.add('bump');
-    const r=g.getBoundingClientRect();FX.burst(r.left+16,r.top+r.height/2,CANDY[k==='w'?1:k],5,3);snd(1200+rnd(300),.05,'triangle',.025)}},600);
+    const r=g.getBoundingClientRect();FX.burst(r.left+16,r.top+r.height/2,CANDY[k==='w'||k==='v'?1:k],5,3);snd(1200+rnd(300),.05,'triangle',.025)}},600);
 }
 const PRAISE=['Tatlı!','Şahane!','Nefis!','Şeker patlaması!','İnanılmaz!','Efsane!'];
 function combo(t){const d=document.createElement('div');d.className='combo';d.textContent=t;$('#board').appendChild(d);setTimeout(()=>d.remove(),1000)}
@@ -701,7 +718,7 @@ function matchAt(x,y){const c=col(x,y);if(c<0)return false;
   let v=1;i=y-1;while(col(x,i)===c){v++;i--}i=y+1;while(col(x,i)===c){v++;i++}return v>=3}
 function findMove(){
   for(let y=0;y<H;y++)for(let x=0;x<W;x++)for(const[dx,dy]of[[1,0],[0,1]]){
-    const x2=x+dx,y2=y+dy;if(x2>=W||y2>=H)continue;const A=G[y][x],B=G[y2][x2];if(!A||!B)continue;
+    const x2=x+dx,y2=y+dy;if(x2>=W||y2>=H)continue;const A=G[y][x],B=G[y2][x2];if(!A||!B||A.lock||B.lock)continue;
     if(A.sp==='r'||B.sp==='r'||(A.sp&&B.sp))return[A,B];
     G[y][x]=B;G[y2][x2]=A;const B0=[B.x,B.y],A0=[A.x,A.y];A.x=x2;A.y=y2;B.x=x;B.y=y;
     const ok=matchAt(x,y)||matchAt(x2,y2);
@@ -740,6 +757,7 @@ async function trySwap(a,b){
   if(Math.abs(a.x-b.x)+Math.abs(a.y-b.y)!==1)return;
   busy=true;clearSel();clearHint();cascadeN=0;if(S.level!==1||moves<L.m-3)showTip(null);
   const A=G[a.y][a.x],B=G[b.y][b.x];
+  if(A.lock||B.lock){const o=A.lock?A:B;o.el.classList.remove('hint');void o.el.offsetWidth;o.el.classList.add('hint');SFX.nope();busy=false;armHint();return}
   swapG(a,b);SFX.whoosh();await sleep(170);
   if(A.sp==='r'||B.sp==='r'||(A.sp&&B.sp)){
     moves--;hud();await comboFire(A,B);await gravity();await resolve(null);
@@ -756,8 +774,8 @@ const done=()=>goals.every(g=>g.n<=0);
 function hud(){
   $('#moves').textContent=moves;$('.moves').classList.toggle('low',playing&&moves<=5&&moves>0);
   $('#goals').innerHTML=goals.map(g=>{
-    const ic=g.k==='w'?`<div class="gem" style="inset:0;background:#3f7a37"><svg viewBox="0 0 40 40"><path d="M8 32 Q12 14 16 32 Q20 8 24 32 Q28 16 32 32Z" fill="#8fdc6a"/></svg></div>`:`<div class="gem g${g.k}" style="inset:0">${ICONS[g.k]}</div>`;
-    return `<div class="goal${g.n<=0?' ok':''}" data-k="${g.k}" title="${T(g.k==='w'?'Yabani ot':TNAME[g.k])}"><div class="mini">${ic}</div><b>${Math.max(0,g.n)}</b></div>`}).join('')+`<div class="goal"><span class="lv">${T('Bulmaca {n}',{n:S.level+1})}</span></div>`;
+    const ic=g.k==='v'?VINE_IC:g.k==='w'?`<div class="gem" style="inset:0;background:#3f7a37"><svg viewBox="0 0 40 40"><path d="M8 32 Q12 14 16 32 Q20 8 24 32 Q28 16 32 32Z" fill="#8fdc6a"/></svg></div>`:`<div class="gem g${g.k}" style="inset:0">${ICONS[g.k]}</div>`;
+    return `<div class="goal${g.n<=0?' ok':''}" data-k="${g.k}" title="${T(g.k==='v'?'Sarmaşık':g.k==='w'?'Yabani ot':TNAME[g.k])}"><div class="mini">${ic}</div><b>${Math.max(0,g.n)}</b></div>`}).join('')+`<div class="goal"><span class="lv">${T('Bulmaca {n}',{n:S.level+1})}</span></div>`;
 }
 function clearSel(){if(sel){const o=G[sel.y]?.[sel.x];o&&o.el.classList.remove('sel');sel=null}}
 function showTip(t){const e=$('#tip');if(!t){e.hidden=true;return}e.textContent=t;e.hidden=false}
@@ -792,10 +810,12 @@ async function startLevel(){
   $('.top').hidden=true;document.body.classList.add('playing');
   buildBoard();
   const wc=WD.flat().reduce((a,b)=>a+b,0);if(wc)goals.push({k:'w',n:wc});
+  const vc=all().filter(o=>o.lock).length;if(vc)goals.push({k:'v',n:vc});
   hud();playing=true;busy=false;armHint();Ads.start();
   let tipTxt=null;
   if(S.level===0)tipTxt=T('Yan yana iki taşı kaydırarak yer değiştir. Aynı türden 3 taşı sıraya diz!');
   else if(S.level===1)tipTxt=T("4'lü dizi çizgili taş, L ya da T şekli bomba, 5'li dizi gökkuşağı tohumu yapar.");
+  else if(vc&&!S.tutV){S.tutV=1;save();tipTxt=T('Sarmaşıklı taşlar kaydırılamaz. Onları bir eşleşmeye kat ya da özel taşla vur, sarmaşık kopsun!')}
   else if(wc&&!S.tutW){S.tutW=1;save();tipTxt=T('Yeşil kareler yabani ot. Üstlerinde taş patlat, koyu olanlara iki kez vur!')}
   showTip(tipTxt);if(tipTxt&&S.level===0)armHint(900);
 }
@@ -804,7 +824,7 @@ async function checkEnd(){
   if(done()){
     playing=false;Ads.stop();
     if(moves>0){combo(T('Bahçe şenliği!'));await sleep(500);
-      const pool=all().filter(o=>!o.sp&&o.t>=0);
+      const pool=all().filter(o=>!o.sp&&!o.lock&&o.t>=0);
       while(moves>0&&pool.length){const o=pool.splice(rnd(pool.length),1)[0];o.sp=Math.random()<.5?'h':'v';draw(o);moves--;hud();snd(700+moves*30,.08,'triangle');await sleep(90)}
       const sp=all().filter(o=>o.sp&&o.sp!=='r');if(sp.length){cascadeN=0;await blast(new Set(sp.map(o=>o.y*W+o.x)));await gravity();await resolve(null)}
     }
@@ -827,7 +847,7 @@ async function checkEnd(){
     playing=false;Ads.stop();await sleep(300);
     const AD=T('📺 Reklam izle: +5 hamle'),ST=T('★1 ver: +5 hamle'),FREE=T('+5 hamle ile devam'),RETRY=T('Tekrar dene'),HOME=T('Bahçeye dön');
     const btns=extraUsed?[RETRY,HOME]:Ads.on?[AD,...(S.stars>=1?[ST]:[]),RETRY,HOME]:[FREE,RETRY,HOME];
-    const list=goals.filter(g=>g.n>0).map(g=>`${g.n} ${g.k==='w'?T('yabani ot'):T(TNAME[g.k]).toLowerCase()}`).join(', ');
+    const list=goals.filter(g=>g.n>0).map(g=>`${g.n} ${g.k==='v'?T('sarmaşık'):g.k==='w'?T('yabani ot'):T(TNAME[g.k]).toLowerCase()}`).join(', ');
     const i=await modal(`<h2>${T('Hamleler bitti')}</h2><p>${T('{list} kaldı. Az kaldı!',{list})}</p>`,btns);
     const act=btns[i];
     const cont=()=>{extraUsed=true;moves=5;playing=true;hud();armHint();Ads.start()};
@@ -1177,9 +1197,9 @@ async function playIntro(){
       ['not','Bulmacaları çöz, her biri sana 1 yıldız kazandırır. Yıldızlarla bahçe işlerini yap ve hikayeyi ilerlet.']
   ]);S.intro=true;save();
 }
-if(/[?&]demo/.test(location.search)){window.__demo=async lv=>{S.level=lv;S.intro=true;S.tutW=1;await startLevel();showTip(null);
+if(/[?&]demo/.test(location.search)){window.__g=()=>({G,goals,moves,playing,busy,trySwap,startLevel,S,findGroups});window.__demo=async lv=>{S.level=lv;S.intro=true;S.tutW=1;S.tutV=1;await startLevel();showTip(null);
   for(let i=0;i<60&&playing;i++){await sleep(220);if(busy||!playing)continue;let best=null;
-    for(let y=0;y<H;y++)for(let x=0;x<W;x++){const o=G[y][x];if(o&&o.sp){for(const[dx,dy]of[[1,0],[0,1],[-1,0],[0,-1]]){const q=G[y+dy]?.[x+dx];if(q&&(o.sp==="r"||q.sp)){best=[o,q];break}}}if(best)break}
+    for(let y=0;y<H;y++)for(let x=0;x<W;x++){const o=G[y][x];if(o&&o.sp&&!o.lock){for(const[dx,dy]of[[1,0],[0,1],[-1,0],[0,-1]]){const q=G[y+dy]?.[x+dx];if(q&&!q.lock&&(o.sp==="r"||q.sp)){best=[o,q];break}}}if(best)break}
     const m=best||findMove();if(m){const[A,B]=m;await trySwap({x:A.x,y:A.y},{x:B.x,y:B.y})}}}}
 else if(!S.intro&&S.level===0)startLevel();
 else if(!S.intro)setTimeout(playIntro,400);
