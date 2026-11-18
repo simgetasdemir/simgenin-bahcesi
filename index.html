@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Simge'nin Bahçesi</title>
+<title>Petalpop</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -231,6 +231,9 @@ body.playing .hud{max-width:640px;width:100%;margin:0 auto}
 .tabs button.on{background:var(--leaf);color:#fff}
 .bee{animation:bee 1.6s ease-in-out infinite alternate;transform-box:fill-box}
 @keyframes bee{25%{transform:translate(6px,-4px)}50%{transform:translate(-3px,-7px)}75%{transform:translate(4px,2px)}100%{transform:translate(-5px,-2px)}}
+.brand{font-size:30px;letter-spacing:.01em}
+.brand .pp1{color:#ff5c9e;-webkit-text-stroke:1.5px #fff;paint-order:stroke fill}
+.brand .pp2{color:#ffd23f;-webkit-text-stroke:1.5px #fff;paint-order:stroke fill;display:inline-block;transform:rotate(-4deg) translateY(-1px)}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important}.tile{transition-duration:.05s!important}}
 </style>
 <style>[hidden]{display:none!important}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
@@ -241,7 +244,7 @@ body.playing .hud{max-width:640px;width:100%;margin:0 auto}
 <div id="forest" aria-hidden="true"></div>
 <div id="app">
   <header class="top">
-    <div class="brand">Simge'nin Bahçesi<small id="chapterLbl">1. Bölüm · Nevin Nine'nin evi</small></div>
+    <div class="brand"><span class="pp1">Petal</span><span class="pp2">pop</span><small id="chapterLbl">1. Bölüm · Nevin Nine'nin evi</small></div>
     <div class="pill" title="Yıldızların"><span class="st">★</span><span id="starCount">0</span></div>
     <button class="icon-btn" id="muteBtn" aria-label="Sesi aç/kapat">♪</button>
   </header>

@@ -1,6 +1,6 @@
-# Simge'nin Bahçesi
+# Petalpop
 
-Eşleştir-3 bulmaca ile bahçe yenilemeyi birleştiren tarayıcı oyunu.
+Eşleştir-3 bulmaca ile bahçe yenilemeyi birleştiren tarayıcı oyunu. Oyun adresi: https://simgetasdemir.github.io/simgenin-bahcesi/
 
 Simge, anneannesi Nevin Nine'nin Ege köyündeki bakımsız bahçesini Bahar Şenliği'ne hazırlıyor. Yanında huysuz ama iyi kalpli komşu Rıza Usta, çocukluk arkadaşı çiçekçi Ela ve ninenin kedisi Fıstık var.
 
@@ -15,3 +15,7 @@ Simge, anneannesi Nevin Nine'nin Ege köyündeki bakımsız bahçesini Bahar Şe
 ## Çalıştırma
 
 Tek dosya: `index.html`. Tarayıcıda açman yeterli. `main` dalına her gönderimde GitHub Pages'e yayınlanır.
+
+## Oyun siteleri
+
+`python3 tools/build_platforms.py [GameDistribution oyun kimliği]` komutu CrazyGames, Poki ve GameDistribution için `dist/` altında reklam kodlu paketleri (zip) üretir.
