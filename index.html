@@ -1364,6 +1364,10 @@ $('#playBtn').onclick=async()=>{snd(520);await Ads.midgame();startLevel()};
 /* ---------- Tahta ışıkları ---------- */
 {const b=$('#bulbs'),N=12;let h='';for(let i=0;i<N;i++){const t=(i+.5)/N*100;h+=`<i style="left:${t}%;top:0"></i><i style="left:${100-t}%;top:100%"></i><i style="left:100%;top:${t}%"></i><i style="left:0;top:${100-t}%"></i>`}b.innerHTML=h}
 /* ---------- Açılış ---------- */
+/* Yeni oturumda önceki bir modal/overlay durumunun ekranda kalmasını önle. */
+$('#modal').hidden=true;$('#modal').classList.remove('win');
+$('#shade').hidden=true;$('#dialog').hidden=true;
+$('#modal').querySelector('.card').innerHTML='';
 relabel();renderGarden();
 async function playIntro(){
   await talk([
