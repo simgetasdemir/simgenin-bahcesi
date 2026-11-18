@@ -131,6 +131,9 @@ button:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 .bubble p{margin:2px 0 4px;line-height:1.45;font-weight:600}
 .bubble .next{font-size:12px;color:var(--muted);font-weight:700;text-align:right}
 #shade{position:fixed;inset:0;background:rgba(30,40,30,.35);z-index:25}
+#shade{touch-action:manipulation;cursor:pointer}
+#dialog{touch-action:manipulation;pointer-events:auto}
+#dialog .in,#dialog .bubble,#dialog .portrait{pointer-events:none}
 #modal{position:fixed;inset:0;z-index:40;display:grid;place-items:center;padding:16px;background:rgba(30,40,30,.45)}
 #modal .card{background:var(--card);border-radius:24px;padding:20px;max-width:360px;width:100%;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.3);animation:up .25s ease-out}
 #modal h2{font-family:var(--display);font-size:26px;margin:0 0 4px;line-height:1.1;text-wrap:balance}
@@ -639,12 +642,26 @@ const CH={
 };
 function talk(lines){
   return new Promise(res=>{
-    let i=0;const D=$('#dialog'),sh=$('#shade');D.hidden=false;sh.hidden=false;
+    let i=0, advancing=false;const D=$('#dialog'),sh=$('#shade');
+    D.hidden=false;sh.hidden=false;
+    D.style.pointerEvents='auto';sh.style.pointerEvents='auto';
     const show=()=>{const[w,t]=lines[i],c=CH[w];D.querySelector('.portrait').innerHTML=c.face;const who=D.querySelector('.who');who.textContent=T(c.name);who.style.color=c.col;D.querySelector('.line').textContent=T(t);
       const inn=D.querySelector('.in');inn.style.animation='none';void inn.offsetWidth;inn.style.animation='';snd(440+rnd(120),.06,'triangle',.03)};
+    const next=e=>{
+      if(e){e.preventDefault();e.stopPropagation()}
+      if(advancing)return;advancing=true;
+      i++;
+      if(i>=lines.length){
+        D.hidden=true;sh.hidden=true;
+        D.onpointerup=sh.onpointerup=D.onclick=sh.onclick=null;document.onkeydown=null;
+        D.style.pointerEvents=sh.style.pointerEvents='';
+        res();
+      }else{show();setTimeout(()=>{advancing=false},120)}
+    };
     show();
-    const next=()=>{i++;if(i>=lines.length){D.hidden=true;sh.hidden=true;D.onclick=sh.onclick=null;document.onkeydown=null;res()}else show()};
-    setTimeout(()=>{D.onclick=sh.onclick=next;document.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();next()}}},150);
+    D.onpointerup=sh.onpointerup=next;
+    D.onclick=sh.onclick=null;
+    document.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){next(e)}};
   });
 }
 function modal(html,buttons){
