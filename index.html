@@ -83,8 +83,8 @@ button:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 .moves{background:var(--ink);color:#fff;border-radius:14px;padding:4px 12px;text-align:center;min-width:64px}
 .moves b{display:block;font-family:var(--display);font-size:26px;line-height:1;font-variant-numeric:tabular-nums}
 .moves small{font-size:11px;font-weight:700;opacity:.8}
-.lvl-title{font-family:var(--display);font-weight:700;font-size:15px;color:var(--muted);text-align:center;margin:-2px 0 -4px}
-.board{position:relative;width:min(100%,470px,calc(100vh - 190px));width:min(100%,470px,calc(100dvh - 190px));aspect-ratio:1;max-width:100%;margin:0 auto;
+.lvl-title{font-family:var(--display);font-weight:700;font-size:13px;color:var(--muted);text-align:center;margin:-4px 0 -6px}
+.board{position:relative;--bw:min(calc(100vw - 10px),640px,calc(100vh - 150px));--bw:min(calc(100vw - 10px),640px,calc(100dvh - 150px));width:var(--bw);aspect-ratio:1;margin-left:calc(50% - var(--bw) / 2);
   background:var(--soil);border-radius:20px;padding:6px;box-shadow:0 5px 0 #3d2e23}
 .layer{position:absolute;inset:6px}
 .cells{display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);border-radius:14px;overflow:hidden}
@@ -95,18 +95,18 @@ button:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 .tiles{overflow:hidden;border-radius:14px;touch-action:none;user-select:none;-webkit-user-select:none}
 .tile{position:absolute;width:12.5%;height:12.5%;transition:left .16s ease,top .24s cubic-bezier(.55,.05,.85,.5);will-change:top,left}
 .tile.pop .gem{transform:scale(0) rotate(40deg);opacity:0}
-.gem{position:absolute;inset:7%;border-radius:32%;display:grid;place-items:center;transition:transform .2s ease,opacity .2s ease;
+.gem{position:absolute;inset:3.5%;border-radius:30%;display:grid;place-items:center;transition:transform .2s ease,opacity .2s ease;
   box-shadow:inset 0 -3px 0 rgba(0,0,0,.18),inset 0 2px 0 rgba(255,255,255,.45),0 2px 3px rgba(0,0,0,.3);overflow:hidden}
-.gem svg{width:72%;height:72%;filter:drop-shadow(0 1px 0 rgba(0,0,0,.15));position:relative;z-index:1}
-.g0{background:radial-gradient(circle at 35% 28%,#ffc2d8,#ff6f9f 45%,#d63a6e)}
-.g1{background:radial-gradient(circle at 35% 28%,#d6f7b4,#74cf55 45%,#3a9440)}
-.g2{background:radial-gradient(circle at 35% 28%,#c8ecff,#4fb6f5 45%,#2675c9)}
-.g3{background:radial-gradient(circle at 35% 28%,#fff6c2,#ffd447 45%,#eaa514)}
-.g4{background:radial-gradient(circle at 35% 28%,#e8d8ff,#a77cf2 45%,#6c3fc9)}
+.gem svg{width:86%;height:86%;filter:drop-shadow(0 2px 1px rgba(0,0,0,.22));position:relative;z-index:1}
+.g0{--c:#ff1a75;background:radial-gradient(circle at 35% 25%,#fff 0 12%,#ffd3e5 40%,#ff8fbd);box-shadow:inset 0 0 0 2px #ff5c9e,inset 0 -4px 0 rgba(200,0,80,.25),0 2px 3px rgba(0,0,0,.3)}
+.g1{--c:#14a83a;background:radial-gradient(circle at 35% 25%,#fff 0 12%,#dcffc0 40%,#94e86a);box-shadow:inset 0 0 0 2px #4fc93a,inset 0 -4px 0 rgba(0,120,30,.25),0 2px 3px rgba(0,0,0,.3)}
+.g2{--c:#0f7fff;background:radial-gradient(circle at 35% 25%,#fff 0 12%,#d4efff 40%,#86cbff);box-shadow:inset 0 0 0 2px #3fa6ff,inset 0 -4px 0 rgba(0,80,200,.25),0 2px 3px rgba(0,0,0,.3)}
+.g3{--c:#f59e00;background:radial-gradient(circle at 35% 25%,#fff 0 12%,#fff4b8 40%,#ffd84a);box-shadow:inset 0 0 0 2px #ffc21a,inset 0 -4px 0 rgba(200,120,0,.25),0 2px 3px rgba(0,0,0,.3)}
+.g4{--c:#8a2be2;background:radial-gradient(circle at 35% 25%,#fff 0 12%,#ecdcff 40%,#c49aff);box-shadow:inset 0 0 0 2px #a46bff,inset 0 -4px 0 rgba(90,20,180,.25),0 2px 3px rgba(0,0,0,.3)}
 .gr{background:conic-gradient(#ff6f9f,#ffd447,#74cf55,#4fb6f5,#a77cf2,#ff6f9f);border-radius:50%;animation:spin 4s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.sp-h::after,.sp-v::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 22%,rgba(255,255,255,.55) 22% 32%)}
-.sp-v::after{background:repeating-linear-gradient(90deg,transparent 0 22%,rgba(255,255,255,.55) 22% 32%)}
+.sp-h::after,.sp-v::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent 0 20%,var(--c) 20% 30%);opacity:.55}
+.sp-v::after{background:repeating-linear-gradient(90deg,transparent 0 20%,var(--c) 20% 30%)}
 .sp-b{box-shadow:inset 0 0 0 3px #fff,inset 0 -3px 0 rgba(0,0,0,.18),0 0 10px 2px rgba(255,240,150,.9);animation:pulse 1s ease-in-out infinite}
 @keyframes pulse{50%{transform:scale(.9)}}
 .tile.sel .gem{transform:scale(1.12);box-shadow:0 0 0 3px #fff,0 0 12px 3px rgba(255,255,255,.7)}
@@ -318,11 +318,11 @@ function modal(html,buttons){
 
 /* ---------- Taş simgeleri ---------- */
 const ICONS=[
- `<svg viewBox="0 0 40 40"><g fill="#fff"><circle cx="20" cy="10.5" r="6.5"/><circle cx="29" cy="17" r="6.5"/><circle cx="25.5" cy="27.5" r="6.5"/><circle cx="14.5" cy="27.5" r="6.5"/><circle cx="11" cy="17" r="6.5"/></g><circle cx="20" cy="20" r="5.5" fill="#ffd23f"/></svg>`,
- `<svg viewBox="0 0 40 40"><path d="M7 33 C7 15 19 6 34 6 C35 22 26 34 7 33Z" fill="#fff"/><path d="M9 31 L27 13" stroke="#3a9440" stroke-width="2.4" stroke-linecap="round"/></svg>`,
- `<svg viewBox="0 0 40 40"><path d="M20 4 C26 13 32 19 32 26 A12 12 0 0 1 8 26 C8 19 14 13 20 4Z" fill="#fff"/><ellipse cx="15" cy="25" rx="2.6" ry="4.2" fill="#9fd6ff"/></svg>`,
- `<svg viewBox="0 0 40 40"><ellipse cx="20" cy="22" rx="14" ry="10.5" fill="#fff" transform="rotate(-25 20 22)"/><path d="M30 11 C33 5 38 7 37 10 C34 12 32 12 30 11Z" fill="#c9f2a8"/><circle cx="16" cy="22" r="2.2" fill="#ffe680"/></svg>`,
- `<svg viewBox="0 0 40 40"><path d="M20 9 Q22 4 27 4" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round"/><g fill="#fff"><circle cx="14" cy="15" r="5.5"/><circle cx="26" cy="15" r="5.5"/><circle cx="20" cy="15" r="5.5"/><circle cx="17" cy="24" r="5.5"/><circle cx="23" cy="24" r="5.5"/><circle cx="20" cy="32" r="5.5"/></g></svg>`
+ `<svg viewBox="0 0 40 40"><g stroke="#fff" stroke-width="1.6"><g fill="#ff1a75"><ellipse cx="20" cy="9.5" rx="6" ry="7.5"/><ellipse cx="20" cy="9.5" rx="6" ry="7.5" transform="rotate(72 20 20)"/><ellipse cx="20" cy="9.5" rx="6" ry="7.5" transform="rotate(144 20 20)"/><ellipse cx="20" cy="9.5" rx="6" ry="7.5" transform="rotate(216 20 20)"/><ellipse cx="20" cy="9.5" rx="6" ry="7.5" transform="rotate(288 20 20)"/></g></g><g fill="#ff7db0"><ellipse cx="20" cy="11" rx="2.6" ry="4"/><ellipse cx="20" cy="11" rx="2.6" ry="4" transform="rotate(72 20 20)"/><ellipse cx="20" cy="11" rx="2.6" ry="4" transform="rotate(144 20 20)"/><ellipse cx="20" cy="11" rx="2.6" ry="4" transform="rotate(216 20 20)"/><ellipse cx="20" cy="11" rx="2.6" ry="4" transform="rotate(288 20 20)"/></g><circle cx="20" cy="20" r="6.2" fill="#ffd60a" stroke="#ff8a00" stroke-width="1.6"/><g fill="#ff8a00"><circle cx="18" cy="18.5" r="1"/><circle cx="22" cy="19" r="1"/><circle cx="20" cy="22" r="1"/></g><circle cx="17.5" cy="17.5" r="1.6" fill="#fff" opacity=".8"/></svg>`,
+ `<svg viewBox="0 0 40 40"><path d="M6 34 C6 15 19 5 35 5 C36 22 26 35 6 34Z" fill="#14a83a" stroke="#fff" stroke-width="1.8"/><path d="M9 31 L28 12 M15 25 L14 17 M15 25 L23 26 M21 19 L21 12 M21 19 L28 19" stroke="#b6ff8a" stroke-width="1.8" stroke-linecap="round"/><path d="M11 24 C11 16 17 10 25 8" stroke="#fff" stroke-width="2" fill="none" opacity=".55" stroke-linecap="round"/></svg>`,
+ `<svg viewBox="0 0 40 40"><path d="M20 3 C26 12 33 19 33 26 A13 13 0 0 1 7 26 C7 19 14 12 20 3Z" fill="#0f7fff" stroke="#fff" stroke-width="1.8"/><path d="M20 10 C24 16 28 20 28 26 A8 8 0 0 1 20 34" fill="none" stroke="#5cc8ff" stroke-width="3" stroke-linecap="round"/><ellipse cx="14.5" cy="24" rx="2.8" ry="5" fill="#fff" opacity=".9"/><circle cx="16" cy="31" r="1.4" fill="#fff" opacity=".8"/></svg>`,
+ `<svg viewBox="0 0 40 40"><g transform="rotate(-25 20 22)"><ellipse cx="20" cy="22" rx="15" ry="11" fill="#ffd000" stroke="#fff" stroke-width="1.8"/><path d="M5 22 l-2 0 M35 22 l2 0" stroke="#f59e00" stroke-width="3" stroke-linecap="round"/><ellipse cx="20" cy="22" rx="11" ry="7.5" fill="none" stroke="#ffef80" stroke-width="2"/></g><path d="M29 10 C32 3 39 5 38 9 C35 12 32 12 29 10Z" fill="#2fc24a" stroke="#fff" stroke-width="1.2"/><ellipse cx="14" cy="21" rx="3" ry="2" fill="#fff" opacity=".85" transform="rotate(-25 14 21)"/></svg>`,
+ `<svg viewBox="0 0 40 40"><path d="M20 9 Q22 3 28 3" stroke="#3d8b2a" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M22 6 C26 4 31 6 30 9 C27 10 24 9 22 6Z" fill="#2fc24a"/><g fill="#8a2be2" stroke="#fff" stroke-width="1.3"><circle cx="13" cy="14" r="5.6"/><circle cx="27" cy="14" r="5.6"/><circle cx="20" cy="14" r="5.6"/><circle cx="16.5" cy="22.5" r="5.6"/><circle cx="23.5" cy="22.5" r="5.6"/><circle cx="20" cy="31" r="5.6"/></g><g fill="#fff" opacity=".85"><circle cx="11.5" cy="12.5" r="1.5"/><circle cx="18.5" cy="12.5" r="1.5"/><circle cx="25.5" cy="12.5" r="1.5"/><circle cx="15" cy="21" r="1.5"/><circle cx="22" cy="21" r="1.5"/><circle cx="18.5" cy="29.5" r="1.5"/></g></svg>`
 ];
 const ICON_R=`<svg viewBox="0 0 40 40"><path d="M20 6 L23.5 16 L34 16 L25.5 22.5 L28.5 33 L20 27 L11.5 33 L14.5 22.5 L6 16 L16.5 16Z" fill="#fff"/></svg>`;
 const TNAME=['Çiçek','Yaprak','Damla','Limon','Üzüm'];
