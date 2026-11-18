@@ -95,7 +95,7 @@ button:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
 .tiles{overflow:hidden;border-radius:14px;touch-action:none;user-select:none;-webkit-user-select:none}
 .tile{position:absolute;width:12.5%;height:12.5%;transition:left .16s ease,top .24s cubic-bezier(.55,.05,.85,.5);will-change:top,left}
 .tile.pop .gem{transform:scale(0) rotate(40deg);opacity:0}
-.gem{position:absolute;inset:3.5%;border-radius:30%;display:grid;place-items:center;transition:transform .2s ease,opacity .2s ease;
+.gem{position:absolute;inset:2.5%;border-radius:30%;display:grid;place-items:center;transition:transform .2s ease,opacity .2s ease;
   box-shadow:inset 0 -3px 0 rgba(0,0,0,.18),inset 0 2px 0 rgba(255,255,255,.45),0 2px 3px rgba(0,0,0,.3);overflow:hidden}
 .gem svg{width:86%;height:86%;filter:drop-shadow(0 2px 1px rgba(0,0,0,.22));position:relative;z-index:1}
 .g0{--c:#ff1a75;background:radial-gradient(circle at 35% 25%,#fff 0 12%,#ffd3e5 40%,#ff8fbd);box-shadow:inset 0 0 0 2px #ff5c9e,inset 0 -4px 0 rgba(200,0,80,.25),0 2px 3px rgba(0,0,0,.3)}
@@ -210,6 +210,21 @@ html{overflow-x:hidden}
 .moves{background:linear-gradient(#2f7d4a,#1d4d27);box-shadow:0 0 0 2px #ffd447,0 0 14px rgba(255,212,71,.6)}
 .moves b{color:#ffd447;text-shadow:0 0 8px rgba(255,212,71,.8)}
 .goal .lv{color:#8a3c9e}
+/* Oyun sırasında tahta ekranı doldurur; yatay ekranda bilgi paneli yana geçer */
+body.playing #app{max-width:none}
+body.playing .board{--bw:min(100vw,calc(100vh - 78px));--bw:min(100vw,calc(100dvh - 78px));padding:5px}
+body.playing .layer{inset:5px}
+body.playing .hud{max-width:640px;width:100%;margin:0 auto}
+@media (min-aspect-ratio:5/4){
+  body.playing #playView:not([hidden]){display:flex;align-items:center;justify-content:center;gap:14px;height:calc(100vh - 12px);height:calc(100dvh - 12px)}
+  body.playing .hud{flex-direction:column;width:150px;flex:none;margin:0}
+  body.playing .hud .back{padding:10px}
+  body.playing .goals{flex-direction:column;align-items:flex-start;padding:10px}
+  body.playing .goal .mini{width:34px;height:34px}
+  body.playing .goal{font-size:20px}
+  body.playing .moves b{font-size:40px}
+  body.playing .board{--bw:min(calc(100vw - 200px),calc(100vh - 14px));--bw:min(calc(100vw - 200px),calc(100dvh - 14px));margin:0}
+}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important}.tile{transition-duration:.05s!important}}
 </style>
 <style>[hidden]{display:none!important}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
