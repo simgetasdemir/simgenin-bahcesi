@@ -710,6 +710,35 @@ body.playing .tip{background:#fffaf0;color:#5d765d;border:1px solid #e7e2d3;box-
   body.playing .goal .mini{width:22px;height:22px}
 }
 
+
+/* 30-level journey map */
+#mapBtn{font-size:19px}
+#modal .card:has(.level-grid){max-width:510px;max-height:min(86dvh,760px);overflow:auto;padding:20px}
+.level-map-head{text-align:left;margin-bottom:13px}
+.map-kicker{font-size:9px;letter-spacing:.2em;font-weight:900;color:#8c9a7c}
+.level-map-head h2{font-family:var(--display);font-size:29px;margin:2px 0;color:#294d3c}
+.level-map-head p{margin:0 0 9px;color:#77816d;font-size:12px;font-weight:800}
+.map-progress{height:8px;background:#e7e8d9;border-radius:99px;overflow:hidden}
+.map-progress i{display:block;height:100%;background:linear-gradient(90deg,#8fbd78,#477f5d);border-radius:99px}
+.map-zones{display:flex;justify-content:space-between;gap:4px;margin:14px 0 8px;color:#78856f;font-size:9px;font-weight:900}
+.level-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;padding:3px 2px 12px}
+.map-node{min-width:0;min-height:72px;border-radius:15px;border:1px solid #e8e4d5;background:#fffdf7;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-shadow:0 3px 0 #e4dfcf}
+.map-node .node-icon{font-size:17px;line-height:1.1}
+.map-node b{font-family:var(--display);font-size:17px;color:#355b46;line-height:1}
+.map-node small{font-size:8px;color:#8b927e;font-weight:800}
+.map-node.done{background:#edf5e8;border-color:#d5e6d0;box-shadow:0 3px 0 #c5d9bf}
+.map-node.done b{color:#477c54}
+.map-node.current{background:linear-gradient(145deg,#f7c4c6,#e88998);border:2px solid #fff;box-shadow:0 4px 0 #b75f70,0 0 0 2px #e9a2a9}
+.map-node.current b,.map-node.current small{color:#fff}
+.map-node.locked{opacity:.57;filter:saturate(.45)}
+.map-node:disabled{cursor:default}
+@media(max-width:420px){
+ #modal .card:has(.level-grid){padding:15px}
+ .level-grid{gap:6px}
+ .map-node{min-height:64px;border-radius:12px}
+ .map-zones{font-size:8px}
+}
+
 </style>
 
 <div id="forest" aria-hidden="true"></div>
@@ -717,6 +746,7 @@ body.playing .tip{background:#fffaf0;color:#5d765d;border:1px solid #e7e2d3;box-
   <header class="top">
     <div class="brand"><span class="pp1">Petal</span><span class="pp2">pop</span><small id="chapterLbl">1. Bölüm · Nevin Nine'nin evi</small></div>
     <div class="pill" title="Yıldızların" data-tt="Yıldızların"><span class="st">★</span><span id="starCount">0</span></div>
+    <button class="icon-btn" id="mapBtn" aria-label="Bölüm haritası" title="Bölüm haritası">🗺️</button>
     <button class="icon-btn" id="langBtn" aria-label="Dili değiştir" data-ta="Dili değiştir">EN</button>
     <button class="icon-btn" id="muteBtn" aria-label="Sesi aç/kapat" data-ta="Sesi aç/kapat">♪</button>
   </header>
@@ -969,6 +999,7 @@ function modal(html,buttons){
     M.hidden=false;
     c.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{M.hidden=true;res(+b.dataset.i)});
     c.querySelectorAll('[data-opt]').forEach(b=>b.onclick=()=>{M.hidden=true;res({opt:+b.dataset.opt})});
+    c.querySelectorAll('[data-level]').forEach(b=>b.onclick=()=>{if(b.disabled)return;M.hidden=true;res({level:+b.dataset.level})});
     const f=c.querySelector('button');if(f)f.focus();
   });
 }
@@ -1659,6 +1690,29 @@ async function doTask(id){
   renderGarden();
 }
 $('#playBtn').onclick=async()=>{snd(520);await Ads.midgame();startLevel()};
+
+
+/* ---------- 30 seviyelik bölüm haritası ---------- */
+function openLevelMap(){
+  const current=Math.max(0,S.level||0),shown=30;
+  const nodes=Array.from({length:shown},(_,i)=>{
+    const n=i+1,done=n<=current,active=n===current+1,locked=n>current+1;
+    const cls=done?'done':active?'current':'locked';
+    const icon=done?'✓':locked?'🔒':n===1?'🌱':n%5===0?'🌸':n%3===0?'🍃':'✿';
+    return `<button class="map-node ${cls}" data-level="${i}" ${locked?'disabled':''} aria-label="Bölüm ${n}">
+      <span class="node-icon">${icon}</span><b>${n}</b><small>${done?'Tamamlandı':active?'Şimdi oyna':'Kilitli'}</small>
+    </button>`;
+  }).join('');
+  const html=`<div class="level-map-head"><span class="map-kicker">NEVİN NİNE'NİN BAHÇESİ</span><h2>Yolculuğun</h2><p>${current} / ${shown} bölüm tamamlandı</p><div class="map-progress"><i style="width:${Math.min(100,current/shown*100)}%"></i></div></div>
+    <div class="map-zones"><span>🌿 Başlangıç</span><span>🌷 Çiçek zamanı</span><span>🌹 Bahar şenliği</span></div>
+    <div class="level-grid">${nodes}</div>`;
+  return modal(html,['Haritayı kapat']);
+}
+$('#mapBtn').onclick=async()=>{
+  if(playing)return;
+  const result=await openLevelMap();
+  if(result&&typeof result.level==='number'){S.level=result.level;save();startLevel()}
+};
 
 /* ---------- Orman ---------- */
 {const r=seeded(42);let t='';
