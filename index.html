@@ -226,6 +226,11 @@ body.playing .hud{max-width:640px;width:100%;margin:0 auto}
   body.playing .moves b{font-size:40px}
   body.playing .board{--bw:min(calc(100vw - 200px),calc(100vh - 14px));--bw:min(calc(100vw - 200px),calc(100dvh - 14px));margin:0}
 }
+.tabs{display:flex;gap:6px;margin-bottom:8px}
+.tabs button{flex:1;padding:7px;border-radius:12px;background:rgba(255,253,246,.75);font-weight:800;box-shadow:0 0 0 2px #ffd447}
+.tabs button.on{background:var(--leaf);color:#fff}
+.bee{animation:bee 1.6s ease-in-out infinite alternate;transform-box:fill-box}
+@keyframes bee{25%{transform:translate(6px,-4px)}50%{transform:translate(-3px,-7px)}75%{transform:translate(4px,2px)}100%{transform:translate(-5px,-2px)}}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important}.tile{transition-duration:.05s!important}}
 </style>
 <style>[hidden]{display:none!important}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}</style>
@@ -242,6 +247,7 @@ body.playing .hud{max-width:640px;width:100%;margin:0 auto}
   </header>
 
   <section id="gardenView">
+    <div class="tabs" id="tabs" hidden><button data-v="1">Ön bahçe</button><button data-v="2">Arka bahçe</button></div>
     <div class="scene-wrap"><svg id="scene" viewBox="0 0 400 260" role="img" aria-label="Simge'nin bahçesi"></svg></div>
     <div class="panel" style="margin-top:10px">
       <button class="big" id="playBtn">Oyna<small id="playSub">Bulmaca 1</small></button>
@@ -293,7 +299,52 @@ function snd(f=520,d=.1,type='sine',vol=.05){
     o.connect(g).connect(AC.destination);o.start(t);o.stop(t+d+.02);}catch(e){}
 }
 const chime=()=>[660,880,1100].forEach((f,i)=>setTimeout(()=>snd(f,.18,'triangle',.06),i*90));
-$('#muteBtn').onclick=()=>{S.mute=!S.mute;save();$('#muteBtn').style.opacity=S.mute?.45:1;if(!S.mute)snd(700)};
+const SFX=(()=>{
+  const ok=()=>{if(S.mute)return false;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();return true}catch(e){return false}};
+  function tone(f1,f2,d,type,vol,delay=0){const t=AC.currentTime+delay,o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.setValueAtTime(f1,t);o.frequency.exponentialRampToValueAtTime(f2,t+d);
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.008);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g).connect(AC.destination);o.start(t);o.stop(t+d+.03)}
+  function noise(d,vol,ftype,f,delay=0){const t=AC.currentTime+delay,b=AC.createBuffer(1,Math.ceil(AC.sampleRate*d),AC.sampleRate),c=b.getChannelData(0);
+    for(let i=0;i<c.length;i++)c[i]=(Math.random()*2-1)*Math.pow(1-i/c.length,2);const src=AC.createBufferSource();src.buffer=b;const fl=AC.createBiquadFilter();fl.type=ftype;fl.frequency.value=f;
+    const g=AC.createGain();g.gain.value=vol;src.connect(fl).connect(g).connect(AC.destination);src.start(t)}
+  const scale=[523,587,659,784,880,1047,1175,1319,1568,1760];
+  return{
+    pop(n){if(!ok())return;const f=scale[Math.min(n,scale.length-1)];tone(f*1.6,f,.12,'sine',.12);tone(f*2,f*2.4,.06,'triangle',.04);noise(.05,.12,'bandpass',2500)},
+    zap(){if(!ok())return;tone(300,2400,.28,'sawtooth',.05);noise(.25,.1,'highpass',3000);tone(1200,1800,.2,'sine',.05,.05)},
+    boom(){if(!ok())return;tone(180,40,.5,'sine',.3);noise(.45,.35,'lowpass',900);tone(600,200,.25,'triangle',.06)},
+    whoosh(){if(!ok())return;noise(.14,.12,'bandpass',1400);tone(380,520,.08,'sine',.04)},
+    nope(){if(!ok())return;tone(260,200,.09,'square',.03);tone(220,170,.1,'square',.03,.1)},
+    tick(){if(!ok())return;tone(1500,1700,.04,'triangle',.05)},
+    sparkle(){if(!ok())return;[1568,1760,2093,2637].forEach((f,i)=>tone(f,f*1.02,.18,'triangle',.05,i*.06))},
+    fanfare(){if(!ok())return;[[523,0],[659,.12],[784,.24],[1047,.36],[784,.52],[1047,.64]].forEach(([f,d])=>{tone(f,f,.3,'square',.035,d);tone(f,f,.35,'triangle',.07,d)});
+      [523,659,784,1047].forEach(f=>tone(f,f,1.2,'triangle',.05,.8));noise(.6,.08,'highpass',5000,.8)}
+  };
+})();
+const Music=(()=>{
+  let on=false,timer=null,step=0,next=0,master=null;const E=60/104/2,N=n=>440*Math.pow(2,(n-69)/12);
+  const chords=[[60,64,67],[57,60,64],[53,57,60],[55,59,62]];
+  const mel=[76,null,79,76, 74,72,null,74, 72,null,69,72, 76,null,null,74, 72,null,74,76, 77,76,74,null, 74,76,79,null, 76,74,72,null];
+  function note(t,f,d,type,vol){const o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.008);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g).connect(master);o.start(t);o.stop(t+d+.05)}
+  let shk=null;
+  function sched(){
+    while(next<AC.currentTime+.3){
+      const bar=Math.floor(step/8)%4,s=step%8,ch=chords[bar];
+      if(s===0||s===3||s===4||s===6)ch.forEach((n,i)=>note(next+i*.014,N(n),.32,'triangle',.03));
+      if(s===0||s===4)note(next,N(ch[0]-24),.45,'sine',.11);
+      if(s===2||s===6)note(next,N(ch[2]-12),.25,'sine',.05);
+      const m=mel[step%32];if(m&&Math.floor(step/32)%2===0){note(next,N(m),.3,'triangle',.05);note(next,N(m+12),.18,'sine',.012)}
+      else if(m&&step%2===0)note(next,N(m+12),.22,'sine',.03);
+      if(s%2===1){const src=AC.createBufferSource();src.buffer=shk;const f=AC.createBiquadFilter();f.type='highpass';f.frequency.value=7000;const g=AC.createGain();g.gain.value=.05;src.connect(f).connect(g).connect(master);src.start(next)}
+      step++;next+=E;
+    }
+  }
+  return{start(){if(on||S.mute)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();
+      if(!shk){shk=AC.createBuffer(1,Math.ceil(AC.sampleRate*.05),AC.sampleRate);const d=shk.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*(1-i/d.length)}
+      master=AC.createGain();master.gain.value=.7;master.connect(AC.destination);on=true;step=0;next=AC.currentTime+.1;timer=setInterval(sched,60)}catch(e){}},
+    stop(){on=false;clearInterval(timer);if(master){const m=master;try{m.gain.setTargetAtTime(0,AC.currentTime,.08);setTimeout(()=>m.disconnect(),600)}catch(e){}}}};
+})();
+document.addEventListener('pointerdown',()=>Music.start(),{once:true});
+document.addEventListener('keydown',()=>Music.start(),{once:true});
+$('#muteBtn').onclick=e=>{e.stopPropagation();S.mute=!S.mute;save();$('#muteBtn').style.opacity=S.mute?.45:1;if(S.mute)Music.stop();else{Music.start();SFX.tick()}};
 $('#muteBtn').style.opacity=S.mute?.45:1;
 
 /* ---------- Parçacık şovu ---------- */
@@ -343,6 +394,7 @@ const CH={
   riza:{name:'Rıza Usta',col:'#4f7a33',face:face('#e3efd4',`<path d="M12 60 C14 46 46 46 48 60Z" fill="#6b8a4a"/><circle cx="30" cy="31" r="13" fill="#e8b48e"/><path d="M15 25 C16 13 44 13 45 25 L48 26 L12 26Z" fill="#6b5a45"/>${eyes}<path d="M22 37 Q30 33 38 37 Q34 41 30 39 Q26 41 22 37Z" fill="#d9d6cf"/><path d="M23 27 L28 28 M32 28 L37 27" stroke="#d9d6cf" stroke-width="2" stroke-linecap="round"/>`)},
   ela:{name:'Ela',col:'#d9711c',face:face('#ffe8cf',`<g fill="#e0732a"><circle cx="17" cy="24" r="8"/><circle cx="24" cy="15" r="8"/><circle cx="36" cy="15" r="8"/><circle cx="43" cy="24" r="8"/><circle cx="15" cy="35" r="7"/><circle cx="45" cy="35" r="7"/></g><path d="M14 60 C16 47 44 47 46 60Z" fill="#3c8fb0"/><circle cx="30" cy="31" r="12.5" fill="#f6cfae"/>${eyes}<circle cx="27" cy="27" r=".1"/><path d="M26 37 Q30 41 34 37" stroke="#8a4a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/><g fill="#c86a3a" opacity=".5"><circle cx="24" cy="34" r=".8"/><circle cx="36" cy="34" r=".8"/></g>`)},
   fistik:{name:'Fıstık',col:'#c9782d',face:face('#fff1d6',`<path d="M14 22 L18 6 L28 18Z M46 22 L42 6 L32 18Z" fill="#e8963f"/><ellipse cx="30" cy="32" rx="18" ry="16" fill="#f0a24c"/><path d="M22 18 q8 6 16 0" stroke="#c9782d" stroke-width="3" fill="none"/><ellipse cx="23" cy="31" rx="2.4" ry="3.2" fill="#2c2a3d"/><ellipse cx="37" cy="31" rx="2.4" ry="3.2" fill="#2c2a3d"/><path d="M28 37 L32 37 L30 39Z" fill="#e2457a"/><path d="M12 36 L22 37 M12 40 L22 39 M48 36 L38 37 M48 40 L38 39" stroke="#fff" stroke-width="1"/><ellipse cx="30" cy="54" rx="14" ry="8" fill="#f0a24c"/>`)},
+  saffet:{name:'Saffet Hanım',col:'#7b3fa0',face:face('#efe3fb',`<circle cx="30" cy="12" r="8" fill="#c9c6cf"/><path d="M15 32 C14 18 46 18 45 32Z" fill="#c9c6cf"/><path d="M12 60 C14 46 46 46 48 60Z" fill="#7b3fa0"/><path d="M18 50 Q30 56 42 50 L40 46 Q30 50 20 46Z" fill="#e2457a"/><circle cx="30" cy="31" r="12.5" fill="#efc6a6"/><circle cx="25" cy="31" r="3.6" fill="none" stroke="#5b4636" stroke-width="1.3"/><circle cx="35" cy="31" r="3.6" fill="none" stroke="#5b4636" stroke-width="1.3"/><path d="M28.6 31 h2.8" stroke="#5b4636" stroke-width="1.3"/><circle cx="25" cy="31" r="1.3" fill="#2c2a3d"/><circle cx="35" cy="31" r="1.3" fill="#2c2a3d"/><path d="M26 38 Q30 36.5 34 38" stroke="#8a4a3a" stroke-width="1.6" fill="none" stroke-linecap="round"/><path d="M21 26 L28 25.5 M32 25.5 L39 26" stroke="#9a96a0" stroke-width="1.6" stroke-linecap="round"/>`)},
   not:{name:'İpucu',col:'#2f7d4a',face:face('#dff1e6',`<path d="M14 46 C14 24 28 12 46 12 C48 32 36 46 14 46Z" fill="#74cf55"/><path d="M17 43 L38 22" stroke="#2f7d4a" stroke-width="2.5" stroke-linecap="round"/>`)},
   mektup:{name:'Nevin Nine\'nin mektubu',col:'#7a4e33',face:face('#f6ead2',`<rect x="10" y="17" width="40" height="28" rx="3" fill="#fffdf6" stroke="#c9a77a" stroke-width="2"/><path d="M10 19 L30 34 L50 19" stroke="#c9a77a" stroke-width="2" fill="none"/><circle cx="30" cy="34" r="5" fill="#e2457a"/>`)}
 };
@@ -410,7 +462,27 @@ const LV=[
  {m:26,w:'checker',g:[[4,25]]},
  {m:28,w:'corners',w2:'corners'},
  {m:28,w:'cross',w2:'center',g:[[0,20]]},
- {m:30,w:'full',w2:'heart'}
+ {m:30,w:'full',w2:'heart'},
+ {m:26,g:[[0,35],[4,35]]},
+ {m:28,w:'diamond',w2:'diamond'},
+ {m:26,w:'checker',w2:'center',g:[[2,25]]},
+ {m:28,g:[[1,40],[3,40]]},
+ {m:28,w:'heart',w2:'heart'},
+ {m:27,w:'frame',w2:'frame',g:[[0,20]]},
+ {m:30,w:'full'},
+ {m:26,g:[[0,30],[2,30],[4,30]]},
+ {m:28,w:'cross',w2:'cross'},
+ {m:30,w:'corners',w2:'diamond',g:[[3,30]]},
+ {m:28,w:'bottom',w2:'checker',g:[[1,30]]},
+ {m:30,w:'full',w2:'center'},
+ {m:28,g:[[0,40],[1,40],[2,40]]},
+ {m:30,w:'heart',w2:'cross',g:[[4,30]]},
+ {m:30,w:'full',w2:'checker'},
+ {m:30,w:'diamond',w2:'frame',g:[[2,35],[3,35]]},
+ {m:32,w:'full',w2:'corners'},
+ {m:30,g:[[0,45],[3,45],[4,45]]},
+ {m:32,w:'full',w2:'diamond',g:[[1,30]]},
+ {m:34,w:'full',w2:'full'}
 ];
 function levelDef(i){
   if(i<LV.length)return LV[i];
@@ -507,7 +579,7 @@ async function blast(initial,creates=[]){
     $('#board').appendChild(pt);setTimeout(()=>pt.remove(),850)}
   for(const c of creates){const x=c.k%W,y=Math.floor(c.k/W);const o=mk(c.sp==='r'?-1:c.t,c.sp,x,y);o.el.classList.add('born');G[y][x]=o}
   cascadeN++;
-  snd(fx?300:420+cascadeN*70,fx?.25:.1,fx?'sawtooth':'sine',fx?.04:.05);
+  if(fx){if(fired.some(o=>o.sp==='b'||o.sp==='r'))SFX.boom();else SFX.zap()}else SFX.pop(cascadeN);
   hud();
   await sleep(fx?280:210);
 }
@@ -592,12 +664,12 @@ async function trySwap(a,b){
   if(Math.abs(a.x-b.x)+Math.abs(a.y-b.y)!==1)return;
   busy=true;clearSel();clearHint();cascadeN=0;
   const A=G[a.y][a.x],B=G[b.y][b.x];
-  swapG(a,b);snd(360,.06);await sleep(170);
+  swapG(a,b);SFX.whoosh();await sleep(170);
   if(A.sp==='r'||B.sp==='r'||(A.sp&&B.sp)){
     moves--;hud();await comboFire(A,B);await gravity();await resolve(null);
   } else if(findGroups().length){
     moves--;hud();await resolve([b.y*W+b.x,a.y*W+a.x]);
-  } else {swapG(a,b);snd(220,.08,'square',.02);await sleep(180);busy=false;armHint();return}
+  } else {swapG(a,b);SFX.nope();await sleep(180);busy=false;armHint();return}
   if(!findMove())shuffle();
   busy=false;await checkEnd();
 }
@@ -633,7 +705,7 @@ tilesEl.addEventListener('pointerup',()=>{
   if(!down)return;const d=down;down=null;if(d.moved||busy)return;
   if(sel&&Math.abs(sel.x-d.x)+Math.abs(sel.y-d.y)===1){const s=sel;trySwap(s,{x:d.x,y:d.y});return}
   if(sel&&sel.x===d.x&&sel.y===d.y){clearSel();return}
-  clearSel();sel={x:d.x,y:d.y};G[d.y][d.x].el.classList.add('sel');snd(600,.04);
+  clearSel();sel={x:d.x,y:d.y};G[d.y][d.x].el.classList.add('sel');SFX.tick();
 });
 
 async function startLevel(){
@@ -656,7 +728,7 @@ async function checkEnd(){
       while(moves>0&&pool.length){const o=pool.splice(rnd(pool.length),1)[0];o.sp=Math.random()<.5?'h':'v';draw(o);moves--;hud();snd(700+moves*30,.08,'triangle');await sleep(90)}
       const sp=all().filter(o=>o.sp&&o.sp!=='r');if(sp.length){cascadeN=0;await blast(new Set(sp.map(o=>o.y*W+o.x)));await gravity();await resolve(null)}
     }
-    await sleep(300);chime();flash();
+    await sleep(300);SFX.fanfare();flash();
     const left=L.m+(extraUsed?5:0);
     const title=score>=6000?'MEGA KAZANÇ!':score>=3500?'SÜPER KAZANÇ!':'BÜYÜK KAZANÇ!';
     S.level++;S.stars++;S.best=Math.max(S.best||0,score);save();renderGarden();
@@ -693,7 +765,8 @@ function el(tag,at,parent){const e=document.createElementNS(NS,tag);for(const k 
 function grp(on,off){const g=el('g',{class:'lay'});if(on)g.dataset.on=on;if(off)g.dataset.off=off;return g}
 function seeded(s){return()=>{s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 
-function buildScene(){
+let sceneCh=0;
+function buildScene(ch){sceneCh=ch;if(ch===2)return buildScene2();
   scene.innerHTML=`<defs>
     <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd0ec"/><stop offset="1" stop-color="#e2f4f0"/></linearGradient>
     <linearGradient id="grass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a3d474"/><stop offset="1" stop-color="#6aae55"/></linearGradient>
@@ -783,15 +856,75 @@ function buildScene(){
 
   el('g',{id:'markers'});
 }
+function buildScene2(){
+  scene.innerHTML=`<defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9ad6ef"/><stop offset="1" stop-color="#f1f6dc"/></linearGradient>
+    <linearGradient id="grass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a8d878"/><stop offset="1" stop-color="#5fa64e"/></linearGradient>
+    <linearGradient id="wild" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6f7f45"/><stop offset="1" stop-color="#4f5e33"/></linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e8f7ff" stop-opacity=".95"/><stop offset=".5" stop-color="#b5e2f5" stop-opacity=".7"/><stop offset="1" stop-color="#e8f7ff" stop-opacity=".9"/></linearGradient>
+    <radialGradient id="glow"><stop offset="0" stop-color="#fff2a8"/><stop offset="1" stop-color="#fff2a8" stop-opacity="0"/></radialGradient>
+    <radialGradient id="roseglow"><stop offset="0" stop-color="#ffb199" stop-opacity=".9"/><stop offset="1" stop-color="#ffb199" stop-opacity="0"/></radialGradient></defs>
+  <rect width="400" height="140" fill="url(#sky)"/>
+  <circle cx="60" cy="34" r="14" fill="#ffe08a"/><circle cx="60" cy="34" r="22" fill="#ffe08a" opacity=".25"/>
+  <g fill="#fff" opacity=".85"><ellipse cx="250" cy="28" rx="28" ry="8"/><ellipse cx="268" cy="22" rx="16" ry="8"/><ellipse cx="150" cy="40" rx="16" ry="5"/></g>
+  <path d="M0 104 Q80 78 160 96 T300 86 T400 94 V122 H0Z" fill="#b6d6a0"/><path d="M180 98 Q260 70 340 92 T400 90 V122 H180Z" fill="#9fc98b"/>
+  <rect y="118" width="400" height="142" fill="url(#grass)"/>`;
+  const wild=el('rect',{y:118,width:400,height:142,fill:'url(#wild)',class:'lay'});wild.dataset.off='arka';
+  // taş duvar
+  el('rect',{x:0,y:106,width:400,height:20,fill:'#d9cbb0'});const sw=seeded(31);
+  for(let r=0;r<2;r++)for(let x=-10;x<400;x+=22)el('rect',{x:x+(r?11:0)+sw()*2,y:107+r*10,width:20,height:8,rx:2,fill:sw()<.5?'#cbbb9c':'#e2d6be'});
+  el('rect',{x:0,y:104,width:400,height:4,fill:'#bfae8e'});
+  // şenlik bayrakları
+  const bun=grp('senlik',null);bun.id='bunting';const bp=el('path',{d:'M0 58 Q200 108 400 58',stroke:'#5b4636','stroke-width':1,fill:'none'},bun);
+  const bl=bp.getTotalLength();for(let i=1;i<20;i++){const p=bp.getPointAtLength(bl*i/20);el('path',{d:`M${p.x-5} ${p.y} L${p.x+5} ${p.y} L${p.x} ${p.y+11}Z`,class:'flagc'+(i%3)},bun)}
+  // sera
+  el('rect',{x:30,y:162,width:114,height:14,rx:3,fill:'#7a573a'});
+  const sb=grp(null,'sera');el('path',{d:'M24 176 V112 L87 80 L150 112 V176Z',fill:'#9aa59c',opacity:.45},sb);
+  el('path',{d:'M24 176 V112 L87 80 L150 112 V176 M55 176 V96 M87 176 V80 M119 176 V96 M24 140 H150',stroke:'#7d7f7a','stroke-width':2.4,fill:'none'},sb);
+  el('path',{d:'M58 120 l12 -8 l-4 14Z M95 140 l14 6 l-10 8Z M30 150 l16 -6 l-6 12Z',fill:'#4c4f4a',opacity:.7},sb);
+  el('path',{d:'M126 100 l18 26',stroke:'#7d7f7a','stroke-width':2.4},sb);
+  const so=grp('sera',null);el('path',{d:'M24 176 V112 L87 80 L150 112 V176Z',fill:'url(#glass)'},so);
+  el('path',{d:'M24 176 V112 L87 80 L150 112 V176 M55 176 V96 M87 176 V80 M119 176 V96 M24 140 H150',stroke:'#fff','stroke-width':2.6,fill:'none'},so);
+  el('path',{d:'M34 130 L70 98 M40 168 L80 132 M96 128 L130 100',stroke:'#fff','stroke-width':3,opacity:.7,'stroke-linecap':'round'},so);
+  const spr=grp('tohum',null);for(let x=38;x<140;x+=9){el('path',{d:`M${x} 166 v-6 M${x} 161 q-4 -3 -5 -1 M${x} 161 q4 -3 5 -1`,stroke:'#3a9440','stroke-width':1.5,fill:'none','stroke-linecap':'round'},spr)}
+  const roses=grp('gulac',null);el('ellipse',{cx:87,cy:146,rx:62,ry:30,fill:'url(#roseglow)'},roses);const rr=seeded(77);
+  for(let i=0;i<12;i++){const x=38+i*8.6,y=146+rr()*10;el('path',{d:`M${x} 168 V${y+4}`,stroke:'#2f7d4a','stroke-width':1.6},roses);
+    el('path',{d:`M${x} ${y+8} q-6 -2 -5 -6`,fill:'#3a9440'},roses);el('circle',{cx:x,cy:y,r:5.4,fill:'#ff7a5c'},roses);el('circle',{cx:x,cy:y,r:3.4,fill:'#ff9a7f'},roses);el('path',{d:`M${x-2} ${y} q2 -3 4 0`,stroke:'#d94d35','stroke-width':1,fill:'none'},roses)}
+  // kuyu
+  const kb=grp(null,'kuyu');[[172,206],[182,210],[194,207],[188,200],[200,212],[176,214]].forEach(([x,y])=>el('ellipse',{cx:x,cy:y,rx:6,ry:4,fill:'#a39b8d'},kb));
+  const ko=grp('kuyu',null);el('rect',{x:170,y:186,width:36,height:26,rx:3,fill:'#cbc4b6'},ko);el('ellipse',{cx:188,cy:186,rx:18,ry:5,fill:'#5d6b75'},ko);el('ellipse',{cx:188,cy:186,rx:18,ry:5,fill:'none',stroke:'#e2ddd2','stroke-width':3},ko);
+  el('path',{d:'M172 186 V154 M204 186 V154',stroke:'#7a5a3e','stroke-width':3},ko);el('path',{d:'M164 158 L188 142 L212 158Z',fill:'#d9774f'},ko);el('path',{d:'M188 160 V176',stroke:'#5b4636'},ko);el('rect',{x:183,y:176,width:10,height:8,fill:'#8c6748'},ko);
+  // gül kemeri ve bank
+  const ar=grp('kemer',null);el('path',{d:'M242 208 V150 A28 28 0 0 1 298 150 V208',stroke:'#fbf5e8','stroke-width':5,fill:'none'},ar);
+  const ap=el('path',{d:'M242 208 V150 A28 28 0 0 1 298 150 V208',fill:'none'},ar);const al=ap.getTotalLength();const ar2=seeded(55);
+  for(let i=0;i<28;i++){const p=ap.getPointAtLength(al*i/28);el('ellipse',{cx:p.x+(ar2()-.5)*6,cy:p.y+(ar2()-.5)*6,rx:4,ry:2.6,fill:'#3f8a48',transform:`rotate(${ar2()*180} ${p.x} ${p.y})`},ar);if(i%2)el('circle',{cx:p.x+(ar2()-.5)*6,cy:p.y+(ar2()-.5)*6,r:3,fill:i%4===1?'#e2457a':'#ff8db3'},ar)}
+  const bn=grp('bank',null);el('rect',{x:252,y:176,width:36,height:4,rx:1.5,class:'benchc'},bn);el('rect',{x:252,y:186,width:36,height:5,rx:1.5,class:'benchc'},bn);
+  el('path',{d:'M255 191 V204 M285 191 V204 M256 180 V186 M284 180 V186',stroke:'#5b4636','stroke-width':2.2},bn);
+  // kovan
+  const hv=grp('kovan',null);el('rect',{x:344,y:188,width:26,height:24,rx:3,fill:'#f2b01e'},hv);el('rect',{x:342,y:184,width:30,height:6,rx:2,fill:'#d9774f'},hv);el('path',{d:'M344 196 H370 M344 204 H370',stroke:'#c98a12','stroke-width':1.4},hv);el('rect',{x:354,y:206,width:6,height:4,rx:1,fill:'#5b4636'},hv);
+  [[338,176],[378,170],[362,164]].forEach(([x,y],i)=>{const b=el('g',{class:'bee',style:`animation-delay:${i*.5}s`},hv);el('ellipse',{cx:x,cy:y,rx:3,ry:2.2,fill:'#ffd447'},b);el('path',{d:`M${x-1} ${y-2} v4 M${x+1} ${y-2} v4`,stroke:'#2c2a3d','stroke-width':.8},b);el('ellipse',{cx:x,cy:y-2.5,rx:2,ry:1.4,fill:'#fff',opacity:.8},b)});
+  // sebze tarhı
+  el('rect',{x:300,y:222,width:92,height:30,rx:6,fill:'#7a573a'},grp(null,'sebze'));
+  const vg=grp('sebze',null);el('rect',{x:300,y:222,width:92,height:30,rx:6,fill:'#7a573a'},vg);
+  for(let r=0;r<2;r++)for(let x=308;x<390;x+=12){el('path',{d:`M${x} ${238+r*12} q-3 -8 0 -12 q3 4 0 12`,fill:'#3a9440'},vg);el('circle',{cx:x+3,cy:232+r*12,r:2.8,fill:r?'#ff8a00':'#e8322f'},vg)}
+  // dikenli çalılar
+  const br=grp(null,'arka'),bq=seeded(61);
+  for(let i=0;i<16;i++){const x=10+bq()*380,y=150+bq()*100,s=10+bq()*12;el('path',{d:`M${x-s} ${y} Q${x-s*.6} ${y-s*1.2} ${x} ${y-s*.7} Q${x+s*.6} ${y-s*1.3} ${x+s} ${y}Z`,fill:bq()<.5?'#3d4a27':'#4a5a2e'},br);
+    for(let j=0;j<4;j++)el('path',{d:`M${x+(bq()-.5)*s*1.4} ${y-bq()*s*.8} l${(bq()-.5)*8} -6`,stroke:'#2b331b','stroke-width':1.4},br);if(bq()<.5)el('circle',{cx:x+(bq()-.5)*s,cy:y-s*.4,r:1.8,fill:'#5a2a6b'},br)}
+  el('g',{id:'markers'});
+}
 const FLOWER={lavanta:['#9b7fd1','#b9a1ea'],gul:['#e2457a','#ff8db3'],papatya:['#ffffff','#fff3c4']};
 const TEA={mavi:'#3c7fb0',sari:'#f2b01e',beyaz:'#f4efe4'};
 const GATE={lacivert:'#25407a',yesil:'#2f7d4a',pembe:'#e2457a'};
 function applyChoices(){
-  const bed=$('#bed');bed.innerHTML='';const k=S.choice.tarh||'lavanta',[c1,c2]=FLOWER[k],r=seeded(4);
+  const BENCH={beyaz:'#f4efe4',lavanta:'#9b7fd1',nane:'#7fd1b3'},FLAGS={gokkusagi:['#e8322f','#ffd447','#3c7fb0'],pembe:['#e2457a','#fff','#ff8db3'],mavi:['#25407a','#fff','#6db8d8']};
+  scene.querySelectorAll('.benchc').forEach(e=>e.setAttribute('fill',BENCH[S.choice.bank||'beyaz']));
+  const fc=FLAGS[S.choice.senlik||'gokkusagi'];[0,1,2].forEach(i=>scene.querySelectorAll('.flagc'+i).forEach(e=>e.setAttribute('fill',fc[i])));
+  const bed=$('#bed');if(bed){bed.innerHTML='';const k=S.choice.tarh||'lavanta',[c1,c2]=FLOWER[k],r=seeded(4);
   for(let i=0;i<22;i++){const x=202+r()*84,y=204+r()*18;
     el('path',{d:`M${x} ${y+6} v-6`,stroke:'#3a9440','stroke-width':1.4},bed);
     if(k==='lavanta'){for(let j=0;j<4;j++)el('ellipse',{cx:x,cy:y-1-j*2.6,rx:1.8,ry:1.6,fill:j%2?c1:c2},bed)}
-    else{el('circle',{cx:x,cy:y-1,r:3.6,fill:r()<.5?c1:c2},bed);el('circle',{cx:x,cy:y-1,r:1.3,fill:k==='papatya'?'#ffd447':'#a82a58'},bed)}}
+    else{el('circle',{cx:x,cy:y-1,r:3.6,fill:r()<.5?c1:c2},bed);el('circle',{cx:x,cy:y-1,r:1.3,fill:k==='papatya'?'#ffd447':'#a82a58'},bed)}}}
   scene.querySelectorAll('.chairc').forEach(e=>e.setAttribute('fill',TEA[S.choice.cay||'mavi']));
   scene.querySelectorAll('.tablec').forEach(e=>e.setAttribute('fill',S.choice.cay==='beyaz'?'#d8ccb4':'#f4efe4'));
   scene.querySelectorAll('.gatec').forEach(e=>e.setAttribute('fill',GATE[S.choice.kapi||'lacivert']));
@@ -836,38 +969,95 @@ const TASKS=[
  {id:'kapi',name:'Bahçe kapısını boya',cost:2,x:254,y:104,icon:'🚪',choice:{title:'Kapı hangi renge boyansın?',opts:[['lacivert','Lacivert','#25407a'],['yesil','Zeytin yeşili','#2f7d4a'],['pembe','Begonvil pembesi','#e2457a']]},say:[
    ['riza','Şenlik kurulu bahçeni görmeye gelecek kızım. Kapıdan girer girmez ağızları açık kalacak.'],
    ['ela','Ben de dükkânda herkese anlattım. Bütün köy merak ediyor!'],
-   ['simge','O zaman sıra Ege Gülü\'nde. Hadi tohumları ekelim!']]}
+   ['simge','O zaman sıra Ege Gülü\'nde. Hadi tohumları ekelim!']]},
+ {ch:2,id:'arka',name:'Dikenli çalıları temizle',cost:1,x:200,y:232,icon:'🌿',say:[
+   ['simge','Arka bahçe de orman olmuş! Bu dikenlerin altında ne var acaba?'],
+   ['riza','Nevin Hanım\'ın serası. Ege Gülü orada büyürdü.']]},
+ {ch:2,id:'sera',name:'Eski serayı onar',cost:3,x:87,y:118,icon:'🏡',say:[
+   ['ela','Camları tek tek sildim, bak nasıl parlıyor!'],
+   ['simge','Tohumlar için mükemmel bir yuva oldu.']]},
+ {ch:2,id:'tohum',name:'Ege Gülü tohumlarını ek',cost:2,x:87,y:156,icon:'🌱',say:[
+   ['mektup','"Her sabah bir avuç su, bir de güzel bir söz. Gül dediğin sevgiyle büyür."'],
+   ['simge','Söz veriyorum nine, her sabah onlarla konuşacağım.']]},
+ {ch:2,id:'kuyu',name:'Eski kuyuyu onar',cost:2,x:188,y:174,icon:'🪣',say:[
+   ['saffet','Demek Nevin\'in torunu sensin. Ben Saffet. Karşı köyün gül bahçesi benimdir.'],
+   ['saffet','On iki yıldır şenliğin birincisiyim. Sana bol şans... İhtiyacın olacak.'],
+   ['simge','Bu da kimdi böyle?'],
+   ['riza','Boş ver kızım. Nevin Hanım\'la gençliklerinde can dosttular, sonra küstüler.']]},
+ {ch:2,id:'kemer',name:'Gül kemeri kur',cost:2,x:270,y:126,icon:'🌹',say:[
+   ['ela','Bu kemerin altından geçen herkes gülümser!'],
+   ['simge','Şenlikte jüri de buradan geçecek.']]},
+ {ch:2,id:'bank',name:'Kemerin altına bank koy',cost:2,x:270,y:188,icon:'🪑',choice:{title:'Bank hangi renk olsun?',opts:[['beyaz','Kireç beyazı','#f4efe4'],['lavanta','Lavanta moru','#9b7fd1'],['nane','Nane yeşili','#7fd1b3']]},say:[
+   ['riza','Nevin Hanım\'la Saffet bu bankta saatlerce otururdu.'],
+   ['simge','Peki neden küstüler?'],
+   ['riza','Bir gül yüzünden. Gerisini o anlatsın.']]},
+ {ch:2,id:'kovan',name:'Arı kovanı yerleştir',cost:2,x:357,y:170,icon:'🐝',say:[
+   ['fistik','Miyav?'],
+   ['simge','Korkma Fıstık, arılar dostumuz. Güllerimizi onlar tozlayacak.']]},
+ {ch:2,id:'sebze',name:'Sebze tarhı kur',cost:2,x:346,y:236,icon:'🍅',say:[
+   ['ela','Şenlik sofrası için domates, biber... Hepsi senin bahçenden!'],
+   ['simge','Ninemin domatesli böreği de olmazsa olmaz.']]},
+ {ch:2,id:'gulac',name:'Ege Gülü\'nü açtır',cost:3,x:87,y:138,icon:'🌺',say:[
+   ['simge','Rıza Usta! Çabuk gelin, açtı!'],
+   ['riza','Kırk yıl... Kırk yıl sonra Ege Gülü yeniden açtı. Nevin Hanım, görüyor musun?'],
+   ['saffet','...Bu koku. Nevin\'in gülü. Hiç unutmadım.']]},
+ {ch:2,id:'senlik',name:'Şenlik bayraklarını as',cost:2,x:200,y:76,icon:'🎉',choice:{title:'Bayraklar hangi renkte olsun?',opts:[['gokkusagi','Gökkuşağı','#ffd447'],['pembe','Pembe beyaz','#ff8db3'],['mavi','Mavi beyaz','#6db8d8']]},say:[
+   ['saffet','Jüri kararını verdi. Bu yılın birincisi... Simge\'nin Bahçesi!'],
+   ['saffet','Nevin\'le aramız bu gül yüzünden açılmıştı. Bir dal istemiştim, vermedi. Şimdi anlıyorum, sana saklıyormuş.'],
+   ['simge','O zaman ilk dalı size vereyim Saffet Hanım. Ninem de bunu isterdi.'],
+   ['saffet','...Teşekkür ederim, kızım.'],
+   ['ela','Şenlik başlasın!']]}
 ];
-const nextTasks=()=>TASKS.filter(t=>!S.done.includes(t.id)).slice(0,2);
+TASKS.forEach(t=>t.ch=t.ch||1);
+const CHAP={1:'1. Bölüm · Nevin Nine\'nin evi',2:'2. Bölüm · Ege Gülü'};
+const chDone=c=>TASKS.filter(t=>t.ch===c).every(t=>S.done.includes(t.id));
+const unlocked=()=>chDone(1)?2:1;
+const viewCh=()=>Math.min(S.view||unlocked(),unlocked());
+const nextTasks=c=>TASKS.filter(t=>t.ch===c&&!S.done.includes(t.id)).slice(0,2);
 function renderGarden(){
+  const ch=viewCh();if(sceneCh!==ch)buildScene(ch);
   scene.querySelectorAll('[data-on]').forEach(e=>e.classList.toggle('off',!S.done.includes(e.dataset.on)));
   scene.querySelectorAll('[data-off]').forEach(e=>e.classList.toggle('off',S.done.includes(e.dataset.off)));
   applyChoices();
+  $('#chapterLbl').textContent=CHAP[ch];
+  const tb=$('#tabs');tb.hidden=unlocked()<2;tb.querySelectorAll('button').forEach(b=>b.classList.toggle('on',+b.dataset.v===ch));
   $('#starCount').textContent=S.stars;
   $('#playSub').textContent='Bulmaca '+(S.level+1);
-  const n=S.done.length;$('#progLbl').textContent=n+' / '+TASKS.length;$('#progBar').style.width=n/TASKS.length*100+'%';
-  const nt=nextTasks(),ul=$('#tasks');
+  const all=TASKS.filter(t=>t.ch===ch),n=all.filter(t=>S.done.includes(t.id)).length;$('#progLbl').textContent=n+' / '+all.length;$('#progBar').style.width=n/all.length*100+'%';
+  const nt=nextTasks(ch),ul=$('#tasks');
   ul.innerHTML=nt.length?nt.map(t=>`<li class="task"><div class="ti" aria-hidden="true">${t.icon}</div><div class="tn">${t.name}<small>${t.cost} yıldız gerekli</small></div><button class="do" data-t="${t.id}" ${S.stars<t.cost?'disabled':''}>★ ${t.cost}</button></li>`).join('')
-    :`<li class="task"><div class="ti">🌹</div><div class="tn">1. bölüm tamamlandı!<small>2. bölüm: Ege Gülü yakında. Yıldız toplamaya devam edebilirsin.</small></div></li>`;
+    :ch===1?`<li class="task"><div class="ti">🌹</div><div class="tn">1. bölüm tamamlandı!<small>Arka bahçede 2. bölüm seni bekliyor.</small></div></li>`
+    :`<li class="task"><div class="ti">🏆</div><div class="tn">2. bölüm tamamlandı!<small>3. bölüm yakında. Yıldız toplamaya devam edebilirsin.</small></div></li>`;
   ul.querySelectorAll('.do').forEach(b=>b.onclick=()=>doTask(b.dataset.t));
   const mk=$('#markers');mk.innerHTML='';
   nt.forEach(t=>{const g=el('g',{class:'marker'+(S.stars<t.cost?' locked':''),transform:`translate(${t.x} ${t.y})`,tabindex:0,role:'button','aria-label':t.name},mk);
     if(S.stars>=t.cost)el('circle',{r:11,class:'ring'},g);el('circle',{r:11},g);const tx=el('text',{},g);tx.textContent=S.stars>=t.cost?'!':t.cost+'★';
     g.onclick=()=>doTask(t.id)});
 }
+$('#tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{S.view=+b.dataset.v;save();SFX.tick();renderGarden()});
 async function doTask(id){
   const t=TASKS.find(x=>x.id===id);if(!t||S.done.includes(id))return;
-  if(S.stars<t.cost){toast(`${t.cost-S.stars} yıldız daha lazım. Bir bulmaca oyna!`);return}
+  if(S.stars<t.cost){toast(`${t.cost-S.stars} yıldız daha lazım. Bir bulmaca oyna!`);SFX.nope();return}
   if(t.choice){
     const i=await modal(`<h2>${t.choice.title}</h2><p>Sonra fikrini değiştiremezsin, iyi seç!</p><div class="opts">${t.choice.opts.map(([k,n,c],j)=>`<button class="opt" data-opt="${j}"><span class="sw" style="background:${c}"></span>${n}</button>`).join('')}</div>`,['Vazgeç']);
     if(typeof i==='number')return;
     S.choice[t.id]=t.choice.opts[i.opt][0];
   }
-  S.stars-=t.cost;S.done.push(id);save();chime();renderGarden();
+  S.stars-=t.cost;S.done.push(id);save();SFX.sparkle();renderGarden();
   {const r=scene.getBoundingClientRect(),px=r.left+t.x/400*r.width,py=r.top+t.y/260*r.height;FX.burst(px,py,['#ffd447','#ff6f9f','#fff','#74cf55'],40,9);FX.ring(px,py,'#ffd447');FX.confetti(60)}
   const mk=$('#markers');for(let i=0;i<6;i++){const c=el('circle',{cx:t.x+(Math.random()-.5)*50,cy:t.y+(Math.random()-.5)*30,r:5,fill:i%2?'#ffd447':'#fff',class:'sparkle',style:`transform-origin:center;transform-box:fill-box;animation-delay:${i*.08}s`},mk);setTimeout(()=>c.remove(),1400)}
   await sleep(700);await talk(t.say);
-  if(S.done.length===TASKS.length){chime();await modal('<div class="big-star">🌹</div><h2>1. bölüm tamamlandı!</h2><p>Nevin Nine\'nin bahçesi yeniden çiçek açtı. Sıradaki hikaye: Ege Gülü ve Bahar Şenliği.</p>',['Harika'])}
+  if(t.ch===1&&chDone(1)){
+    SFX.fanfare();FX.confetti(160);
+    await modal('<div class="big-star">🌹</div><h2>1. bölüm tamamlandı!</h2><p>Nevin Nine\'nin bahçesi yeniden çiçek açtı. Şimdi sıra arka bahçede: Ege Gülü ve Bahar Şenliği.</p>',['Arka bahçeye git']);
+    S.view=2;save();renderGarden();
+    await talk([['simge','Tohumları ekmek için uygun bir yer lazım.'],['riza','Evin arkasına hiç baktın mı? Nevin Hanım\'ın asıl hazinesi orada.'],['not','Arka bahçe açıldı! Yeni işler ve 20 yeni bulmaca seni bekliyor.']]);
+  }
+  if(t.ch===2&&chDone(2)){
+    SFX.fanfare();FX.confetti(200);
+    const r=$('.scene-wrap').getBoundingClientRect();FX.fountain(r.left+r.width/2,r.top+r.height/2,80);
+    await modal('<div class="big-star">🏆</div><div class="jack">ŞENLİK BİRİNCİSİ!</div><p>Ege Gülü kırk yıl sonra yeniden açtı ve Bahar Şenliği\'nde birinci oldu. 3. bölüm yakında!</p>',['Yaşasın!']);
+  }
   renderGarden();
 }
 $('#playBtn').onclick=()=>{snd(520);startLevel()};
@@ -889,7 +1079,7 @@ $('#playBtn').onclick=()=>{snd(520);startLevel()};
 /* ---------- Tahta ışıkları ---------- */
 {const b=$('#bulbs'),N=12;let h='';for(let i=0;i<N;i++){const t=(i+.5)/N*100;h+=`<i style="left:${t}%;top:0"></i><i style="left:${100-t}%;top:100%"></i><i style="left:100%;top:${t}%"></i><i style="left:0;top:${100-t}%"></i>`}b.innerHTML=h}
 /* ---------- Açılış ---------- */
-buildScene();renderGarden();
+renderGarden();
 if(!S.intro){
   setTimeout(async()=>{
     await talk([
