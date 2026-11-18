@@ -416,6 +416,76 @@ body:not(.playing) #gardenView .task {
   body:not(.playing) #gardenView .big { min-height: 68px; border-radius: 17px; }
 }
 
+
+/* ── Petalpop playful match-3 visual direction ── */
+body:not(.playing){
+  background:linear-gradient(180deg,#8eddf2 0%,#c8f0d2 46%,#fff0c9 100%);
+}
+body:not(.playing) #forest{
+  opacity:.58;
+  filter:saturate(1.35) brightness(1.28);
+}
+body:not(.playing) .top{
+  background:linear-gradient(110deg,rgba(255,255,255,.94),rgba(255,246,224,.92));
+  border:2px solid rgba(255,255,255,.9);
+  box-shadow:0 7px 0 rgba(61,145,105,.18),0 14px 28px rgba(47,106,91,.16);
+  backdrop-filter:blur(8px);
+}
+body:not(.playing) .brand{color:#f04f91;text-shadow:0 2px 0 #fff}
+body:not(.playing) .brand .pp1{color:#f04f91}
+body:not(.playing) .brand .pp2{color:#f5a623}
+body:not(.playing) .brand small{color:#477b65;text-shadow:none}
+body:not(.playing) .pill,
+body:not(.playing) .icon-btn{
+  color:#345b50;background:#fff;border:2px solid #e4f5e8;
+  box-shadow:0 3px 0 rgba(75,145,105,.18);
+  backdrop-filter:none;
+}
+body:not(.playing) .pill .st{color:#ffb92e}
+body:not(.playing) #gardenView .scene-wrap{
+  border:4px solid #fff;border-radius:26px;
+  box-shadow:0 7px 0 #69b77c,0 15px 28px rgba(42,103,77,.22);
+  background:linear-gradient(#9ce5f5,#c9efb0);
+}
+body:not(.playing) #gardenView .scene-wrap::before{border:2px solid rgba(255,255,255,.55)}
+body:not(.playing) #gardenView #scene{filter:saturate(1.22) contrast(1.035)}
+body:not(.playing) #gardenView .panel{
+  border:3px solid #fff;border-radius:26px;
+  background:linear-gradient(155deg,#fff 0%,#fff7e8 100%);
+  color:#315b4a;
+  box-shadow:0 7px 0 #e5c987,0 15px 30px rgba(51,100,73,.18);
+}
+body:not(.playing) #gardenView .panel::after{color:rgba(255,111,159,.18)}
+body:not(.playing) #gardenView #playBtn{
+  background:linear-gradient(180deg,#ff8cba 0%,#f04f91 100%);
+  border:2px solid #fff;color:#fff;
+  box-shadow:0 6px 0 #c83270,0 10px 18px rgba(213,62,123,.22),inset 0 2px 0 rgba(255,255,255,.4);
+  text-shadow:0 2px 0 rgba(140,35,83,.2);
+}
+body:not(.playing) #gardenView #playBtn:active{
+  box-shadow:0 2px 0 #c83270;transform:translateY(4px);
+}
+body:not(.playing) #gardenView .panel h3{color:#e45a8e;font-family:var(--display);font-size:21px}
+body:not(.playing) #gardenView .prog{height:12px;background:#e6f2dd;border:2px solid #fff}
+body:not(.playing) #gardenView .prog i{background:linear-gradient(90deg,#78d66c,#36ae79)}
+body:not(.playing) #gardenView .task{
+  background:linear-gradient(135deg,#f1fbff,#fff);
+  border:2px solid #e0f2e7;border-radius:16px;
+  box-shadow:0 3px 0 rgba(99,171,130,.14);
+}
+body:not(.playing) #gardenView .task .ti{background:#fff0f6;border-radius:12px}
+body:not(.playing) #gardenView .task .do{
+  background:linear-gradient(180deg,#83d86e,#43ad68);
+  box-shadow:0 3px 0 #328451;border-radius:12px;
+}
+body:not(.playing) #gardenView .task .do[disabled]{
+  background:#d7e2d8;box-shadow:0 3px 0 #b7c6b8;
+}
+@media(max-width:520px){
+  body:not(.playing) #gardenView .panel{padding:15px}
+  body:not(.playing) #gardenView #tasks{grid-template-columns:1fr}
+}
+
 </style>
 
 <div id="forest" aria-hidden="true"></div>
