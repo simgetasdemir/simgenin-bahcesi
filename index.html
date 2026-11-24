@@ -3,6 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!--pwa--><link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#ff5c9e">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Petalpop">
+<script>window.addEventListener('load',()=>{if(!window.__PLATFORM&&'serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{})})</script><!--/pwa-->
 <title>Petalpop</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1365,7 +1372,7 @@ async function comboFire(A,B){
 async function useHammer(x,y){
   if(busy||!playing||moves<=0||(hammerUsed&&!(S.inv.sh>0)))return;
   const o=G[y]?.[x];if(!o)return;
-  if(hammerUsed){S.inv.sh--;save()}
+  if(hammerUsed){S.inv.sh--;save()}Stats.ev('booster_shears',S.level+1);
   hammerUsed=true;hammerMode=false;busy=true;clearSel();clearHint();cascadeN=0;
   moves--;hud();SFX.boom();combo(T('Bahçıvan dokunuşu!'));
   await blast(new Set([y*W+x]));
@@ -1381,11 +1388,11 @@ $('#hammerBtn').onclick=()=>{
 };
 $('#mixBtn').onclick=()=>{
   if(busy||!playing)return;if(!(S.inv.mix>0)){toast(T('Karıştırma hakkın yok. Günlük ödül ve sandıklardan kazanabilirsin.'));return}
-  S.inv.mix--;save();clearSel();clearHint();shuffle();SFX.whoosh();hud();armHint();
+  S.inv.mix--;save();Stats.ev('booster_mix',S.level+1);clearSel();clearHint();shuffle();SFX.whoosh();hud();armHint();
 };
 $('#plusBtn').onclick=()=>{
   if(busy||!playing)return;if(!(S.inv.plus>0)){toast(T('+5 hamle hakkın yok. Günlük ödül ve sandıklardan kazanabilirsin.'));return}
-  S.inv.plus--;save();moves+=5;hud();chime();toast(T('+5 hamle!'));
+  S.inv.plus--;save();Stats.ev('booster_plus',S.level+1);moves+=5;hud();chime();toast(T('+5 hamle!'));
 };
 async function trySwap(a,b){
   if(busy||!playing||moves<=0)return;
@@ -1443,6 +1450,7 @@ tilesEl.addEventListener('pointerup',()=>{
 });
 
 async function startLevel(){
+  Stats.ev('start',S.level+1);
   L=levelDef(S.level);moves=L.m;extraUsed=false;score=0;hammerMode=false;hammerUsed=false;
   goals=(L.g||[]).map(([t,n])=>({k:t,n}));
   $('#gardenView').hidden=true;$('#playView').hidden=false;
@@ -1470,7 +1478,7 @@ async function checkEnd(){
     await sleep(300);SFX.fanfare();flash();
     const left=L.m+(extraUsed?5:0);
     const title=T(score>=6000?'MEGA KAZANÇ!':score>=3500?'SÜPER KAZANÇ!':'BÜYÜK KAZANÇ!');
-    S.level=Math.min(30,S.level+1);S.stars++;S.best=Math.max(S.best||0,score);
+    Stats.ev('win',S.level+1);S.level=Math.min(30,S.level+1);S.stars++;S.best=Math.max(S.best||0,score);
     S.chest=(S.chest||0)+1;let chestTxt;
     if(S.chest>=CHEST_N){S.chest=0;const r=rollChest();give(r);chestTxt=`🎁 ${T('Sandık açıldı!')} ${rwText(r)}`}
     else chestTxt=`🎁 ${T('Sandık')}: ${S.chest}/${CHEST_N}`;
@@ -1494,6 +1502,7 @@ async function checkEnd(){
     const INV=T('➕ Envanterden +5 hamle ({n})',{n:S.inv.plus||0});
     const btns=(S.inv.plus>0?[INV]:[]).concat(extraUsed?[RETRY,HOME]:Ads.on?[AD,...(S.stars>=1?[ST]:[]),RETRY,HOME]:[FREE,RETRY,HOME]);
     const list=goals.filter(g=>g.n>0).map(g=>`${g.n} ${g.k==='v'?T('sarmaşık'):g.k==='w'?T('yabani ot'):T(TNAME[g.k]).toLowerCase()}`).join(', ');
+    Stats.ev('lose',S.level+1);
     const i=await modal(`<h2>${T('Hamleler bitti')}</h2><p>${T('{list} kaldı. Az kaldı!',{list})}</p>`,btns);
     const act=btns[i];
     const cont=()=>{extraUsed=true;moves=5;playing=true;hud();armHint();Ads.start()};
@@ -1508,7 +1517,26 @@ async function checkEnd(){
 $('#quitBtn').onclick=async()=>{
   if(busy)return;
   const i=await modal(`<h2>${T('Bahçeye dönülsün mü?')}</h2><p>${T('Bu bulmacadaki ilerlemen kaybolur.')}</p>`,[T('Bahçeye dön'),T('Oynamaya devam')]);
-  if(i===0){playing=false;goGarden()}
+  if(i===0){Stats.ev('quit',S.level+1);playing=false;goGarden()}
+};
+/* ---------- Ölçüm ----------
+   Oyuncunun nerede takıldığını görmek için anonim olay sayımı.
+   Yerel özet her zaman tutulur (localStorage 'petalpop-stats'); ?stats ile görülür.
+   Uzak sayım için GoatCounter (ücretsiz) kodunu STATS_CODE'a yaz ya da paketlerde window.__STATS ile ver.
+   Kişisel veri gönderilmez: yalnızca olay adı, bulmaca numarası ve platform. */
+const STATS_CODE='';
+const Stats={
+  key:'petalpop-stats',
+  ev(name,lv){
+    if(/[?&]demo/.test(location.search))return;
+    try{const d=JSON.parse(localStorage.getItem(this.key)||'{}');d[name]=d[name]||{};const k=lv==null?'-':lv;d[name][k]=(d[name][k]||0)+1;localStorage.setItem(this.key,JSON.stringify(d))}catch(e){}
+    const code=window.__STATS||STATS_CODE;if(!code)return;
+    try{const p='/ev/'+name+(lv==null?'':'/'+lv);
+      new Image().src=`https://${code}.goatcounter.com/count?p=${encodeURIComponent(p)}&t=${encodeURIComponent(name)}&r=${encodeURIComponent(window.__PLATFORM||'web')}&e=true&rnd=${Math.random().toString(36).slice(2)}`}catch(e){}
+  },
+  show(){const d=JSON.parse(localStorage.getItem(this.key)||'{}');const lv=new Set();for(const n in d)for(const k in d[n])lv.add(k);
+    const rows=[...lv].sort((a,b)=>(+a||0)-(+b||0)).map(k=>`<tr><td>${k}</td><td>${d.start?.[k]||0}</td><td>${d.win?.[k]||0}</td><td>${d.lose?.[k]||0}</td><td>${d.quit?.[k]||0}</td></tr>`).join('');
+    modal(`<h2>Petalpop stats</h2><table style="width:100%;font-size:13px"><tr><th>#</th><th>start</th><th>win</th><th>lose</th><th>quit</th></tr>${rows}</table>`,['OK'])}
 };
 /* ---------- Günlük ödül, sandık, haftalık etkinlik ---------- */
 const CHEST_N=3;
@@ -1538,7 +1566,7 @@ async function dailyCheck(){
   const r=DAILY[streak-1];
   const days=DAILY.map((d,i)=>`<div class="day ${i<streak-1?'got':i===streak-1?'now':''}">${T('{n}. gün',{n:i+1})}<b>${i<streak-1?'✓':i===6?'🎁':RW_IC[Object.keys(d)[0]]}</b></div>`).join('');
   await modal(`<h2>${T('Günlük ödül')}</h2><p>${streak>1?T('{n} gündür üst üste geliyorsun!',{n:streak}):T('Her gün gel, ödüller büyüsün!')}</p><div class="days">${days}</div><div class="rw">${rwText(r)}</div>`,[T('Ödülü al')]);
-  S.daily={last:today,streak};give(r);save();renderMeta();chime();
+  S.daily={last:today,streak};give(r);Stats.ev('daily',streak);save();renderMeta();chime();
   const pr=$('#invBox')?.getBoundingClientRect();if(pr)FX.burst(pr.left+pr.width/2,pr.top+pr.height/2,['#ffd447','#ff8db3','#fff'],24,7);
 }
 function goGarden(){clearHint();Ads.stop();$('.top').hidden=false;document.body.classList.remove('playing');$('#playView').hidden=true;$('#gardenView').hidden=false;renderGarden()}
@@ -1966,6 +1994,8 @@ if(/[?&]demo/.test(location.search)){window.__g=()=>({G,goals,moves,playing,busy
     const m=best||findMove();if(m){const[A,B]=m;await trySwap({x:A.x,y:A.y},{x:B.x,y:B.y})}}}}
 else if(!S.intro)setTimeout(playIntro,400);
 else setTimeout(dailyCheck,700);
+if(/[?&]stats/.test(location.search))setTimeout(()=>Stats.show(),900);
+Stats.ev('open');
 })();
 </script>
 

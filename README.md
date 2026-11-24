@@ -19,3 +19,8 @@ Tek dosya: `index.html`. Tarayıcıda açman yeterli. `main` dalına her gönder
 ## Oyun siteleri
 
 `python3 tools/build_platforms.py [GameDistribution oyun kimliği]` komutu CrazyGames, Poki ve GameDistribution için `dist/` altında reklam kodlu paketleri (zip) üretir.
+
+
+## Büyüme ve telefon uygulaması
+
+Günlük ödül, yardımcı aletler, ölçüm, oyun siteleri ve telefon uygulaması adımları için [docs/BUYUME.md](docs/BUYUME.md) dosyasına bak.

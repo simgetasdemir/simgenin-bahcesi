@@ -1,12 +1,13 @@
 """Oyun sitesi paketlerini üretir: dist/<site>/index.html ve dist/<site>.zip
 
-Kullanım: python3 tools/build_platforms.py [GameDistribution oyun kimliği]
+Kullanım: python3 tools/build_platforms.py [GameDistribution oyun kimliği] [GoatCounter kodu]
 Kaynak: depo kökündeki index.html (GitHub sayfası sürümü).
 """
-import os, sys, zipfile
+import os, re, sys, zipfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 gd_id = sys.argv[1] if len(sys.argv) > 1 else "GD_GAME_ID"
+stats = sys.argv[2] if len(sys.argv) > 2 else ""
 
 HEADS = {
     "crazygames": '<script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script>\n'
@@ -22,11 +23,14 @@ HEADS = {
 EXTRA_CSS = "<style>body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}</style>\n"
 
 src = open(os.path.join(ROOT, "index.html"), encoding="utf-8").read()
+# Telefon uygulaması (PWA) etiketleri oyun sitelerinde gerekmez
+src = re.sub(r"<!--pwa-->.*?<!--/pwa-->\n?", "", src, flags=re.S)
 marker = '<meta name="viewport"'
 i = src.index(marker)
 i = src.index(">", i) + 1
 for name, head in HEADS.items():
-    out = src[:i] + "\n" + head + EXTRA_CSS + src[i:]
+    st = "<script>window.__STATS='" + stats + "'</script>\n" if stats else ""
+    out = src[:i] + "\n" + head + st + EXTRA_CSS + src[i:]
     d = os.path.join(ROOT, "dist", name)
     os.makedirs(d, exist_ok=True)
     with open(os.path.join(d, "index.html"), "w", encoding="utf-8") as f:
