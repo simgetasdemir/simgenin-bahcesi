@@ -35,7 +35,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15p
   -webkit-tap-highlight-color:transparent;overflow-x:hidden}
 button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 button:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
-#app{max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
+#app{max-width:1040px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
 .top{display:flex;align-items:center;gap:8px}
 .brand{font-family:var(--display);font-weight:800;font-size:24px;line-height:1;color:var(--leaf);flex:1;letter-spacing:-.01em}
 .brand small{display:block;font-family:var(--body);font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;margin-top:3px}
@@ -420,6 +420,397 @@ body:not(.playing) #gardenView .task {
   body:not(.playing) #gardenView .big { min-height: 68px; border-radius: 17px; }
 }
 
+
+/* ── Petalpop playful match-3 visual direction ── */
+body:not(.playing){
+  background:linear-gradient(180deg,#8eddf2 0%,#c8f0d2 46%,#fff0c9 100%);
+}
+body:not(.playing) #forest{
+  opacity:.58;
+  filter:saturate(1.35) brightness(1.28);
+}
+body:not(.playing) .top{
+  background:linear-gradient(110deg,rgba(255,255,255,.94),rgba(255,246,224,.92));
+  border:2px solid rgba(255,255,255,.9);
+  box-shadow:0 7px 0 rgba(61,145,105,.18),0 14px 28px rgba(47,106,91,.16);
+  backdrop-filter:blur(8px);
+}
+body:not(.playing) .brand{color:#f04f91;text-shadow:0 2px 0 #fff}
+body:not(.playing) .brand .pp1{color:#f04f91}
+body:not(.playing) .brand .pp2{color:#f5a623}
+body:not(.playing) .brand small{color:#477b65;text-shadow:none}
+body:not(.playing) .pill,
+body:not(.playing) .icon-btn{
+  color:#345b50;background:#fff;border:2px solid #e4f5e8;
+  box-shadow:0 3px 0 rgba(75,145,105,.18);
+  backdrop-filter:none;
+}
+body:not(.playing) .pill .st{color:#ffb92e}
+body:not(.playing) #gardenView .scene-wrap{
+  border:4px solid #fff;border-radius:26px;
+  box-shadow:0 7px 0 #69b77c,0 15px 28px rgba(42,103,77,.22);
+  background:linear-gradient(#9ce5f5,#c9efb0);
+}
+body:not(.playing) #gardenView .scene-wrap::before{border:2px solid rgba(255,255,255,.55)}
+body:not(.playing) #gardenView #scene{filter:saturate(1.22) contrast(1.035)}
+body:not(.playing) #gardenView .panel{
+  border:3px solid #fff;border-radius:26px;
+  background:linear-gradient(155deg,#fff 0%,#fff7e8 100%);
+  color:#315b4a;
+  box-shadow:0 7px 0 #e5c987,0 15px 30px rgba(51,100,73,.18);
+}
+body:not(.playing) #gardenView .panel::after{color:rgba(255,111,159,.18)}
+body:not(.playing) #gardenView #playBtn{
+  background:linear-gradient(180deg,#ff8cba 0%,#f04f91 100%);
+  border:2px solid #fff;color:#fff;
+  box-shadow:0 6px 0 #c83270,0 10px 18px rgba(213,62,123,.22),inset 0 2px 0 rgba(255,255,255,.4);
+  text-shadow:0 2px 0 rgba(140,35,83,.2);
+}
+body:not(.playing) #gardenView #playBtn:active{
+  box-shadow:0 2px 0 #c83270;transform:translateY(4px);
+}
+body:not(.playing) #gardenView .panel h3{color:#e45a8e;font-family:var(--display);font-size:21px}
+body:not(.playing) #gardenView .prog{height:12px;background:#e6f2dd;border:2px solid #fff}
+body:not(.playing) #gardenView .prog i{background:linear-gradient(90deg,#78d66c,#36ae79)}
+body:not(.playing) #gardenView .task{
+  background:linear-gradient(135deg,#f1fbff,#fff);
+  border:2px solid #e0f2e7;border-radius:16px;
+  box-shadow:0 3px 0 rgba(99,171,130,.14);
+}
+body:not(.playing) #gardenView .task .ti{background:#fff0f6;border-radius:12px}
+body:not(.playing) #gardenView .task .do{
+  background:linear-gradient(180deg,#83d86e,#43ad68);
+  box-shadow:0 3px 0 #328451;border-radius:12px;
+}
+body:not(.playing) #gardenView .task .do[disabled]{
+  background:#d7e2d8;box-shadow:0 3px 0 #b7c6b8;
+}
+@media(max-width:520px){
+  body:not(.playing) #gardenView .panel{padding:15px}
+  body:not(.playing) #gardenView #tasks{grid-template-columns:1fr}
+}
+
+
+/* Petalpop oyun ekranı: ana bahçeyle aynı neşeli, renkli görsel dil */
+body.playing{
+  background:
+    radial-gradient(ellipse at 12% 8%,rgba(255,232,153,.9),transparent 32%),
+    radial-gradient(ellipse at 92% 18%,rgba(255,164,203,.55),transparent 28%),
+    linear-gradient(155deg,#8edcf0 0%,#b9edcf 52%,#fff0b8 100%);
+}
+body.playing #forest{opacity:.18;filter:saturate(1.2)}
+body.playing .top{padding:8px 10px;background:rgba(255,255,255,.92);border:2px solid #fff;border-radius:19px;box-shadow:0 4px 0 rgba(55,139,151,.18),0 8px 18px rgba(39,99,93,.12)}
+body.playing .brand{color:#e94f91;text-shadow:none}
+body.playing .brand small{color:#568c7b;text-shadow:none}
+body.playing .pill,body.playing .icon-btn{background:#fff;box-shadow:0 3px 0 #d9e9dc;color:#416b5b}
+body.playing .hud{gap:9px;align-items:stretch}
+body.playing .hud .back{background:linear-gradient(#fff,#fff4fa);color:#e94f91;border:2px solid #fff;box-shadow:0 4px 0 #e7c4d4,0 5px 12px rgba(39,99,93,.12);min-width:48px}
+body.playing .goals{background:rgba(255,255,255,.94);border:2px solid #fff;box-shadow:0 4px 0 #d8e8dc,0 5px 12px rgba(39,99,93,.1);border-radius:17px}
+body.playing .goal{color:#47745f}
+body.playing .goal.ok{color:#269b67}
+body.playing .moves{background:linear-gradient(160deg,#ff83ad,#ef4e8d);border:2px solid #fff;box-shadow:0 4px 0 #c93670,0 5px 12px rgba(39,99,93,.16);border-radius:17px;min-width:68px}
+body.playing .moves b{color:#fff;text-shadow:0 2px 0 rgba(174,35,91,.35)}
+body.playing .moves small{color:#fff;opacity:.95}
+body.playing .lvl-title{color:#397e69;text-shadow:0 1px #fff;font-size:14px;letter-spacing:.02em}
+body.playing .board{
+  background:linear-gradient(135deg,#fff8d5,#ffcf69 45%,#ff8eb4);
+  border:3px solid #fff;
+  border-radius:23px;
+  padding:8px;
+  box-shadow:0 7px 0 #d86a91,0 0 0 4px rgba(255,255,255,.55),0 14px 28px rgba(55,105,91,.25);
+}
+body.playing .board::before{inset:5px;border-radius:15px;background:#9a704d}
+body.playing .cells{border:2px solid rgba(255,255,255,.55);border-radius:12px}
+body.playing .cell{background:#9a7558;box-shadow:inset 0 0 0 1px rgba(255,255,255,.07)}
+body.playing .cell:nth-child(odd){background:#a98565}
+body.playing .cell.w1{background:radial-gradient(circle at 30% 70%,#83d85b 0 18%,transparent 19%),radial-gradient(circle at 75% 30%,#6fc94d 0 16%,transparent 17%),#4f9b43}
+body.playing .cell.w2{background:radial-gradient(circle at 30% 70%,#3e7e32 0 18%,transparent 19%),radial-gradient(circle at 75% 30%,#3e7e32 0 16%,transparent 17%),#2b632b;box-shadow:inset 0 0 0 2px #1d4d25}
+body.playing .tile.sel .gem{filter:drop-shadow(0 0 5px #fff) brightness(1.12)}
+body.playing .tip{border-radius:14px;background:#fff8d9;color:#80552b;border:2px solid #fff;box-shadow:0 3px 0 rgba(117,81,41,.2)}
+@media(max-width:520px){
+  body.playing{padding:6px max(7px,env(safe-area-inset-left,0px))}
+  body.playing .top{padding:7px 8px}
+  body.playing .brand{font-size:21px}
+  body.playing .brand small{font-size:10px}
+  body.playing .hud{gap:6px}
+  body.playing .goals{padding:5px 6px;gap:4px}
+  body.playing .goal{font-size:13px}
+  body.playing .moves{min-width:57px;padding:4px 8px}
+}
+
+/* Tek kullanımlık bahçıvan makası güçlendiricisi */
+.booster{flex:none;min-width:48px;min-height:48px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;border-radius:15px;background:linear-gradient(#fff,#fff0f6);border:2px solid #fff;color:#df4e8b;font-size:20px;line-height:1;box-shadow:0 4px 0 #e7c4d4,0 5px 12px rgba(39,99,93,.12);font-weight:900}
+.booster small{font-size:10px;line-height:1.1;color:#8a6a79}
+.booster.armed{background:linear-gradient(#fff4b9,#ffd76a);color:#9a5a16;box-shadow:0 4px 0 #d9a33d,0 0 0 3px rgba(255,215,106,.28)}
+.booster:disabled{opacity:.48;filter:grayscale(.65);cursor:default}
+body.playing .booster{border-color:#fff}
+@media(max-width:520px){.booster{min-width:42px;min-height:44px;border-radius:13px}}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   PETALPOP 2.0 · RADICAL PRODUCT REDESIGN
+   Cozy premium garden world + editorial quest layout
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+:root{
+  --pp-forest:#173d32;--pp-moss:#47765a;--pp-sage:#a9c6a0;
+  --pp-cream:#fff9ed;--pp-paper:#fffdf8;--pp-ink:#253d34;
+  --pp-coral:#ef7891;--pp-gold:#eebd65;--pp-line:rgba(46,78,58,.13);
+}
+html{background:#e8efdf}
+body{
+  min-height:100%;padding:22px clamp(12px,3vw,36px) 32px;
+  background:
+    radial-gradient(ellipse at 8% 2%,rgba(249,220,157,.7),transparent 32%),
+    radial-gradient(ellipse at 95% 20%,rgba(173,207,173,.48),transparent 30%),
+    linear-gradient(145deg,#e8efdf 0%,#f6f0df 55%,#e5eee3 100%);
+  color:var(--pp-ink);
+}
+#forest{opacity:.13!important;filter:saturate(.55) blur(1px)}
+#app{max-width:1120px;gap:18px}
+.top{
+  min-height:76px;padding:12px 18px;border-radius:23px;
+  background:rgba(255,253,248,.88);border:1px solid rgba(255,255,255,.9);
+  box-shadow:0 12px 34px rgba(38,69,49,.09),inset 0 1px 0 #fff;
+  backdrop-filter:blur(16px);
+}
+.brand{color:var(--pp-forest)!important;text-shadow:none!important;font-size:30px;letter-spacing:-.045em}
+.brand::before{
+  content:"✿";display:inline-grid;place-items:center;width:36px;height:36px;margin-right:8px;
+  border-radius:13px;background:#f8e5df;color:#d86d7e;font-size:22px;vertical-align:2px;
+  box-shadow:inset 0 -2px 0 rgba(157,75,83,.12)
+}
+.brand .pp1{color:#254f3e}.brand .pp2{color:#d8787e}
+.brand small{margin-top:2px;color:#82917c!important;text-shadow:none!important;font-size:10px;letter-spacing:.16em}
+.pill,.icon-btn{
+  background:#f6f2e8!important;border:1px solid #eee6d7;color:#4e6655!important;
+  box-shadow:0 2px 0 rgba(66,91,65,.08)!important
+}
+.pill{padding:9px 15px}
+.icon-btn{width:42px;height:42px}
+#gardenView{
+  display:grid;grid-template-columns:minmax(0,1.55fr) minmax(310px,.85fr);
+  grid-template-areas:"tabs tabs" "scene panel";
+  gap:16px;align-items:stretch
+}
+#gardenView .tabs{grid-area:tabs}
+#gardenView .scene-wrap{
+  grid-area:scene;align-self:stretch;min-width:0;margin:0!important;
+  border:7px solid rgba(255,253,248,.96)!important;border-radius:30px!important;
+  background:#b8d8c0;box-shadow:0 2px 0 #d7dfc9,0 18px 40px rgba(37,75,51,.17)!important;
+  min-height:360px;display:flex;align-items:center
+}
+#gardenView #scene{width:100%;height:auto;filter:saturate(1.08) contrast(1.02)}
+#gardenView .panel{
+  grid-area:panel;align-self:stretch;margin:0!important;padding:24px!important;
+  border:1px solid rgba(255,255,255,.95)!important;border-radius:28px!important;
+  background:linear-gradient(155deg,#fffefa,#f8f3e7)!important;
+  box-shadow:0 2px 0 #e4dfcd,0 18px 40px rgba(37,75,51,.12)!important;
+  color:var(--pp-ink)!important;gap:15px;position:relative;overflow:hidden
+}
+#gardenView .panel::before{
+  content:"YOUR LITTLE WORLD";display:block;position:relative;z-index:1;
+  color:#9a9c7f;font:800 10px/1 var(--body);letter-spacing:.2em
+}
+#gardenView .panel::after{
+  content:"✿";position:absolute;right:20px;top:12px;color:rgba(216,120,126,.11);
+  font-size:100px;line-height:1;pointer-events:none
+}
+#gardenView #playBtn{
+  min-height:84px;border-radius:19px!important;
+  background:linear-gradient(135deg,#e98b8c,#d96d7d)!important;
+  border:1px solid rgba(255,255,255,.8)!important;
+  box-shadow:0 5px 0 #ad5965,0 12px 24px rgba(190,91,103,.2),inset 0 1px 0 rgba(255,255,255,.5)!important;
+  font-size:25px;letter-spacing:.01em
+}
+#gardenView #playBtn::after{display:none}
+#gardenView #playBtn small{font-size:11px;letter-spacing:.13em;text-transform:uppercase;opacity:.9}
+#gardenView .panel h3{
+  margin:7px 0 0!important;color:#365e49!important;font-size:22px!important;
+  letter-spacing:-.02em
+}
+#gardenView .panel h3 #progLbl{color:#92977f;font-size:11px;letter-spacing:.06em}
+#gardenView .prog{height:9px!important;background:#e9e8d8!important;border:0!important}
+#gardenView .prog i{background:linear-gradient(90deg,#8ebd79,#477e60)!important}
+#gardenView #tasks{display:flex!important;flex-direction:column;gap:9px!important;margin-top:0!important}
+#gardenView .task{
+  padding:10px!important;border:1px solid #ece9dc!important;border-radius:17px!important;
+  background:rgba(255,255,255,.72)!important;box-shadow:0 3px 10px rgba(52,76,49,.045)!important
+}
+#gardenView .task .ti{background:#f5e9df!important;border-radius:12px;color:#b66e70}
+#gardenView .task .tn{color:#435b49;font-size:13px}
+#gardenView .task .tn small{color:#9a9b89;font-size:11px}
+#gardenView .task .do{
+  background:#668c68!important;box-shadow:0 3px 0 #456b4c!important;border-radius:11px!important;
+  padding:8px 11px
+}
+#gardenView .task .do[disabled]{background:#d8ddd1!important;box-shadow:0 3px 0 #bdc5b8!important}
+.tabs{display:flex;gap:8px;justify-content:flex-start}
+.tabs button{
+  padding:9px 16px;border-radius:99px;background:rgba(255,253,248,.7);
+  border:1px solid #e5e4d5;color:#6d806c;font-weight:800;font-size:12px
+}
+.tabs button.on{background:#315c48;color:#fff;border-color:#315c48;box-shadow:0 3px 0 #234532}
+body.playing{padding-top:14px;background:linear-gradient(145deg,#e8efdf,#f7f0df 55%,#e5eee3)!important}
+body.playing #app{max-width:680px;gap:12px}
+body.playing #forest{opacity:.08!important}
+body.playing .top{min-height:62px;padding:8px 14px}
+body.playing .brand{font-size:24px}
+body.playing .brand::before{width:30px;height:30px;font-size:18px;border-radius:10px}
+body.playing .hud{gap:10px}
+body.playing .hud .back,body.playing .goals,body.playing .moves,body.playing .booster{
+  border:1px solid rgba(255,255,255,.95);border-radius:17px;
+  box-shadow:0 3px 0 rgba(56,82,59,.12),0 8px 18px rgba(45,73,53,.07)
+}
+body.playing .hud .back{background:#fffaf0;color:#42654f}
+body.playing .goals{background:#fffdf7}
+body.playing .moves{background:#d97883;box-shadow:0 3px 0 #b65e6a}
+body.playing .booster{background:#fffaf0;box-shadow:0 3px 0 #e4d5d1;color:#b86c79}
+body.playing .lvl-title{color:#6d826c;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+body.playing .board{
+  background:linear-gradient(145deg,#d9b985,#b88d68)!important;
+  border:7px solid #fffaf0!important;border-radius:25px!important;padding:7px!important;
+  box-shadow:0 3px 0 #c7b99c,0 18px 40px rgba(47,72,51,.2)!important
+}
+body.playing .board::before{inset:5px;border-radius:14px;background:#88694f}
+body.playing .cells{border-radius:11px}
+body.playing .cell{background:#8f7257}
+body.playing .cell:nth-child(odd){background:#98795c}
+body.playing .tip{background:#fffaf0;color:#5d765d;border:1px solid #e7e2d3;box-shadow:0 4px 12px rgba(30,50,30,.1)}
+#dialog .bubble{background:#fffaf0;border:1px solid rgba(255,255,255,.9)}
+#modal .card{background:#fffaf0;border:1px solid #fff;box-shadow:0 18px 55px rgba(25,48,34,.28)}
+#toast{background:#294b3a;border:1px solid rgba(255,255,255,.3);box-shadow:0 8px 25px rgba(20,40,30,.18)}
+@media(max-width:760px){
+  body{padding:10px 10px 24px}
+  #app{gap:12px}
+  .top{min-height:64px;padding:9px 11px;border-radius:19px}
+  .brand{font-size:24px}
+  .brand::before{width:30px;height:30px;font-size:18px;border-radius:10px;margin-right:6px}
+  .brand small{font-size:9px}
+  #gardenView{grid-template-columns:1fr;grid-template-areas:"tabs" "scene" "panel";gap:12px}
+  #gardenView .scene-wrap{min-height:0;border-width:5px!important;border-radius:23px!important}
+  #gardenView .panel{padding:17px!important;border-radius:23px!important}
+  #gardenView .panel::before{font-size:9px}
+  #gardenView #playBtn{min-height:70px}
+  #gardenView .panel h3{font-size:20px!important}
+  #gardenView #tasks{display:grid!important;grid-template-columns:1fr 1fr!important;gap:7px!important}
+  #gardenView .task{gap:7px;padding:8px!important}
+  #gardenView .task .ti{width:31px;height:31px}
+  #gardenView .task .tn{font-size:11px}
+  #gardenView .task .do{padding:7px 8px;font-size:11px}
+  body.playing{padding:7px 7px 16px}
+  body.playing #app{gap:9px}
+  body.playing .top{min-height:54px;padding:6px 9px}
+  body.playing .brand{font-size:20px}
+  body.playing .brand small{font-size:8px}
+  body.playing .hud{gap:5px}
+  body.playing .hud .back{min-width:40px;padding:0 9px}
+  body.playing .goals{padding:5px;gap:4px}
+  body.playing .goal{font-size:12px}
+  body.playing .moves{min-width:53px;padding:4px 7px}
+  body.playing .booster{min-width:39px;min-height:42px}
+  body.playing .board{--bw:min(calc(100vw - 12px),calc(100dvh - 170px));border-width:5px!important;padding:5px!important}
+}
+@media(max-width:390px){
+  #gardenView #tasks{grid-template-columns:1fr!important}
+  body.playing .goal .mini{width:22px;height:22px}
+}
+
+
+/* 30-level journey map */
+#mapBtn{font-size:19px}
+#modal .card:has(.level-grid){max-width:510px;max-height:min(86dvh,760px);overflow:auto;padding:20px}
+.level-map-head{text-align:left;margin-bottom:13px}
+.map-kicker{font-size:9px;letter-spacing:.2em;font-weight:900;color:#8c9a7c}
+.level-map-head h2{font-family:var(--display);font-size:29px;margin:2px 0;color:#294d3c}
+.level-map-head p{margin:0 0 9px;color:#77816d;font-size:12px;font-weight:800}
+.map-progress{height:8px;background:#e7e8d9;border-radius:99px;overflow:hidden}
+.map-progress i{display:block;height:100%;background:linear-gradient(90deg,#8fbd78,#477f5d);border-radius:99px}
+.map-zones{display:flex;justify-content:space-between;gap:4px;margin:14px 0 8px;color:#78856f;font-size:9px;font-weight:900}
+.level-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;padding:3px 2px 12px}
+.map-node{min-width:0;min-height:72px;border-radius:15px;border:1px solid #e8e4d5;background:#fffdf7;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-shadow:0 3px 0 #e4dfcf}
+.map-node .node-icon{font-size:17px;line-height:1.1}
+.map-node b{font-family:var(--display);font-size:17px;color:#355b46;line-height:1}
+.map-node small{font-size:8px;color:#8b927e;font-weight:800}
+.map-node.done{background:#edf5e8;border-color:#d5e6d0;box-shadow:0 3px 0 #c5d9bf}
+.map-node.done b{color:#477c54}
+.map-node.current{background:linear-gradient(145deg,#f7c4c6,#e88998);border:2px solid #fff;box-shadow:0 4px 0 #b75f70,0 0 0 2px #e9a2a9}
+.map-node.current b,.map-node.current small{color:#fff}
+.map-node.locked{opacity:.57;filter:saturate(.45)}
+.map-node:disabled{cursor:default}
+@media(max-width:420px){
+ #modal .card:has(.level-grid){padding:15px}
+ .level-grid{gap:6px}
+ .map-node{min-height:64px;border-radius:12px}
+ .map-zones{font-size:8px}
+}
+
+
+/* Opening welcome hero */
+.welcome{
+  position:relative;isolation:isolate;overflow:hidden;min-height:150px;
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+  padding:20px 28px;border-radius:24px;
+  background:linear-gradient(112deg,#234f3d 0%,#376c50 58%,#78966c 100%);
+  color:#fff;box-shadow:0 16px 36px rgba(37,75,51,.19),inset 0 1px 0 rgba(255,255,255,.24)
+}
+.welcome::before,.welcome::after{content:"";position:absolute;border-radius:50%;pointer-events:none;z-index:-1}
+.welcome::before{width:340px;height:340px;right:7%;top:-245px;background:rgba(255,236,185,.13);border:1px solid rgba(255,255,255,.12)}
+.welcome::after{width:250px;height:250px;right:-70px;bottom:-190px;background:rgba(255,255,255,.08)}
+.welcome-copy{position:relative;z-index:2;max-width:760px}
+.welcome-kicker{display:inline-block;margin-bottom:8px;color:#f6dca9;font-size:10px;font-weight:900;letter-spacing:.2em}
+.welcome h1{max-width:610px;margin:0;font:800 clamp(21px,2.6vw,29px)/1.12 var(--display);letter-spacing:-.035em;text-wrap:balance}
+.welcome p{max-width:700px;margin:7px 0 11px;color:rgba(255,255,255,.82);font-size:13px;line-height:1.55;font-weight:600}
+.welcome-tags{display:flex;flex-wrap:wrap;gap:6px}
+.welcome-tags span{display:inline-flex;align-items:center;gap:5px;padding:6px 9px;border:1px solid rgba(255,255,255,.2);border-radius:99px;background:rgba(255,255,255,.1);font-size:10px;color:#fff}
+.welcome-tags b{font-weight:800}
+.welcome-art{position:absolute;right:4%;top:0;bottom:0;width:23%;min-width:145px;pointer-events:none;opacity:.72}
+.wa-sun{position:absolute;right:23%;top:17%;font-size:72px;color:#f7d98d;opacity:.95;text-shadow:0 0 35px rgba(255,226,152,.3)}
+.wa-flower{position:absolute;display:grid;place-items:center;border-radius:50%;text-shadow:0 5px 12px rgba(0,0,0,.16);filter:drop-shadow(0 5px 4px rgba(0,0,0,.12))}
+.wf1{right:10%;bottom:9%;font-size:86px;color:#f6b8b7;transform:rotate(-12deg)}
+.wf2{right:49%;bottom:0%;font-size:64px;color:#f5d27e;transform:rotate(14deg)}
+.wf3{right:1%;top:13%;font-size:37px;color:#f4e5c5}
+.wa-leaf{position:absolute;right:48%;top:22%;font-size:100px;color:#b6d19b;transform:rotate(-35deg);opacity:.85}
+.wa-butterfly{position:absolute;right:2%;top:48%;font-size:30px;animation:butterflyFloat 4s ease-in-out infinite}
+@keyframes butterflyFloat{50%{transform:translate(-9px,-10px) rotate(8deg)}}
+body.playing .welcome{display:none}
+@media(max-width:760px){
+ .welcome{min-height:0;padding:17px 18px;border-radius:21px}
+ .welcome-copy{max-width:88%}
+ .welcome h1{font-size:clamp(20px,5.4vw,26px)}
+ .welcome p{font-size:11px;max-width:460px;margin:7px 0 10px}
+ .welcome-art{right:-5%;width:27%;min-width:110px;opacity:.48}
+ .wa-sun{font-size:54px}.wf1{font-size:65px}.wf2{font-size:48px}.wf3{font-size:29px}.wa-leaf{font-size:76px}.wa-butterfly{font-size:23px}
+}
+@media(max-width:420px){
+ .welcome{padding:16px 14px}
+ .welcome-copy{max-width:100%;padding-right:4px}
+ .welcome-art{right:-20%;opacity:.18}
+ .welcome-tags{gap:5px}
+ .welcome-tags span{font-size:9px;padding:6px 8px}
+}
+
+
+/* Stone cottage restoration stages */
+#gardenView .scene-wrap{background:linear-gradient(#f5d8bd,#c9d9b7)!important}
+#scene .lay{transition:opacity .9s ease,filter .9s ease}
+#scene [data-on]{opacity:0;transition:opacity .85s ease}
+#scene [data-on]:not(.off){opacity:1}
+#scene [data-off]{opacity:1;transition:opacity .85s ease}
+#scene [data-off].off{opacity:0}
+#scene [data-on],#scene [data-off]{pointer-events:none}
+
+
+/* Immersive 3D cottage world */
+.scene-wrap{background:#b9d6d8!important;border-radius:24px;overflow:hidden;box-shadow:0 18px 48px rgba(34,57,43,.2)}
+#scene{display:none!important}
+#threeStage{position:relative;width:100%;height:clamp(390px,58vw,620px);min-height:390px;overflow:hidden;background:linear-gradient(#b9d6d8,#d5e3c3)}
+#threeStage canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+.stage-hint{position:absolute;z-index:2;top:14px;left:50%;transform:translateX(-50%);padding:8px 14px;border-radius:99px;background:rgba(31,54,42,.72);color:white;font-size:11px;font-weight:800;white-space:nowrap;pointer-events:none}
+.stage-loading{position:absolute;inset:0;display:grid;place-items:center;color:#31543e;font-weight:900;pointer-events:none}
+#threeStage.ready .stage-loading{display:none}
+#gardenView .panel{max-width:760px;margin:14px auto 0!important;width:100%;padding:20px}
+#gardenView .big{max-width:420px;align-self:center}
+#gardenView #tasks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media(max-width:650px){#threeStage{height:clamp(360px,112vw,500px);min-height:360px}#gardenView .panel{padding:13px}#gardenView #tasks{grid-template-columns:1fr}.stage-hint{font-size:10px}}
 </style>
 
 <div id="forest" aria-hidden="true"></div>
@@ -427,13 +818,24 @@ body:not(.playing) #gardenView .task {
   <header class="top">
     <div class="brand"><span class="pp1">Petal</span><span class="pp2">pop</span><small id="chapterLbl">1. Bölüm · Nevin Nine'nin evi</small></div>
     <div class="pill" title="Yıldızların" data-tt="Yıldızların"><span class="st">★</span><span id="starCount">0</span></div>
+    <button class="icon-btn" id="mapBtn" aria-label="Bölüm haritası" title="Bölüm haritası">🗺️</button>
     <button class="icon-btn" id="langBtn" aria-label="Dili değiştir" data-ta="Dili değiştir">EN</button>
     <button class="icon-btn" id="muteBtn" aria-label="Sesi aç/kapat" data-ta="Sesi aç/kapat">♪</button>
   </header>
 
+  <section class="welcome" aria-label="Petalpop'a hoş geldin">
+    <div class="welcome-copy">
+      <span class="welcome-kicker" data-t="PUZZLE ÇÖZ · TAŞ EVİNİ YENİLE">PUZZLE ÇÖZ · TAŞ EVİNİ YENİLE</span>
+      <h1 data-t="Her puzzle evi biraz daha güzelleştirir.">Her puzzle evi biraz daha güzelleştirir.</h1>
+      <p data-t="Üçlü eşleştirme puzzle’larını çöz, yıldız kazan ve Nevin Nine’nin terk edilmiş taş evini yenile. Otları temizle, pencereleri değiştir, duvarları onar ve rengârenk çiçekler ek.">Nevin Nine'nin bahçesini güzelleştir, renkli bulmacaları çöz ve bu sıcacık hikâyenin bir parçası ol.</p>
+      <div class="welcome-tags"><span>🧩 <b data-t="Puzzle çöz · yıldız kazan">Puzzle çöz · yıldız kazan</b></span><span>🧹 <b data-t="Otları temizle">Otları temizle</b></span><span>🪟 <b data-t="Pencereleri yenile">Pencereleri yenile</b></span><span>🌷 <b data-t="Çiçek ek · evi güzelleştir">Çiçek ek · evi güzelleştir</b></span></div>
+    </div>
+    <div class="welcome-art" aria-hidden="true"><span class="wa-sun">☀</span><span class="wa-flower wf1">✿</span><span class="wa-flower wf2">✿</span><span class="wa-flower wf3">✿</span><span class="wa-leaf">❧</span><span class="wa-butterfly">🦋</span></div>
+  </section>
+
   <section id="gardenView">
     <div class="tabs" id="tabs" hidden><button data-v="1" data-t="Ön bahçe">Ön bahçe</button><button data-v="2" data-t="Arka bahçe">Arka bahçe</button></div>
-    <div class="scene-wrap"><svg id="scene" viewBox="0 0 400 260" role="img" aria-label="Simge'nin bahçesi"></svg></div>
+    <div class="scene-wrap"><svg id="scene" viewBox="0 0 400 260" role="img" aria-label="Simge'nin bahçesi"></svg><div id="threeStage"><div class="stage-hint">Bahçeyi döndür · Altıgen bulmacalara dokun · Kilitleri sırayla aç</div><div class="stage-loading">3 boyutlu bahçe hazırlanıyor…</div></div></div>
     <div class="panel" style="margin-top:10px">
       <button class="big" id="playBtn"><span data-t="Oyna">Oyna</span><small id="playSub">Bulmaca 1</small></button>
       <h3><span data-t="Bahçe işleri">Bahçe işleri</span> <span id="progLbl">0 / 10</span></h3>
@@ -446,6 +848,7 @@ body:not(.playing) #gardenView .task {
     <div class="hud">
       <button class="back" id="quitBtn" aria-label="Bahçeye dön" data-ta="Bahçeye dön">‹</button>
       <div class="goals" id="goals"></div>
+      <button class="booster" id="hammerBtn" type="button" aria-label="Bahçıvan makası">✂️<small>1</small></button>
       <div class="moves"><b id="moves">20</b><small data-t="hamle">hamle</small></div>
     </div>
     <div class="board" id="board">
@@ -476,7 +879,7 @@ const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 
 /* ---------- Dil ---------- */
 let LANG=S.lang||((navigator.language||'en').toLowerCase().startsWith('tr')?'tr':'en');
-const EN={"Oyna": "Play", "Bulmaca {n}": "Puzzle {n}", "hamle": "moves", "dokun ›": "tap ›", "Bahçe işleri": "Garden tasks", "Ön bahçe": "Front garden", "Arka bahçe": "Backyard", "Yıldızların": "Your stars", "Sesi aç/kapat": "Sound on/off", "Bahçeye dön": "Back to garden", "Dili değiştir": "Change language", "1. Bölüm · Nevin Nine'nin evi": "Chapter 1 · Grandma Nevin's house", "2. Bölüm · Ege Gülü": "Chapter 2 · The Aegean Rose", "{n} yıldız gerekli": "Needs {n} stars", "1. bölüm tamamlandı!": "Chapter 1 complete!", "Arka bahçede 2. bölüm seni bekliyor.": "Chapter 2 is waiting in the backyard.", "2. bölüm tamamlandı!": "Chapter 2 complete!", "3. bölüm yakında. Yıldız toplamaya devam edebilirsin.": "Chapter 3 is coming soon. Keep collecting stars!", "{n} yıldız daha lazım. Bir bulmaca oyna!": "You need {n} more stars. Play a puzzle!", "Sonra fikrini değiştiremezsin, iyi seç!": "You can't change it later, so choose well!", "Vazgeç": "Cancel", "Nevin Nine'nin bahçesi yeniden çiçek açtı. Şimdi sıra arka bahçede: Ege Gülü ve Bahar Şenliği.": "Grandma Nevin's garden is blooming again. Next up is the backyard: the Aegean Rose and the Spring Festival.", "Arka bahçeye git": "Go to the backyard", "ŞENLİK BİRİNCİSİ!": "FESTIVAL CHAMPION!", "Ege Gülü kırk yıl sonra yeniden açtı ve Bahar Şenliği'nde birinci oldu. 3. bölüm yakında!": "The Aegean Rose bloomed again after forty years and won first prize at the Spring Festival. Chapter 3 is coming soon!", "Yaşasın!": "Hooray!", "Çiçek": "Flower", "Yaprak": "Leaf", "Damla": "Drop", "Limon": "Lemon", "Üzüm": "Grape", "Yabani ot": "Weeds", "Sarmaşık": "Vines", "sarmaşık": "vines", "Sarmaşıklı taşlar kaydırılamaz. Onları bir eşleşmeye kat ya da özel taşla vur, sarmaşık kopsun!": "Tiles wrapped in vines can't be moved. Include them in a match or hit them with a special tile to snap the vines!", "yabani ot": "weeds", "Tatlı!": "Sweet!", "Şahane!": "Lovely!", "Nefis!": "Delicious!", "Şeker patlaması!": "Sugar rush!", "İnanılmaz!": "Incredible!", "Efsane!": "Legendary!", "Gökkuşağı!": "Rainbow!", "Bahçe şenliği!": "Garden party!", "Taşlar karıştırıldı": "Tiles shuffled", "MEGA KAZANÇ!": "MEGA BLOOM!", "SÜPER KAZANÇ!": "SUPER BLOOM!", "BÜYÜK KAZANÇ!": "BIG BLOOM!", "Bulmaca {n} puanı": "Puzzle {n} score", "+1 yıldız! Bahçede seni bekleyen işler var.": "+1 star! Tasks are waiting for you in the garden.", "Yıldızı al": "Collect star", "📺 Reklam izle: +5 hamle": "📺 Watch an ad: +5 moves", "★1 ver: +5 hamle": "Spend ★1: +5 moves", "+5 hamle ile devam": "Continue with +5 moves", "Tekrar dene": "Try again", "Hamleler bitti": "Out of moves", "{list} kaldı. Az kaldı!": "Still {list} to go. So close!", "1 yıldız karşılığında +5 hamle!": "+5 moves for 1 star!", "Teşekkürler! +5 hamle": "Thanks! +5 moves", "Reklam şu an yok, tekrar deneyebilirsin": "No ad available right now. Try again later.", "Bahçeye dönülsün mü?": "Back to the garden?", "Bu bulmacadaki ilerlemen kaybolur.": "You'll lose your progress in this puzzle.", "Oynamaya devam": "Keep playing", "Yan yana iki taşı kaydırarak yer değiştir. Aynı türden 3 taşı sıraya diz!": "Swipe two neighboring tiles to swap them. Line up 3 of the same kind!", "4'lü dizi çizgili taş, L ya da T şekli bomba, 5'li dizi gökkuşağı tohumu yapar.": "4 in a row makes a striped tile, an L or T shape makes a bomb, 5 in a row makes a rainbow seed.", "Yeşil kareler yabani ot. Üstlerinde taş patlat, koyu olanlara iki kez vur!": "Green squares are weeds. Pop tiles on them. Dark ones need two hits!", "Simge": "Simge", "Rıza Usta": "Uncle Rıza", "Ela": "Ela", "Fıstık": "Pistachio", "Saffet Hanım": "Mrs. Saffet", "İpucu": "Tip", "Nevin Nine'nin mektubu": "Grandma Nevin's letter", "Kuru otları temizle": "Clear the dry weeds", "Çiti onar": "Fix the fence", "Taş yolu döşe": "Lay the stone path", "Çiçek tarhı ek": "Plant a flower bed", "Eski çeşmeyi onar": "Repair the old fountain", "Kediye yuva yap": "Make a bed for the cat", "Zeytine salıncak as": "Hang a swing on the olive tree", "Çay köşesi kur": "Set up a tea corner", "Fenerleri as": "Hang the lanterns", "Bahçe kapısını boya": "Paint the garden gate", "Dikenli çalıları temizle": "Clear the thorny bushes", "Eski serayı onar": "Repair the old greenhouse", "Ege Gülü tohumlarını ek": "Plant the Aegean Rose seeds", "Eski kuyuyu onar": "Repair the old well", "Gül kemeri kur": "Build a rose arch", "Kemerin altına bank koy": "Put a bench under the arch", "Arı kovanı yerleştir": "Set up a beehive", "Sebze tarhı kur": "Plant a vegetable bed", "Ege Gülü'nü açtır": "Make the Aegean Rose bloom", "Şenlik bayraklarını as": "Hang the festival flags", "Tarha ne ekelim?": "What should we plant?", "Lavanta": "Lavender", "Gül": "Rose", "Papatya": "Daisy", "Sandalyeler hangi renk olsun?": "What color should the chairs be?", "Ege mavisi": "Aegean blue", "Limon sarısı": "Lemon yellow", "Kireç beyazı": "Chalk white", "Kapı hangi renge boyansın?": "What color should the gate be?", "Lacivert": "Navy blue", "Zeytin yeşili": "Olive green", "Begonvil pembesi": "Bougainvillea pink", "Bank hangi renk olsun?": "What color should the bench be?", "Lavanta moru": "Lavender purple", "Nane yeşili": "Mint green", "Bayraklar hangi renkte olsun?": "What color should the flags be?", "Gökkuşağı": "Rainbow", "Pembe beyaz": "Pink and white", "Mavi beyaz": "Blue and white", "Oh be! Kuru otların altından yemyeşil bir çimen çıktı.": "Phew! There was bright green grass under all those dry weeds.", "Aferin kızım. Nevin Hanım her sabah buraya çıkıp çiçeklerine günaydın derdi.": "Well done, dear. Every morning Nevin came out here to say good morning to her flowers.", "Çivileri sağlam çak. Burası poyraz alır, ilk rüzgârda yıkılmasın.": "Hammer those nails in tight. The north wind blows hard here.", "Bakın usta, begonvil de açtı! Çit düzelince güneş ona da vurmaya başladı.": "Look, the bougainvillea is blooming! Now that the fence is fixed, it gets the sun too.", "Hmm. Fena olmamış. Ama daha yapılacak çok iş var.": "Hmm. Not bad. But there's still a lot of work to do.", "Simge?! Gerçekten sen misin? Çocukken bu yolda bisiklet sürerdik!": "Simge?! Is that really you? We used to ride our bikes on this path as kids!", "Ela! Hâlâ köyün çiçekçisi misin?": "Ela! Are you still the village florist?", "Tabii ki. Bir tarh kurarsan fideleri benden al. Sana arkadaş fiyatı!": "Of course. If you plant a flower bed, get the seedlings from me. Friends' discount!", "Çok yakıştı! Bak, arılar şimdiden keşfetti bile.": "It looks perfect! Look, the bees have already found it.", "Ninem de hep çiçek ekerdi. Sanki bahçe yeniden nefes alıyor.": "Grandma always planted flowers. It feels like the garden is breathing again.", "Çeşmenin bir taşı oynuyor... İçinde küçük bir teneke kutu var!": "One of the fountain stones is loose... There's a little tin box inside!", "\"Simge'ciğim, bu tohumları sana sakladım. Bahar Şenliği'nde ek. Gerisini Rıza bilir.\"": "\"My dear Simge, I saved these seeds for you. Plant them for the Spring Festival. Rıza knows the rest.\"", "Rıza Usta? Siz bu kutuyu biliyor musunuz?": "Uncle Rıza? Do you know about this box?", "Bilirim... Ama önce bir çay demleyelim, sonra anlatırım.": "I do... But let's brew some tea first, then I'll tell you.", "Miyav!": "Meow!", "Miyav?": "Meow?", "Sen de kimsin bakalım? Tasmasında \"Fıstık\" yazıyor.": "And who are you? Your collar says \"Pistachio\".", "Nevin Hanım'ın kedisi. Ondan beri benim bahçede yatıyordu. Demek evine döndü.": "That's Nevin's cat. She's been sleeping in my garden ever since. Looks like she's come home.", "Ninem beni bu zeytin ağacının altında sallardı.": "Grandma used to push me on a swing under this olive tree.", "Seni sallarken hep aynı türküyü mırıldanırdı. Bütün sokak duyardı.": "She always hummed the same folk song while she pushed you. The whole street could hear it.", "İşte şimdi oldu. Otur bakalım, anlatayım.": "Now that's more like it. Sit down and I'll tell you.", "O tohumlar Nevin Hanım'ın \"Ege Gülü\". Kırk yıl önce şenlikte birinci olmuştu. Tohumunu kimseye vermedi.": "Those seeds are Nevin's \"Aegean Rose\". It won first prize at the festival forty years ago. She never gave its seeds to anyone.", "Ve bana bıraktı... Bu yıl Ege Gülü'nü şenlikte yeniden açtıracağım!": "And she left them to me... This year I'll make the Aegean Rose bloom at the festival again!", "Akşam oldu bak! Bahçe masal gibi görünüyor.": "Evening's here! The garden looks like a fairy tale.", "Ninem görse çok sevinirdi.": "Grandma would have loved to see this.", "Bence görüyor.": "I think she can.", "Şenlik kurulu bahçeni görmeye gelecek kızım. Kapıdan girer girmez ağızları açık kalacak.": "The festival committee is coming to see your garden, dear. Their jaws will drop the moment they walk in.", "Ben de dükkânda herkese anlattım. Bütün köy merak ediyor!": "I told everyone at the shop. The whole village is curious!", "O zaman sıra Ege Gülü'nde. Hadi tohumları ekelim!": "Then it's time for the Aegean Rose. Let's plant those seeds!", "Arka bahçe de orman olmuş! Bu dikenlerin altında ne var acaba?": "The backyard is a jungle too! I wonder what's under these thorns.", "Nevin Hanım'ın serası. Ege Gülü orada büyürdü.": "Nevin's greenhouse. That's where the Aegean Rose grew.", "Camları tek tek sildim, bak nasıl parlıyor!": "I cleaned every pane of glass. Look how it shines!", "Tohumlar için mükemmel bir yuva oldu.": "It's the perfect home for the seeds.", "\"Her sabah bir avuç su, bir de güzel bir söz. Gül dediğin sevgiyle büyür.\"": "\"A handful of water and a kind word every morning. A rose grows with love.\"", "Söz veriyorum nine, her sabah onlarla konuşacağım.": "I promise, Grandma. I'll talk to them every morning.", "Demek Nevin'in torunu sensin. Ben Saffet. Karşı köyün gül bahçesi benimdir.": "So you're Nevin's granddaughter. I'm Saffet. The rose garden in the next village is mine.", "On iki yıldır şenliğin birincisiyim. Sana bol şans... İhtiyacın olacak.": "I've won the festival twelve years in a row. Good luck... You'll need it.", "Bu da kimdi böyle?": "Who on earth was that?", "Boş ver kızım. Nevin Hanım'la gençliklerinde can dosttular, sonra küstüler.": "Never mind her, dear. She and Nevin were best friends when they were young. Then they fell out.", "Bu kemerin altından geçen herkes gülümser!": "Everyone who walks under this arch will smile!", "Şenlikte jüri de buradan geçecek.": "The festival judges will walk through here too.", "Nevin Hanım'la Saffet bu bankta saatlerce otururdu.": "Nevin and Saffet used to sit on this bench for hours.", "Peki neden küstüler?": "So why did they fall out?", "Bir gül yüzünden. Gerisini o anlatsın.": "Over a rose. Let her tell you the rest.", "Korkma Fıstık, arılar dostumuz. Güllerimizi onlar tozlayacak.": "Don't worry, Pistachio. Bees are our friends. They'll pollinate our roses.", "Şenlik sofrası için domates, biber... Hepsi senin bahçenden!": "Tomatoes and peppers for the festival table... All from your garden!", "Ninemin domatesli böreği de olmazsa olmaz.": "And Grandma's tomato pastry is a must.", "Rıza Usta! Çabuk gelin, açtı!": "Uncle Rıza! Come quick, it's blooming!", "Kırk yıl... Kırk yıl sonra Ege Gülü yeniden açtı. Nevin Hanım, görüyor musun?": "Forty years... After forty years the Aegean Rose is blooming again. Nevin, can you see it?", "...Bu koku. Nevin'in gülü. Hiç unutmadım.": "...That scent. Nevin's rose. I never forgot it.", "Jüri kararını verdi. Bu yılın birincisi... Simge'nin Bahçesi!": "The judges have decided. This year's winner is... Simge's Garden!", "Nevin'le aramız bu gül yüzünden açılmıştı. Bir dal istemiştim, vermedi. Şimdi anlıyorum, sana saklıyormuş.": "Nevin and I fell out over this rose. I asked her for a cutting and she refused. Now I understand. She was saving it for you.", "O zaman ilk dalı size vereyim Saffet Hanım. Ninem de bunu isterdi.": "Then let me give you the first cutting, Mrs. Saffet. Grandma would have wanted that.", "...Teşekkür ederim, kızım.": "...Thank you, dear.", "Şenlik başlasın!": "Let the festival begin!", "Tohumları ekmek için uygun bir yer lazım.": "I need a good place to plant the seeds.", "Evin arkasına hiç baktın mı? Nevin Hanım'ın asıl hazinesi orada.": "Have you looked behind the house? Nevin's real treasure is back there.", "Arka bahçe açıldı! Yeni işler ve 20 yeni bulmaca seni bekliyor.": "The backyard is open! New tasks and 20 new puzzles are waiting for you.", "İşte geldim... Nevin Nine'nin evi. Ama bu bahçe ne hale gelmiş böyle!": "Here I am... Grandma Nevin's house. But look at the state of this garden!", "\"Bahçemi sana emanet ediyorum Simge'ciğim. Onu yeniden çiçeklendir.\"": "\"I'm leaving my garden in your care, my dear Simge. Make it bloom again.\"", "Hoş geldin kızım. Ben Rıza, yan komşunuz. Bu bahçe bir zamanlar köyün en güzeliydi.": "Welcome, dear. I'm Rıza, your next-door neighbor. This garden was once the prettiest in the village.", "Bahar Şenliği'ne bir ay var. Yetişir mi, bilmem...": "The Spring Festival is a month away. Can it be ready in time? I'm not so sure...", "Yetişecek! Hemen işe koyuluyorum.": "It will be! I'm getting to work right now.", "Bulmacaları çöz, her biri sana 1 yıldız kazandırır. Yıldızlarla bahçe işlerini yap ve hikayeyi ilerlet.": "Each puzzle you solve earns 1 star. Spend stars on garden tasks to move the story forward."};
+const EN={"PUZZLE ÇÖZ · TAŞ EVİNİ YENİLE":"SOLVE PUZZLES · RESTORE YOUR STONE HOUSE", "Her puzzle evi biraz daha güzelleştirir.":"Every puzzle makes your house more beautiful.", "Üçlü eşleştirme puzzle’larını çöz, yıldız kazan ve Nevin Nine’nin terk edilmiş taş evini yenile. Otları temizle, pencereleri değiştir, duvarları onar ve rengârenk çiçekler ek.":"Solve match-3 puzzles, earn stars, and restore Grandma Nevin’s abandoned stone cottage. Clear weeds, replace windows, repair walls, and plant colorful flowers.", "Puzzle çöz · yıldız kazan":"Solve puzzles · earn stars", "Otları temizle":"Clear the weeds", "Pencereleri yenile":"Restore the windows", "Çiçek ek · evi güzelleştir":"Plant flowers · beautify the home", "KÜÇÜK BİR BAHÇE, BÜYÜK BİR HİKÂYE":"A LITTLE GARDEN, A BIG STORY", "Birlikte yeniden çiçek açalım.":"Let's make this garden bloom again.", "Nevin Nine'nin bahçesini güzelleştir, renkli bulmacaları çöz ve bu sıcacık hikâyenin bir parçası ol.":"Restore Grandma Nevin's garden, solve colorful puzzles, and become part of a heartwarming story.", "Bahçeni kur":"Restore your garden", "Bulmacaları çöz":"Solve puzzles", "Hikâyeyi keşfet":"Discover the story", "Oyna": "Play", "Bulmaca {n}": "Puzzle {n}", "hamle": "moves", "dokun ›": "tap ›", "Bahçe işleri": "Garden tasks", "Ön bahçe": "Front garden", "Arka bahçe": "Backyard", "Yıldızların": "Your stars", "Sesi aç/kapat": "Sound on/off", "Bahçeye dön": "Back to garden", "Dili değiştir": "Change language", "1. Bölüm · Nevin Nine'nin evi": "Chapter 1 · Grandma Nevin's house", "2. Bölüm · Ege Gülü": "Chapter 2 · The Aegean Rose", "{n} yıldız gerekli": "Needs {n} stars", "1. bölüm tamamlandı!": "Chapter 1 complete!", "Arka bahçede 2. bölüm seni bekliyor.": "Chapter 2 is waiting in the backyard.", "2. bölüm tamamlandı!": "Chapter 2 complete!", "3. bölüm yakında. Yıldız toplamaya devam edebilirsin.": "Chapter 3 is coming soon. Keep collecting stars!", "{n} yıldız daha lazım. Bir bulmaca oyna!": "You need {n} more stars. Play a puzzle!", "Sonra fikrini değiştiremezsin, iyi seç!": "You can't change it later, so choose well!", "Vazgeç": "Cancel", "Nevin Nine'nin bahçesi yeniden çiçek açtı. Şimdi sıra arka bahçede: Ege Gülü ve Bahar Şenliği.": "Grandma Nevin's garden is blooming again. Next up is the backyard: the Aegean Rose and the Spring Festival.", "Arka bahçeye git": "Go to the backyard", "ŞENLİK BİRİNCİSİ!": "FESTIVAL CHAMPION!", "Ege Gülü kırk yıl sonra yeniden açtı ve Bahar Şenliği'nde birinci oldu. 3. bölüm yakında!": "The Aegean Rose bloomed again after forty years and won first prize at the Spring Festival. Chapter 3 is coming soon!", "Yaşasın!": "Hooray!", "Çiçek": "Flower", "Yaprak": "Leaf", "Damla": "Drop", "Limon": "Lemon", "Üzüm": "Grape", "Yabani ot": "Weeds", "Sarmaşık": "Vines", "sarmaşık": "vines", "Sarmaşıklı taşlar kaydırılamaz. Onları bir eşleşmeye kat ya da özel taşla vur, sarmaşık kopsun!": "Tiles wrapped in vines can't be moved. Include them in a match or hit them with a special tile to snap the vines!", "yabani ot": "weeds", "Tatlı!": "Sweet!", "Şahane!": "Lovely!", "Nefis!": "Delicious!", "Şeker patlaması!": "Sugar rush!", "İnanılmaz!": "Incredible!", "Efsane!": "Legendary!", "Gökkuşağı!": "Rainbow!", "Bahçe şenliği!": "Garden party!", "Taşlar karıştırıldı": "Tiles shuffled", "MEGA KAZANÇ!": "MEGA BLOOM!", "SÜPER KAZANÇ!": "SUPER BLOOM!", "BÜYÜK KAZANÇ!": "BIG BLOOM!", "Bulmaca {n} puanı": "Puzzle {n} score", "+1 yıldız! Bahçede seni bekleyen işler var.": "+1 star! Tasks are waiting for you in the garden.", "Yıldızı al": "Collect star", "📺 Reklam izle: +5 hamle": "📺 Watch an ad: +5 moves", "★1 ver: +5 hamle": "Spend ★1: +5 moves", "+5 hamle ile devam": "Continue with +5 moves", "Tekrar dene": "Try again", "Hamleler bitti": "Out of moves", "{list} kaldı. Az kaldı!": "Still {list} to go. So close!", "1 yıldız karşılığında +5 hamle!": "+5 moves for 1 star!", "Teşekkürler! +5 hamle": "Thanks! +5 moves", "Reklam şu an yok, tekrar deneyebilirsin": "No ad available right now. Try again later.", "Bahçeye dönülsün mü?": "Back to the garden?", "Bu bulmacadaki ilerlemen kaybolur.": "You'll lose your progress in this puzzle.", "Oynamaya devam": "Keep playing", "Yan yana iki taşı kaydırarak yer değiştir. Aynı türden 3 taşı sıraya diz!": "Swipe two neighboring tiles to swap them. Line up 3 of the same kind!", "4'lü dizi çizgili taş, L ya da T şekli bomba, 5'li dizi gökkuşağı tohumu yapar.": "4 in a row makes a striped tile, an L or T shape makes a bomb, 5 in a row makes a rainbow seed.", "Yeşil kareler yabani ot. Üstlerinde taş patlat, koyu olanlara iki kez vur!": "Green squares are weeds. Pop tiles on them. Dark ones need two hits!", "Simge": "Simge", "Rıza Usta": "Uncle Rıza", "Ela": "Ela", "Fıstık": "Pistachio", "Saffet Hanım": "Mrs. Saffet", "İpucu": "Tip", "Nevin Nine'nin mektubu": "Grandma Nevin's letter", "Kuru otları temizle": "Clear the dry weeds", "Çiti onar": "Fix the fence", "Taş yolu döşe": "Lay the stone path", "Çiçek tarhı ek": "Plant a flower bed", "Eski çeşmeyi onar": "Repair the old fountain", "Kediye yuva yap": "Make a bed for the cat", "Zeytine salıncak as": "Hang a swing on the olive tree", "Çay köşesi kur": "Set up a tea corner", "Fenerleri as": "Hang the lanterns", "Bahçe kapısını boya": "Paint the garden gate", "Dikenli çalıları temizle": "Clear the thorny bushes", "Eski serayı onar": "Repair the old greenhouse", "Ege Gülü tohumlarını ek": "Plant the Aegean Rose seeds", "Eski kuyuyu onar": "Repair the old well", "Gül kemeri kur": "Build a rose arch", "Kemerin altına bank koy": "Put a bench under the arch", "Arı kovanı yerleştir": "Set up a beehive", "Sebze tarhı kur": "Plant a vegetable bed", "Ege Gülü'nü açtır": "Make the Aegean Rose bloom", "Şenlik bayraklarını as": "Hang the festival flags", "Tarha ne ekelim?": "What should we plant?", "Lavanta": "Lavender", "Gül": "Rose", "Papatya": "Daisy", "Sandalyeler hangi renk olsun?": "What color should the chairs be?", "Ege mavisi": "Aegean blue", "Limon sarısı": "Lemon yellow", "Kireç beyazı": "Chalk white", "Kapı hangi renge boyansın?": "What color should the gate be?", "Lacivert": "Navy blue", "Zeytin yeşili": "Olive green", "Begonvil pembesi": "Bougainvillea pink", "Bank hangi renk olsun?": "What color should the bench be?", "Lavanta moru": "Lavender purple", "Nane yeşili": "Mint green", "Bayraklar hangi renkte olsun?": "What color should the flags be?", "Gökkuşağı": "Rainbow", "Pembe beyaz": "Pink and white", "Mavi beyaz": "Blue and white", "Oh be! Kuru otların altından yemyeşil bir çimen çıktı.": "Phew! There was bright green grass under all those dry weeds.", "Aferin kızım. Nevin Hanım her sabah buraya çıkıp çiçeklerine günaydın derdi.": "Well done, dear. Every morning Nevin came out here to say good morning to her flowers.", "Çivileri sağlam çak. Burası poyraz alır, ilk rüzgârda yıkılmasın.": "Hammer those nails in tight. The north wind blows hard here.", "Bakın usta, begonvil de açtı! Çit düzelince güneş ona da vurmaya başladı.": "Look, the bougainvillea is blooming! Now that the fence is fixed, it gets the sun too.", "Hmm. Fena olmamış. Ama daha yapılacak çok iş var.": "Hmm. Not bad. But there's still a lot of work to do.", "Simge?! Gerçekten sen misin? Çocukken bu yolda bisiklet sürerdik!": "Simge?! Is that really you? We used to ride our bikes on this path as kids!", "Ela! Hâlâ köyün çiçekçisi misin?": "Ela! Are you still the village florist?", "Tabii ki. Bir tarh kurarsan fideleri benden al. Sana arkadaş fiyatı!": "Of course. If you plant a flower bed, get the seedlings from me. Friends' discount!", "Çok yakıştı! Bak, arılar şimdiden keşfetti bile.": "It looks perfect! Look, the bees have already found it.", "Ninem de hep çiçek ekerdi. Sanki bahçe yeniden nefes alıyor.": "Grandma always planted flowers. It feels like the garden is breathing again.", "Çeşmenin bir taşı oynuyor... İçinde küçük bir teneke kutu var!": "One of the fountain stones is loose... There's a little tin box inside!", "\"Simge'ciğim, bu tohumları sana sakladım. Bahar Şenliği'nde ek. Gerisini Rıza bilir.\"": "\"My dear Simge, I saved these seeds for you. Plant them for the Spring Festival. Rıza knows the rest.\"", "Rıza Usta? Siz bu kutuyu biliyor musunuz?": "Uncle Rıza? Do you know about this box?", "Bilirim... Ama önce bir çay demleyelim, sonra anlatırım.": "I do... But let's brew some tea first, then I'll tell you.", "Miyav!": "Meow!", "Miyav?": "Meow?", "Sen de kimsin bakalım? Tasmasında \"Fıstık\" yazıyor.": "And who are you? Your collar says \"Pistachio\".", "Nevin Hanım'ın kedisi. Ondan beri benim bahçede yatıyordu. Demek evine döndü.": "That's Nevin's cat. She's been sleeping in my garden ever since. Looks like she's come home.", "Ninem beni bu zeytin ağacının altında sallardı.": "Grandma used to push me on a swing under this olive tree.", "Seni sallarken hep aynı türküyü mırıldanırdı. Bütün sokak duyardı.": "She always hummed the same folk song while she pushed you. The whole street could hear it.", "İşte şimdi oldu. Otur bakalım, anlatayım.": "Now that's more like it. Sit down and I'll tell you.", "O tohumlar Nevin Hanım'ın \"Ege Gülü\". Kırk yıl önce şenlikte birinci olmuştu. Tohumunu kimseye vermedi.": "Those seeds are Nevin's \"Aegean Rose\". It won first prize at the festival forty years ago. She never gave its seeds to anyone.", "Ve bana bıraktı... Bu yıl Ege Gülü'nü şenlikte yeniden açtıracağım!": "And she left them to me... This year I'll make the Aegean Rose bloom at the festival again!", "Akşam oldu bak! Bahçe masal gibi görünüyor.": "Evening's here! The garden looks like a fairy tale.", "Ninem görse çok sevinirdi.": "Grandma would have loved to see this.", "Bence görüyor.": "I think she can.", "Şenlik kurulu bahçeni görmeye gelecek kızım. Kapıdan girer girmez ağızları açık kalacak.": "The festival committee is coming to see your garden, dear. Their jaws will drop the moment they walk in.", "Ben de dükkânda herkese anlattım. Bütün köy merak ediyor!": "I told everyone at the shop. The whole village is curious!", "O zaman sıra Ege Gülü'nde. Hadi tohumları ekelim!": "Then it's time for the Aegean Rose. Let's plant those seeds!", "Arka bahçe de orman olmuş! Bu dikenlerin altında ne var acaba?": "The backyard is a jungle too! I wonder what's under these thorns.", "Nevin Hanım'ın serası. Ege Gülü orada büyürdü.": "Nevin's greenhouse. That's where the Aegean Rose grew.", "Camları tek tek sildim, bak nasıl parlıyor!": "I cleaned every pane of glass. Look how it shines!", "Tohumlar için mükemmel bir yuva oldu.": "It's the perfect home for the seeds.", "\"Her sabah bir avuç su, bir de güzel bir söz. Gül dediğin sevgiyle büyür.\"": "\"A handful of water and a kind word every morning. A rose grows with love.\"", "Söz veriyorum nine, her sabah onlarla konuşacağım.": "I promise, Grandma. I'll talk to them every morning.", "Demek Nevin'in torunu sensin. Ben Saffet. Karşı köyün gül bahçesi benimdir.": "So you're Nevin's granddaughter. I'm Saffet. The rose garden in the next village is mine.", "On iki yıldır şenliğin birincisiyim. Sana bol şans... İhtiyacın olacak.": "I've won the festival twelve years in a row. Good luck... You'll need it.", "Bu da kimdi böyle?": "Who on earth was that?", "Boş ver kızım. Nevin Hanım'la gençliklerinde can dosttular, sonra küstüler.": "Never mind her, dear. She and Nevin were best friends when they were young. Then they fell out.", "Bu kemerin altından geçen herkes gülümser!": "Everyone who walks under this arch will smile!", "Şenlikte jüri de buradan geçecek.": "The festival judges will walk through here too.", "Nevin Hanım'la Saffet bu bankta saatlerce otururdu.": "Nevin and Saffet used to sit on this bench for hours.", "Peki neden küstüler?": "So why did they fall out?", "Bir gül yüzünden. Gerisini o anlatsın.": "Over a rose. Let her tell you the rest.", "Korkma Fıstık, arılar dostumuz. Güllerimizi onlar tozlayacak.": "Don't worry, Pistachio. Bees are our friends. They'll pollinate our roses.", "Şenlik sofrası için domates, biber... Hepsi senin bahçenden!": "Tomatoes and peppers for the festival table... All from your garden!", "Ninemin domatesli böreği de olmazsa olmaz.": "And Grandma's tomato pastry is a must.", "Rıza Usta! Çabuk gelin, açtı!": "Uncle Rıza! Come quick, it's blooming!", "Kırk yıl... Kırk yıl sonra Ege Gülü yeniden açtı. Nevin Hanım, görüyor musun?": "Forty years... After forty years the Aegean Rose is blooming again. Nevin, can you see it?", "...Bu koku. Nevin'in gülü. Hiç unutmadım.": "...That scent. Nevin's rose. I never forgot it.", "Jüri kararını verdi. Bu yılın birincisi... Simge'nin Bahçesi!": "The judges have decided. This year's winner is... Simge's Garden!", "Nevin'le aramız bu gül yüzünden açılmıştı. Bir dal istemiştim, vermedi. Şimdi anlıyorum, sana saklıyormuş.": "Nevin and I fell out over this rose. I asked her for a cutting and she refused. Now I understand. She was saving it for you.", "O zaman ilk dalı size vereyim Saffet Hanım. Ninem de bunu isterdi.": "Then let me give you the first cutting, Mrs. Saffet. Grandma would have wanted that.", "...Teşekkür ederim, kızım.": "...Thank you, dear.", "Şenlik başlasın!": "Let the festival begin!", "Tohumları ekmek için uygun bir yer lazım.": "I need a good place to plant the seeds.", "Evin arkasına hiç baktın mı? Nevin Hanım'ın asıl hazinesi orada.": "Have you looked behind the house? Nevin's real treasure is back there.", "Arka bahçe açıldı! Yeni işler ve 20 yeni bulmaca seni bekliyor.": "The backyard is open! New tasks and 20 new puzzles are waiting for you.", "İşte geldim... Nevin Nine'nin evi. Ama bu bahçe ne hale gelmiş böyle!": "Here I am... Grandma Nevin's house. But look at the state of this garden!", "\"Bahçemi sana emanet ediyorum Simge'ciğim. Onu yeniden çiçeklendir.\"": "\"I'm leaving my garden in your care, my dear Simge. Make it bloom again.\"", "Hoş geldin kızım. Ben Rıza, yan komşunuz. Bu bahçe bir zamanlar köyün en güzeliydi.": "Welcome, dear. I'm Rıza, your next-door neighbor. This garden was once the prettiest in the village.", "Bahar Şenliği'ne bir ay var. Yetişir mi, bilmem...": "The Spring Festival is a month away. Can it be ready in time? I'm not so sure...", "Yetişecek! Hemen işe koyuluyorum.": "It will be! I'm getting to work right now.", "Bulmacaları çöz, her biri sana 1 yıldız kazandırır. Yıldızlarla bahçe işlerini yap ve hikayeyi ilerlet.": "Each puzzle you solve earns 1 star. Spend stars on garden tasks to move the story forward."};
 const MISS=new Set();window.__miss=MISS;
 function T(s,v){let r=s;if(LANG==='en'){if(EN[s]!==undefined)r=EN[s];else MISS.add(s)}if(v)for(const k in v)r=r.split('{'+k+'}').join(v[k]);return r}
 function relabel(){document.documentElement.lang=LANG;
@@ -678,6 +1081,7 @@ function modal(html,buttons){
     M.hidden=false;
     c.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{M.hidden=true;res(+b.dataset.i)});
     c.querySelectorAll('[data-opt]').forEach(b=>b.onclick=()=>{M.hidden=true;res({opt:+b.dataset.opt})});
+    c.querySelectorAll('[data-level]').forEach(b=>b.onclick=()=>{if(b.disabled)return;M.hidden=true;res({level:+b.dataset.level})});
     const f=c.querySelector('button');if(f)f.focus();
   });
 }
@@ -753,7 +1157,15 @@ const LV=[
  {m:32,w:'full',w2:'diamond',g:[[1,30]]},
  {m:34,w:'full',w2:'full'}
 ];
+/* Kolay mod: daha çok hamle, daha az hedef, ilk bölümlerde çift kat ot yok */
 function levelDef(i){
+  const d=levelBase(i),e=Object.assign({},d);
+  e.m=Math.round(d.m*1.3)+2;
+  if(d.g)e.g=d.g.map(([t,n])=>[t,Math.max(6,Math.round(n*.7))]);
+  if(i<10)e.w2=null;
+  return e;
+}
+function levelBase(i){
   if(i<LV.length)return LV[i];
   const ks=Object.keys(P),w=ks[i%ks.length];
   return {m:26,w,w2:i%3?null:'center',v:i%4===1?['dots','mid','rows','xs'][(i>>2)%4]:null,g:[[i%5,20+(i%4)*4]]};
@@ -763,7 +1175,7 @@ function levelDef(i){
 const W=8,H=8;
 const tilesEl=$('#tiles'),cellsEl=$('#cells');
 let score=0;
-let G=[],WD=[],L=null,moves=0,goals=[],busy=false,sel=null,extraUsed=false,playing=false,cascadeN=0,hintT=null;
+let G=[],WD=[],L=null,moves=0,goals=[],busy=false,sel=null,extraUsed=false,playing=false,cascadeN=0,hintT=null,hammerMode=false,hammerUsed=false;
 
 function mk(t,sp,x,y){
   const el=document.createElement('div');el.className='tile';
@@ -934,6 +1346,22 @@ async function comboFire(A,B){
   }
   await blast(cells);
 }
+async function useHammer(x,y){
+  if(busy||!playing||hammerUsed||moves<=0)return;
+  const o=G[y]?.[x];if(!o)return;
+  hammerUsed=true;hammerMode=false;busy=true;clearSel();clearHint();cascadeN=0;
+  moves--;hud();SFX.boom();combo('Bahçıvan dokunuşu!');
+  await blast(new Set([y*W+x]));
+  await gravity();await resolve(null);
+  if(!findMove())shuffle(true);
+  busy=false;await checkEnd();if(playing)armHint();
+}
+$('#hammerBtn').onclick=()=>{
+  if(busy||!playing||hammerUsed)return;
+  hammerMode=!hammerMode;clearSel();hud();
+  toast(hammerMode?'Makas hazır! Temizlemek istediğin taşa dokun.':'Makas iptal edildi.');
+  SFX.tick();
+};
 async function trySwap(a,b){
   if(busy||!playing||moves<=0)return;
   if(Math.abs(a.x-b.x)+Math.abs(a.y-b.y)!==1)return;
@@ -955,6 +1383,7 @@ function collect(t){for(const g of goals)if(g.k===t&&g.n>0)g.n--}
 const done=()=>goals.every(g=>g.n<=0);
 function hud(){
   $('#moves').textContent=moves;$('.moves').classList.toggle('low',playing&&moves<=5&&moves>0);
+  const hb=$('#hammerBtn');if(hb){hb.disabled=hammerUsed||!playing;hb.classList.toggle('armed',hammerMode);hb.innerHTML=hammerUsed?'✓<small>0</small>':'✂️<small>1</small>';hb.title=hammerUsed?'Bu seviyede makas kullanıldı':hammerMode?'Bir taşa dokun':'Bir taşı temizle';}
   $('#goals').innerHTML=goals.map(g=>{
     const ic=g.k==='v'?VINE_IC:g.k==='w'?`<div class="gem" style="inset:0;background:#3f7a37"><svg viewBox="0 0 40 40"><path d="M8 32 Q12 14 16 32 Q20 8 24 32 Q28 16 32 32Z" fill="#8fdc6a"/></svg></div>`:`<div class="gem g${g.k}" style="inset:0">${ICONS[g.k]}</div>`;
     return `<div class="goal${g.n<=0?' ok':''}" data-k="${g.k}" title="${T(g.k==='v'?'Sarmaşık':g.k==='w'?'Yabani ot':TNAME[g.k])}"><div class="mini">${ic}</div><b>${Math.max(0,g.n)}</b></div>`}).join('')+`<div class="goal"><span class="lv">${T('Bulmaca {n}',{n:S.level+1})}</span></div>`;
@@ -962,7 +1391,7 @@ function hud(){
 function clearSel(){if(sel){const o=G[sel.y]?.[sel.x];o&&o.el.classList.remove('sel');sel=null}}
 function showTip(t){const e=$('#tip');if(!t){e.hidden=true;return}e.textContent=t;e.hidden=false}
 function clearHint(){clearTimeout(hintT);tilesEl.querySelectorAll('.hint').forEach(e=>e.classList.remove('hint'))}
-function armHint(ms=7000){clearHint();hintT=setTimeout(()=>{if(busy||!playing)return;const m=findMove();if(m)m.forEach(o=>o.el.classList.add('hint'))},ms)}
+function armHint(ms=4000){clearHint();hintT=setTimeout(()=>{if(busy||!playing)return;const m=findMove();if(m)m.forEach(o=>o.el.classList.add('hint'))},ms)}
 
 /* Dokunma: kaydır ya da iki taşa sırayla dokun */
 let down=null;
@@ -980,20 +1409,21 @@ tilesEl.addEventListener('pointermove',e=>{
 });
 tilesEl.addEventListener('pointerup',()=>{
   if(!down)return;const d=down;down=null;if(d.moved||busy)return;
+   if(hammerMode){useHammer(d.x,d.y);return;}
   if(sel&&Math.abs(sel.x-d.x)+Math.abs(sel.y-d.y)===1){const s=sel;trySwap(s,{x:d.x,y:d.y});return}
   if(sel&&sel.x===d.x&&sel.y===d.y){clearSel();return}
   clearSel();sel={x:d.x,y:d.y};G[d.y][d.x].el.classList.add('sel');SFX.tick();
 });
 
 async function startLevel(){
-  L=levelDef(S.level);moves=L.m;extraUsed=false;score=0;
+  L=levelDef(S.level);moves=L.m;extraUsed=false;score=0;hammerMode=false;hammerUsed=false;
   goals=(L.g||[]).map(([t,n])=>({k:t,n}));
   $('#gardenView').hidden=true;$('#playView').hidden=false;
   $('.top').hidden=true;document.body.classList.add('playing');
   buildBoard();
   const wc=WD.flat().reduce((a,b)=>a+b,0);if(wc)goals.push({k:'w',n:wc});
   const vc=all().filter(o=>o.lock).length;if(vc)goals.push({k:'v',n:vc});
-  hud();playing=true;busy=false;armHint();Ads.start();
+  playing=true;busy=false;hud();armHint();Ads.start();
   let tipTxt=null;
   if(S.level===0)tipTxt=T('Yan yana iki taşı kaydırarak yer değiştir. Aynı türden 3 taşı sıraya diz!');
   else if(S.level===1)tipTxt=T("4'lü dizi çizgili taş, L ya da T şekli bomba, 5'li dizi gökkuşağı tohumu yapar.");
@@ -1013,7 +1443,7 @@ async function checkEnd(){
     await sleep(300);SFX.fanfare();flash();
     const left=L.m+(extraUsed?5:0);
     const title=T(score>=6000?'MEGA KAZANÇ!':score>=3500?'SÜPER KAZANÇ!':'BÜYÜK KAZANÇ!');
-    S.level++;S.stars++;S.best=Math.max(S.best||0,score);save();renderGarden();
+    S.level=Math.min(30,S.level+1);S.stars++;S.best=Math.max(S.best||0,score);save();renderGarden();
     const M=$('#modal');M.classList.add('win');
     const p=modal(`<div class="big-star">★</div><div class="jack">${title}</div><div class="bulbs">${'<i></i>'.repeat(9)}</div><div class="score"><span id="scoreN">0</span><small>${T('Bulmaca {n} puanı',{n:S.level})}</small></div><p style="margin-top:10px">${T('+1 yıldız! Bahçede seni bekleyen işler var.')}</p>`,[T('Yıldızı al')]);
     countUp($('#scoreN'),score,1400);
@@ -1022,6 +1452,7 @@ async function checkEnd(){
     const iv=setInterval(()=>{FX.fountain(Math.random()*innerWidth,innerHeight+10,14);FX.burst(Math.random()*innerWidth,Math.random()*innerHeight*.5,['#ffd447','#ff6f9f','#fff'],18,8);snd(800+rnd(600),.08,'triangle',.03)},450);
     await p;clearInterval(iv);M.classList.remove('win');
     goGarden();
+    if(S.level===30){await sleep(500);await modal(`<div class="big-star">🌹</div><div class="jack">${T('BAHAR ŞENLİĞİ!')}</div><p>${T('30 bulmacayı tamamladın. Nevin Nine’nin bahçesi yeniden hayat buldu. Evin, seranın ve Ege Gülü’nün hikâyesini tamamladın!')}</p><p>${T('Yeni bir macera yakında. Şimdilik bahçeni keşfedebilir ve tamamladığın işleri görebilirsin.')}</p>`,[T('Bahçeyi keşfet')]);}
     const sp=$('.pill');sp.classList.remove('bump');void sp.offsetWidth;sp.classList.add('bump');
     const pr=sp.getBoundingClientRect();FX.burst(pr.left+pr.width/2,pr.top+pr.height/2,['#ffd447','#fff'],24,7);chime();
     if(!S.intro){await sleep(600);await playIntro()}
@@ -1083,14 +1514,71 @@ function buildScene(ch){sceneCh=ch;if(ch===2)return buildScene2();
   el('path',{d:'M237 140 V116 Q245 110 253 114 V140Z',class:'gatec'},gNew);el('path',{d:'M255 140 V114 Q263 110 271 116 V140Z',class:'gatec'},gNew);
   el('path',{d:'M241 120 V136 M245 118 V136 M249 117 V136 M259 117 V136 M263 118 V136 M267 120 V136',stroke:'#fff',opacity:.5,'stroke-width':1.2},gNew);
 
-  // Ev
-  el('rect',{x:-2,y:52,width:120,height:122,fill:'#efe3cf'});
-  const st=seeded(3);for(let i=0;i<14;i++)el('rect',{x:4+st()*100,y:60+st()*100,width:10+st()*10,height:5,rx:2,fill:'#e0cfb2'});
-  el('path',{d:'M-8 57 L56 16 L126 57Z',fill:'#d9774f'});el('path',{d:'M-8 57 L126 57 L126 61 L-8 61Z',fill:'#b85c3a'});
-  el('rect',{x:16,y:76,width:28,height:28,fill:'#bfe1ee',stroke:'#fff','stroke-width':3});el('path',{d:'M30 76 V104 M16 90 H44',stroke:'#fff','stroke-width':2});
-  el('rect',{x:5,y:74,width:10,height:32,rx:1,fill:'#3c7fb0'});el('rect',{x:45,y:74,width:10,height:32,rx:1,fill:'#3c7fb0'});
-  el('path',{d:'M66 172 V122 a16 16 0 0 1 32 0 V172Z',fill:'#7a4e33'});el('circle',{cx:92,cy:150,r:1.8,fill:'#ffd447'});
-  el('rect',{x:58,y:170,width:48,height:6,rx:2,fill:'#d8c8ad'});
+  // Nevin Nine'nin terk edilmiş taş evi — görevlerle katman katman yenilenir
+  const houseBase=grp(null,null);
+  el('path',{d:'M15 178 V83 L105 31 L211 83 V178Z',fill:'#9b8c78',stroke:'#665c50','stroke-width':2},houseBase);
+  const stones=seeded(33);
+  for(let row=0;row<7;row++)for(let col=0;col<9;col++){
+    const x=21+col*21+(row%2?10:0),y=91+row*12;
+    if(x>195)continue;
+    el('path',{d:`M${x} ${y} h${14+stones()*5} l-2 7 h-14Z`,fill:['#b7a891','#c8b99f','#8f8271','#d1c4ac'][Math.floor(stones()*4)],stroke:'#887b69','stroke-width':.55,opacity:.95},houseBase);
+  }
+  // Eski, çökmüş kiremit çatı
+  const roofOld=grp(null,null);roofOld.dataset.off='cit';
+  el('path',{d:'M5 86 L103 22 L222 85 L215 94 L103 43 L13 96Z',fill:'#51483f',stroke:'#342f2b','stroke-width':2},roofOld);
+  for(let r=0;r<4;r++)for(let x=30;x<205;x+=17){
+    const y=64-r*8+(x-30)*.28;
+    el('path',{d:`M${x} ${y} l12 -8 l11 8`,stroke:r%2?'#8a5b48':'#a36c50','stroke-width':3,fill:'none',opacity:.85},roofOld);
+  }
+  // Onarılmış kiremit çatı
+  const roofNew=grp('cit',null);roofNew.dataset.on='cit';
+  el('path',{d:'M5 84 L103 18 L222 83 L216 91 L103 38 L12 92Z',fill:'#9c5947',stroke:'#633d34','stroke-width':1.5},roofNew);
+  for(let r=0;r<5;r++)for(let x=17;x<215;x+=15){
+    const y=78-r*8+Math.abs(x-103)*.3;
+    el('path',{d:`M${x} ${y} q6 -5 12 0`,stroke:r%2?'#c17b5a':'#7d493b','stroke-width':2.5,fill:'none'},roofNew);
+  }
+  // Tahtayla kapatılmış eski pencereler
+  const winOld=grp(null,null);winOld.dataset.off='fener';
+  [[38,104],[151,104]].forEach(([x,y])=>{
+    el('rect',{x,y,width:30,height:37,rx:2,fill:'#302f2b',stroke:'#62594e','stroke-width':3},winOld);
+    el('path',{d:`M${x-3} ${y+4} l36 27 M${x+4} ${y-2} l-5 40`,stroke:'#795b42','stroke-width':4},winOld);
+  });
+  const winNew=grp('fener',null);winNew.dataset.on='fener';
+  [[38,104],[151,104]].forEach(([x,y])=>{
+    el('rect',{x,y,width:30,height:37,rx:3,fill:'#e8bd78',stroke:'#f3e5c8','stroke-width':3},winNew);
+    el('rect',{x:x+4,y:y+4,width:22,height:29,fill:'#8fc5bd'},winNew);
+    el('path',{d:`M${x+15} ${y+4} V${y+33} M${x+4} ${y+18} H${x+26}`,stroke:'#f7ead0','stroke-width':2},winNew);
+    el('path',{d:`M${x-4} ${y-3} h38 v5 h-38Z`,fill:'#665342'},winNew);
+    el('circle',{cx:x+15,cy:y+17,r:8,fill:'#ffe8a6',opacity:.2},winNew);
+  });
+  // Eski ahşap kapı ve yenilenmiş mavi kapı
+  const doorOld=grp(null,null);doorOld.dataset.off='kapi';
+  el('path',{d:'M87 178 V132 Q105 112 123 132 V178Z',fill:'#302b27',stroke:'#6f6253','stroke-width':3},doorOld);
+  el('path',{d:'M91 178 V135 L104 126 L119 135 V178Z',fill:'#574333'},doorOld);
+  el('path',{d:'M94 144 l24 22 M118 144 l-24 22',stroke:'#8b6b4e','stroke-width':3},doorOld);
+  const doorNew=grp('kapi',null);doorNew.dataset.on='kapi';
+  el('path',{d:'M87 178 V132 Q105 112 123 132 V178Z',fill:'#315c62',stroke:'#eadfc8','stroke-width':3},doorNew);
+  el('path',{d:'M92 178 V135 Q105 119 118 135 V178Z',fill:'#477e7a',stroke:'#213f42','stroke-width':1.5},doorNew);
+  el('path',{d:'M105 127 V178 M94 151 H116',stroke:'#9ec0aa','stroke-width':1.5,opacity:.8},doorNew);
+  el('circle',{cx:113,cy:157,r:2,fill:'#e9c47d'},doorNew);
+  // Eski baca ve yenilenmiş baca
+  const chimney=grp(null,null);chimney.dataset.off='cesme';
+  el('path',{d:'M171 62 V35 H190 V73',fill:'#6e6254',stroke:'#51473e','stroke-width':2},chimney);
+  el('path',{d:'M167 35 h27 v-6 h-27Z',fill:'#51483f'},chimney);
+  const smoke=grp('cesme',null);smoke.dataset.on='cesme';
+  el('path',{d:'M171 62 V31 H190 V73',fill:'#a66b54',stroke:'#704638','stroke-width':1.5},smoke);
+  el('path',{d:'M167 31 h27 v-6 h-27Z',fill:'#c17d5e'},smoke);
+  el('path',{d:'M177 23 q-7 -8 0 -12 M184 22 q7 -8 1 -13',stroke:'#fff','stroke-width':2,opacity:.7,fill:'none','stroke-linecap':'round'},smoke);
+  // Sarmaşıklar ve döküntü
+  const ivy=grp(null,null);ivy.dataset.off='otlar';
+  el('path',{d:'M13 177 Q7 142 24 120 T31 84 M203 177 Q215 147 198 128 T205 98',stroke:'#344c31','stroke-width':5,fill:'none'},ivy);
+  for(let i=0;i<20;i++){const x=12+stones()*202,y=65+stones()*110;el('ellipse',{cx:x,cy:y,rx:3+stones()*3,ry:2+stones()*3,fill:i%2?'#456b3e':'#65824b',transform:`rotate(${stones()*90} ${x} ${y})`},ivy)}
+  const rubble=grp(null,null);rubble.dataset.off='otlar';
+  for(let i=0;i<15;i++){const x=15+stones()*200,y=178+stones()*18;el('ellipse',{cx:x,cy:y,rx:3+stones()*4,ry:2+stones()*2,fill:['#786d5d','#a89b83','#665b4c'][i%3]},rubble)}
+  // Onarılan taş cepheye temiz derzler ve sıcak ışık
+  const finish=grp('fener',null);finish.dataset.on='fener';
+  el('path',{d:'M17 178 V83 L105 31 L211 83',stroke:'#e6d6b9','stroke-width':2.4,fill:'none',opacity:.75},finish);
+  el('path',{d:'M78 178 V132 Q105 105 132 132 V178',stroke:'#e6d6b9','stroke-width':2,fill:'none',opacity:.8},finish);
   // Begonvil (çit tamir edilince açar)
   const bg=grp('cit',null),Rb=seeded(11);for(let i=0;i<26;i++)el('circle',{cx:70+Rb()*50,cy:56+Rb()*30,r:3+Rb()*3,fill:Rb()<.5?'#e2457a':'#f06d9b'},bg);
 
@@ -1317,7 +1805,7 @@ function renderGarden(){
   ul.innerHTML=nt.length?nt.map(t=>`<li class="task"><div class="ti" aria-hidden="true">${t.icon}</div><div class="tn">${T(t.name)}<small>${T('{n} yıldız gerekli',{n:t.cost})}</small></div><button class="do" data-t="${t.id}" ${S.stars<t.cost?'disabled':''}>★ ${t.cost}</button></li>`).join('')
     :ch===1?`<li class="task"><div class="ti">🌹</div><div class="tn">${T('1. bölüm tamamlandı!')}<small>${T('Arka bahçede 2. bölüm seni bekliyor.')}</small></div></li>`
     :`<li class="task"><div class="ti">🏆</div><div class="tn">${T('2. bölüm tamamlandı!')}<small>${T('3. bölüm yakında. Yıldız toplamaya devam edebilirsin.')}</small></div></li>`;
-  ul.querySelectorAll('.do').forEach(b=>b.onclick=()=>doTask(b.dataset.t));
+  ul.querySelectorAll('.do').forEach(b=>b.onclick=()=>doTask(b.dataset.t));window.__petalSnapshot={done:[...S.done],stars:S.stars,level:S.level,tasks:nt.map(t=>({id:t.id,name:T(t.name),cost:t.cost,icon:t.icon})),chapter:ch};window.dispatchEvent(new CustomEvent('petal-snapshot',{detail:window.__petalSnapshot}));
   const mk=$('#markers');mk.innerHTML='';
   nt.forEach(t=>{const g=el('g',{class:'marker'+(S.stars<t.cost?' locked':''),transform:`translate(${t.x} ${t.y})`,tabindex:0,role:'button','aria-label':T(t.name)},mk);
     if(S.stars>=t.cost)el('circle',{r:11,class:'ring'},g);el('circle',{r:11},g);const tx=el('text',{},g);tx.textContent=S.stars>=t.cost?'!':t.cost+'★';
@@ -1349,7 +1837,31 @@ async function doTask(id){
   }
   renderGarden();
 }
-$('#playBtn').onclick=async()=>{snd(520);await Ads.midgame();startLevel()};
+window.__petalTask=id=>doTask(id);window.__petalStartPuzzle=()=>{if(!playing&&S.level<30)startLevel();else if(S.level>=30)toast('30 bulmacalık ilk hikâyeyi tamamladın!')};window.__petalLocked=()=>toast('Quyidagi bulmacalar sırasıyla açılır. Önce açık olanı tamamla!');
+$('#playBtn').onclick=async()=>{if(S.level>=30){toast(T('İlk hikâye tamamlandı! Yeni macera yakında.'));return}snd(520);await Ads.midgame();startLevel()};
+
+
+/* ---------- 30 seviyelik bölüm haritası ---------- */
+function openLevelMap(){
+  const current=Math.max(0,S.level||0),shown=30;
+  const nodes=Array.from({length:shown},(_,i)=>{
+    const n=i+1,done=n<=current,active=n===current+1,locked=n>current+1;
+    const cls=done?'done':active?'current':'locked';
+    const icon=done?'✓':locked?'🔒':n===1?'🌱':n%5===0?'🌸':n%3===0?'🍃':'✿';
+    return `<button class="map-node ${cls}" data-level="${i}" ${locked?'disabled':''} aria-label="Bölüm ${n}">
+      <span class="node-icon">${icon}</span><b>${n}</b><small>${done?'Tamamlandı':active?'Şimdi oyna':'Kilitli'}</small>
+    </button>`;
+  }).join('');
+  const html=`<div class="level-map-head"><span class="map-kicker">NEVİN NİNE'NİN BAHÇESİ</span><h2>Yolculuğun</h2><p>${current} / ${shown} bölüm tamamlandı</p><div class="map-progress"><i style="width:${Math.min(100,current/shown*100)}%"></i></div></div>
+    <div class="map-zones"><span>🌿 Başlangıç</span><span>🌷 Çiçek zamanı</span><span>🌹 Bahar şenliği</span></div>
+    <div class="level-grid">${nodes}</div>`;
+  return modal(html,['Haritayı kapat']);
+}
+$('#mapBtn').onclick=async()=>{
+  if(playing)return;
+  const result=await openLevelMap();
+  if(result&&typeof result.level==='number'){S.level=result.level;save();startLevel()}
+};
 
 /* ---------- Orman ---------- */
 {const r=seeded(42);let t='';
@@ -1368,6 +1880,10 @@ $('#playBtn').onclick=async()=>{snd(520);await Ads.midgame();startLevel()};
 /* ---------- Tahta ışıkları ---------- */
 {const b=$('#bulbs'),N=12;let h='';for(let i=0;i<N;i++){const t=(i+.5)/N*100;h+=`<i style="left:${t}%;top:0"></i><i style="left:${100-t}%;top:100%"></i><i style="left:100%;top:${t}%"></i><i style="left:0;top:${100-t}%"></i>`}b.innerHTML=h}
 /* ---------- Açılış ---------- */
+/* Yeni oturumda önceki bir modal/overlay durumunun ekranda kalmasını önle. */
+$('#modal').hidden=true;$('#modal').classList.remove('win');
+$('#shade').hidden=true;$('#dialog').hidden=true;
+$('#modal').querySelector('.card').innerHTML='';
 relabel();renderGarden();
 async function playIntro(){
   await talk([
@@ -1387,5 +1903,51 @@ else if(!S.intro)setTimeout(playIntro,400);
 })();
 </script>
 
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js"}}
+</script>
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js';
+import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/controls/OrbitControls.js';
+const root=document.querySelector('#threeStage');
+if(root){
+const scene=new THREE.Scene();scene.background=new THREE.Color('#b9d6d8');scene.fog=new THREE.Fog('#b9d6d8',18,38);
+const camera=new THREE.PerspectiveCamera(38,1,.1,100);camera.position.set(9,7.2,12);
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.1;root.appendChild(renderer.domElement);
+const controls=new OrbitControls(camera,renderer.domElement);controls.target.set(0,1.4,0);controls.enableDamping=true;controls.minDistance=7;controls.maxDistance=19;controls.maxPolarAngle=Math.PI*.48;controls.enablePan=false;
+scene.add(new THREE.HemisphereLight('#e8f5ff','#65764a',2));const sun=new THREE.DirectionalLight('#fff0d4',3.1);sun.position.set(-5,10,7);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);scene.add(sun);
+const M=(c,r=.88)=>new THREE.MeshStandardMaterial({color:c,roughness:r});const m={grass:M('#78985b'),stone:M('#b8aa91'),stone2:M('#a69780'),stone3:M('#d0c2a7'),roof:M('#713f32'),roof2:M('#985844'),wood:M('#654632'),door:M('#365e59'),glass:new THREE.MeshPhysicalMaterial({color:'#a9d9e7',roughness:.16,transparent:true,opacity:.8}),leaf:M('#477548'),leaf2:M('#6f9852'),pink:M('#e65f89'),gold:M('#f3c86d'),white:M('#fff0d5')};
+const world=new THREE.Group();scene.add(world);function G(p=world){const g=new THREE.Group();p.add(g);return g}function B(p,x,y,z,w,h,d,ma){const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),ma);o.position.set(x,y,z);o.castShadow=o.receiveShadow=true;p.add(o);return o}function S(p,x,y,z,r,ma,sc=[1,1,1]){const o=new THREE.Mesh(new THREE.SphereGeometry(r,12,10),ma);o.position.set(x,y,z);o.scale.set(...sc);o.castShadow=true;p.add(o);return o}
+const floor=new THREE.Mesh(new THREE.CylinderGeometry(9.4,9.7,.35,64),m.grass);floor.position.y=-.12;floor.receiveShadow=true;world.add(floor);
+const house=G(),walls=G(house);B(walls,0,1.55,-1.8,5.2,3.1,3.5,m.stone);
+let seed=71;const R=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};
+for(let r=0;r<8;r++)for(let c=0;c<9;c++){const x=-2.48+c*.61+(r%2)*.16,y=.25+r*.37;if(y>2.85||(Math.abs(x)<.68&&y<2.15)||(Math.abs(x)>1.55&&y>1.05&&y<2.45))continue;B(walls,x,y,0, .52+R()*.08,.29,.06,[m.stone2,m.stone3,m.stone][Math.floor(R()*3)]).position.z=-.02;}
+for(let r=0;r<8;r++)for(let c=0;c<6;c++)B(walls,2.62,.25+r*.37,-3.3+c*.59+(r%2)*.12,.06,.3,.5,m.stone2);
+const roof=G(house);const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute([-3,3.1,-4,0,5.15,-4,0,5.15,.4,-3,3.1,.4,3,3.1,-4,0,5.15,-4,0,5.15,.4,3,3.1,.4],3));geo.setIndex([0,1,2,0,2,3,4,6,5,4,7,6]);geo.computeVertexNormals();const rm=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:'#794637',side:THREE.DoubleSide}));rm.castShadow=true;roof.add(rm);
+for(let side of [-1,1])for(let r=0;r<8;r++)for(let c=0;c<9;c++){const tile=B(roof,side*(.2+r*.34),5.05-r*.25,-3.85+c*.47+(r%2)*.05,.46,.08,.43,r%2?m.roof:m.roof2);tile.rotation.z=side*.59}
+const damage=G(house);for(let i=0;i<20;i++)S(damage,-2.4+R()*4.8,3.4+R()*1.5,-3.8+R()*3.7,.15,m.leaf2,[1,.25,.7]);
+const chimney=G(house);B(chimney,1.65,4.1,-2.4,.62,1.6,.68,m.stone2);B(chimney,1.65,4.95,-2.4,.82,.18,.85,m.roof2);
+const oldDoor=G(house),newDoor=G(house);B(oldDoor,0,1.05,.02,1.18,2.1,.16,m.wood);B(newDoor,0,1.05,.04,1.18,2.1,.18,m.door);S(newDoor,.42,1.05,.16,.07,m.gold);
+const oldWin=G(house),newWin=G(house);for(const x of [-1.85,1.85]){B(oldWin,x,1.85,.03,.95,1.15,.14,m.wood);for(let j=0;j<3;j++)B(oldWin,x-.25+j*.25,1.85,.12,.08,1,.04,m.roof);B(newWin,x,1.85,.04,1.04,1.22,.13,m.white);B(newWin,x,1.85,.12,.88,1.06,.05,m.glass);B(newWin,x,1.85,.16,.05,1.06,.05,m.white);B(newWin,x,1.85,.16,.88,.05,.05,m.white);for(const dx of [-.62,.62])B(newWin,x+dx,1.85,.07,.18,1.3,.1,m.door)}
+const path=G();for(let i=0;i<9;i++){const p=B(path,(i%2?-.13:.13),.12,5.7-i*.52,1.15,.18,.7,m.stone3);p.rotation.y=(R()-.5)*.2}
+const fence=G();for(let x=-7;x<=7;x+=.65){if(Math.abs(x)<1.5)continue;B(fence,x,.5,6.8,.13,.95,.15,m.wood)}B(fence,0,.35,6.8,15,.12,.16,m.wood);B(fence,0,.72,6.8,15,.12,.16,m.wood);
+const weeds=G();for(let i=0;i<110;i++){const x=-8+R()*16,z=-7+R()*13;if(z<-4&&Math.abs(x)<3.5)continue;const stem=B(weeds,x,.32+R()*.2,z,.045,.6,.045,m.leaf);stem.rotation.z=(R()-.5)*.6;S(weeds,x+(R()-.5)*.25,.5+R()*.25,z,.12,m.leaf2,[1.5,.35,.6])}
+const beds=G();for(let i=0;i<18;i++){const x=-6+R()*12,z=2.7+R()*2;B(beds,x,.32,z,.035,.6,.035,m.leaf);S(beds,x,.68,z,.16,i%2?m.pink:m.gold,[1,.75,1])}
+const trees=G();for(const [x,z] of [[-7,-3],[7,-3],[-7,4],[7,4]]){B(trees,x,1.2,z,.4,2.4,.4,m.wood);for(let j=0;j<5;j++)S(trees,x+(R()-.5),2.6+R(),z+(R()-.5),1,m.leaf2,[1,.8,1])}
+const fountain=G();const basin=new THREE.Mesh(new THREE.CylinderGeometry(.85,.95,.35,32),m.stone3);basin.position.set(4,.25,2.5);fountain.add(basin);const water=new THREE.Mesh(new THREE.CylinderGeometry(.72,.72,.06,32),new THREE.MeshPhysicalMaterial({color:'#83cde0',roughness:.15}));water.position.set(4,.46,2.5);fountain.add(water);B(fountain,4,1,2.5,.25,1.2,.25,m.stone2);
+const flowers=G();for(let i=0;i<65;i++){const x=-7+R()*14,z=-6+R()*12;B(flowers,x,.25,z,.03,.45,.03,m.leaf);S(flowers,x,.52,z,.13,[m.pink,m.gold,m.white][i%3],[1,.8,1])}
+const parts={otlar:weeds,cit:damage,kapi:oldDoor,fener:oldWin,cesme:chimney,tarh:beds};newDoor.visible=false;newWin.visible=false;
+const spots={otlar:[-3,.5,3],cit:[-2,4.3,-2],yol:[0,.4,4.7],tarh:[-4,.5,2.4],cesme:[4,1,2.5],kedi:[-4,.6,-.5],salincak:[6,.8,-2],cay:[2,.5,4],fener:[-1.8,2.4,.5],kapi:[0,1.8,.2]};const markerGroup=G(),markers=[];const puzzleGroup=G(),puzzleNodes=[];const ray=new THREE.Raycaster(),pointer=new THREE.Vector2();
+const puzzleSpots=[[-3.2,.18,5.4],[-2.1,.18,4.25],[-.9,.18,5.5],[.5,.18,4.1],[1.8,.18,5.35],[3.1,.18,4.15]];
+function labelSprite(txt,color){const c=document.createElement('canvas');c.width=128;c.height=128;const x=c.getContext('2d');x.fillStyle='rgba(48,62,43,.88)';x.beginPath();x.arc(64,64,54,0,Math.PI*2);x.fill();x.strokeStyle='#f5d88b';x.lineWidth=7;x.stroke();x.fillStyle=color;x.font='bold 58px system-ui';x.textAlign='center';x.textBaseline='middle';x.fillText(txt,64,67);const tex=new THREE.CanvasTexture(c);const mat=new THREE.SpriteMaterial({map:tex,transparent:true,depthWrite:false});const sp=new THREE.Sprite(mat);sp.scale.set(.72,.72,1);return sp}
+function updatePuzzleNodes(level){for(const n of puzzleNodes)puzzleGroup.remove(n);puzzleNodes.length=0;for(let i=0;i<6;i++){const g=G(puzzleGroup);g.position.set(...puzzleSpots[i]);const completed=level>=(i+1)*5,unlocked=!completed&&level>=i*5;const base=new THREE.Mesh(new THREE.CylinderGeometry(.43,.5,.22,32),M(completed?'#9aaf75':unlocked?'#d4b56d':'#788078'));base.position.y=.11;g.add(base);const ring=new THREE.Mesh(new THREE.TorusGeometry(.34,.045,8,32),M(completed?'#d8f0a1':unlocked?'#ffe18a':'#626b65'));ring.rotation.x=-Math.PI/2;ring.position.y=.25;g.add(ring);const orb=new THREE.Mesh(new THREE.SphereGeometry(.19,20,16),M(completed?'#9bd37d':unlocked?'#f3c86d':'#8b9690'));orb.position.y=.48;g.add(orb);const sp=labelSprite(completed?'✓':unlocked?String(i+1):'🔒', '#fff8df');sp.position.y=1.02;g.add(sp);g.userData.puzzle=true;g.userData.unlocked=unlocked;g.userData.completed=completed;puzzleNodes.push(g)}}
+
+function updateMarkers(snap){for(const o of markers)markerGroup.remove(o);markers.length=0;for(const t of snap?.tasks||[]){const p=spots[t.id];if(!p)continue;const g=G(markerGroup);g.position.set(...p);const ring=new THREE.Mesh(new THREE.TorusGeometry(.34,.055,8,28),new THREE.MeshStandardMaterial({color:'#ffe18a',emissive:'#a56a25',emissiveIntensity:.8}));ring.rotation.x=-Math.PI/2;g.add(ring);S(g,0,.12,0,.13,m.gold);g.userData.task=t.id;markers.push(g)}}
+function sync(snap){if(!snap)return;const d=new Set(snap.done||[]);weeds.visible=!d.has('otlar');damage.visible=!d.has('cit');oldDoor.visible=!d.has('kapi');newDoor.visible=d.has('kapi');oldWin.visible=!d.has('fener');newWin.visible=d.has('fener');chimney.visible=!d.has('cesme');beds.visible=d.has('tarh');updateMarkers(snap);updatePuzzleNodes(Math.max(0,Math.min(6,snap.level||0)))}
+function resize(){const w=root.clientWidth,h=root.clientHeight;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false)}new ResizeObserver(resize).observe(root);resize();
+renderer.domElement.addEventListener('pointerup',e=>{const r=renderer.domElement.getBoundingClientRect();pointer.x=(e.clientX-r.left)/r.width*2-1;pointer.y=-(e.clientY-r.top)/r.height*2+1;ray.setFromCamera(pointer,camera);const hits=ray.intersectObjects([...markers,...puzzleNodes],true);if(hits.length){let o=hits[0].object;while(o&&!o.userData.task&&!o.userData.puzzle)o=o.parent;if(o?.userData.task)window.__petalTask?.(o.userData.task);else if(o?.userData.puzzle){if(o.userData.unlocked)window.__petalStartPuzzle?.();else if(!o.userData.completed)window.__petalLocked?.()}}});
+function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)}animate();root.classList.add('ready');window.addEventListener('petal-snapshot',e=>sync(e.detail));sync(window.__petalSnapshot);
+}
+</script>
 </body>
 </html>

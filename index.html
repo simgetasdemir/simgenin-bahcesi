@@ -1153,7 +1153,15 @@ const LV=[
  {m:32,w:'full',w2:'diamond',g:[[1,30]]},
  {m:34,w:'full',w2:'full'}
 ];
+/* Kolay mod: daha çok hamle, daha az hedef, ilk bölümlerde çift kat ot yok */
 function levelDef(i){
+  const d=levelBase(i),e=Object.assign({},d);
+  e.m=Math.round(d.m*1.3)+2;
+  if(d.g)e.g=d.g.map(([t,n])=>[t,Math.max(6,Math.round(n*.7))]);
+  if(i<10)e.w2=null;
+  return e;
+}
+function levelBase(i){
   if(i<LV.length)return LV[i];
   const ks=Object.keys(P),w=ks[i%ks.length];
   return {m:26,w,w2:i%3?null:'center',v:i%4===1?['dots','mid','rows','xs'][(i>>2)%4]:null,g:[[i%5,20+(i%4)*4]]};
@@ -1379,7 +1387,7 @@ function hud(){
 function clearSel(){if(sel){const o=G[sel.y]?.[sel.x];o&&o.el.classList.remove('sel');sel=null}}
 function showTip(t){const e=$('#tip');if(!t){e.hidden=true;return}e.textContent=t;e.hidden=false}
 function clearHint(){clearTimeout(hintT);tilesEl.querySelectorAll('.hint').forEach(e=>e.classList.remove('hint'))}
-function armHint(ms=7000){clearHint();hintT=setTimeout(()=>{if(busy||!playing)return;const m=findMove();if(m)m.forEach(o=>o.el.classList.add('hint'))},ms)}
+function armHint(ms=4000){clearHint();hintT=setTimeout(()=>{if(busy||!playing)return;const m=findMove();if(m)m.forEach(o=>o.el.classList.add('hint'))},ms)}
 
 /* Dokunma: kaydır ya da iki taşa sırayla dokun */
 let down=null;
